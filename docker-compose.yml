@@ -1,0 +1,26 @@
+version: "3.8"
+services:
+  main:
+    build:
+      context: ./pkg
+    container_name: compaon.main
+    volumes:
+      - ./pkg:/pkg
+      # Exclude container directory overwritten by host.
+      - /pkg/node_modules
+    ports:
+      - "3000:3000"
+  mysql:
+    image: mysql:5.7
+    # For MAC M1
+    # image: arm64v8/mysql:oracle
+    container_name: compaon.mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci  --sql_mode=""
+    volumes:
+      - ./db_data/db:/var/lib/mysql
+      - ./.docker/mysql:/docker-entrypoint-initdb.d
+    restart: always
+    ports:
+      - "3306:3306"
