@@ -1,0 +1,8 @@
+.DS_Store
+*.swp
+*.tmp
+*.log
+.vscode
+dist
+node_modules
+build
