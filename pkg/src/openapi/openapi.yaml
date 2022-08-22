@@ -263,39 +263,6 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/Pano"
-        # booths:
-        #   type: array
-        #   items:
-        #     type: object
-        #     properties:
-        #       name:
-        #         type: string
-        #       media:
-        #         type: array
-        #         items:
-        #           type: object
-        #           properties:
-        #             media_id:
-        #               type: integer
-        #             description:
-        #               type: string
-        #       template:
-        #         type: object
-        #         properties:
-        #           id:
-        #             type: integer
-        #             format: int64
-        #             example: 1
-        #           image:
-        #             type: array
-        #             items:
-        #               type: string
-        #           video:
-        #             type: array
-        #             items:
-        #               type: string
-        #       enterprise_id:
-        #         type: integer
     Organization:
       type: object
       properties:
