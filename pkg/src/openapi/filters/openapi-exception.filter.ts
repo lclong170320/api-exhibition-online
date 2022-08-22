@@ -14,10 +14,10 @@ export class OpenApiExceptionFilter implements ExceptionFilter {
             details: error.errors.map((e): ErrorDetail => {
                 return {
                     field: e.path,
-                    message: e.message
-                } as ErrorDetail
-            })
-        }
+                    message: e.message,
+                } as ErrorDetail;
+            }),
+        };
 
         response.status(error.status).header(error.headers).json(responseBody);
     }
