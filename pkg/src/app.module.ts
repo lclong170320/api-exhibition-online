@@ -7,7 +7,7 @@ import { MiddlewareConsumer, Module } from '@nestjs/common';
 import * as OpenApiValidator from 'express-openapi-validator';
 import { join } from 'path';
 import { APP_FILTER } from '@nestjs/core';
-import { OpenApiExceptionFilter } from 'openapi/filters/openapi-exception.filter';
+import { OpenApiExceptionFilter } from '@/openapi/filters/openapi-exception.filter';
 
 @Module({
     imports: [
