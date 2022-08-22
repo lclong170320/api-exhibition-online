@@ -21,6 +21,7 @@
       "@/components/*": ["components/*"],
       "@/constants/*": ["constants/*"],
       "@/database/*": ["database/*"],
+      "@/openapi/*": ["openapi/*"],
     }
   }
 }

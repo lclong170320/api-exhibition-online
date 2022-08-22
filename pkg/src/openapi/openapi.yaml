@@ -1,0 +1,374 @@
+openapi: 3.0.0
+info:
+  title: COMPAON API
+  version: 1.0.0
+  contact:
+    email: compaon@dalavina.com
+    name: Compaon
+    url: "https://dalavina.com/compaon"
+  license:
+    name: EULA
+    url: https://en.wikipedia.org/wiki/End-user_license_agreement
+  description: API definition for COMPAON
+tags:
+  - name: Booth
+    description: API to interact with the Booth
+  - name: Exhibition
+    description: API to interact with the Exhibition
+  - name: Media
+    description: API to interact with the Media
+  - name: Organization
+    description: API to interact with the Organization
+servers:
+  - url: http://localhost:3000/api/v1
+paths:
+  /exhibitions:
+    get:
+      summary: Get exhibitions
+      description: Return multiple exhibitions
+      operationId: getExhibitions
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  start:
+                    type: integer
+                    format: int64
+                    example: 1
+                  limit:
+                    type: integer
+                    format: int64
+                    example: 10
+                  row_count:
+                    type: integer
+                    format: int64
+                    example: 1
+                  exhibitions:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Exhibition"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponseBody"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponseBody"
+      tags:
+        - Exhibition
+  /exhibitions/{id}:
+    get:
+      summary: Get exhibition by ID
+      description: Return a single exhibition
+      operationId: getExhibitionById
+      parameters:
+        - name: id
+          description: ID to get exhibition
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: ^[0-9]+$
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Exhibition"
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponseBody"
+              examples:
+                example-1:
+                  value:
+                    message: Bad Request
+                    details:
+                      - field: .params.id
+                        message: should match pattern "^[0-9]+$"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponseBody"
+              examples:
+                example-1:
+                  value:
+                    message: Internal server error
+                    details: []
+      tags:
+        - Exhibition
+  /organization/{id}:
+    parameters:
+      - name: id
+        description: ID to get organization
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: "^[0-9]+"
+    get:
+      summary: Get organization by ID
+      description: Return a single organization
+      operationId: getOrganizationById
+      tags:
+        - Organization
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Organization"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponseBody"
+              examples:
+                example-1:
+                  value:
+                    message: Bad Request
+                    details:
+                      - field: .params.id
+                        message: should match pattern "^[0-9]+$"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponseBody"
+              examples:
+                example-1:
+                  value:
+                    message: Internal server error
+                    details: []
+  /medias/{id}:
+    parameters:
+      - name: id
+        description: ID to get media
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: ^[0-9]+$
+    get:
+      summary: Get media by ID
+      description: Return a single media
+      operationId: getMediaById
+      tags:
+        - Media
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Media"
+              examples:
+                example-1:
+                  value:
+                    id: 1
+                    url: https://example.local/medianame.jpg
+                    mime: image/jpeg
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponseBody"
+              examples:
+                example-1:
+                  value:
+                    message: Bad Request
+                    details:
+                      - field: .params.id
+                        message: should match pattern "^[0-9]+$"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponseBody"
+              examples:
+                example-1:
+                  value:
+                    message: Internal server error
+                    details: []
+  /booths/{id}/templates:
+    post:
+      summary: ""
+      operationId: post-templates
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+              examples:
+                example-1:
+                  value:
+                    id: 1
+      description: Create a new template for a booth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+            examples:
+              example-1:
+                value:
+                  slot1: "https://domain.dev/image1.jpg"
+                  slot2: "https://domain.dev/video1.mp4"
+                  slot3: "https://domain.dev/video1.mp4"
+      tags:
+        - Booth
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+        description: The booth's ID will be add new template
+components:
+  schemas:
+    Exhibition:
+      type: object
+      required:
+        - "id"
+        - "panos"
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        panos:
+          type: array
+          items:
+            $ref: "#/components/schemas/Pano"
+    Organization:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: Dalavina
+        tax:
+          type: string
+          example: "900000"
+        address:
+          type: string
+          example: 22 Nguyễn Việt Hồng
+        represent:
+          type: string
+          example: Mr.Timo
+        slogan:
+          type: string
+          example: We Can Do Everything Together
+        major:
+          type: string
+          example: Software
+    Address:
+      type: object
+      properties:
+        number:
+          type: string
+        street:
+          type: string
+        wards:
+          type: string
+        district:
+          type: string
+        city:
+          type: string
+    Media:
+      type: object
+      properties:
+        id:
+          type: integer
+        url:
+          type: string
+        mime:
+          type: string
+    ErrorResponseBody:
+      type: object
+      required:
+        - "message"
+        - "details"
+      properties:
+        message:
+          type: string
+        details:
+          type: array
+          items:
+            $ref: "#/components/schemas/ErrorDetail"
+    ErrorDetail:
+      type: object
+      required:
+        - "field"
+        - "message"
+      properties:
+        field:
+          type: string
+        message:
+          type: string
+    Position:
+      type: object
+      required:
+        - "x"
+        - "y"
+        - "z"
+      properties:
+        x:
+          type: integer
+        y:
+          type: integer
+        z:
+          type: integer
+    Pano:
+      type: object
+      required:
+        - "media_id"
+        - "markers"
+      properties:
+        media_id:
+          type: integer
+        markers:
+          type: array
+          items:
+            $ref: "#/components/schemas/Marker"
+    Marker:
+      type: object
+      required:
+        - "media_id"
+        - "position"
+        - "destination"
+        - "description"
+      properties:
+        media_id:
+          type: integer
+        position:
+          $ref: "#/components/schemas/Position"
+        destination:
+          type: string
+        description:
+          type: string

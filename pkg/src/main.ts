@@ -1,20 +1,20 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { apiPrefix } from '@/constants/common';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { OpenAPIObject, SwaggerModule } from '@nestjs/swagger';
+import { load } from 'js-yaml';
+import { readFileSync } from 'fs';
+import { join } from 'path';
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
     app.setGlobalPrefix(apiPrefix.version1);
-    const swaggerConfig = new DocumentBuilder()
-        .setTitle('Compaon API')
-        .setDescription('API developed throughout the API with NestJS course')
-        .setVersion('1.0')
-        .build();
-
-    const document = SwaggerModule.createDocument(app, swaggerConfig);
-    SwaggerModule.setup('swagger', app, document);
+    const document = load(
+        readFileSync(join(__dirname, 'openapi/openapi.yaml'), 'utf8'),
+    ) as OpenAPIObject;
+    SwaggerModule.setup('/docs', app, document);
 
     await app.listen(3000);
 }
+
 bootstrap();
