@@ -2,13 +2,13 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
 import * as fs from 'fs';
 import * as path from 'path';
 const sqlUp = fs.readFileSync(
-    path.join(__dirname, '../../sql/exhibition/create-exhibitions-up.sql'),
+    path.join(__dirname, 'sql/create-exhibitions-up.sql'),
     {
         encoding: 'utf-8',
     },
 );
 const sqlDown = fs.readFileSync(
-    path.join(__dirname, '../../sql/exhibition/create-exhibitions-down.sql'),
+    path.join(__dirname, 'sql/create-exhibitions-down.sql'),
     {
         encoding: 'utf-8',
     },

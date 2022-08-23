@@ -2,13 +2,13 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
 import * as fs from 'fs';
 import * as path from 'path';
 const sqlUp = fs.readFileSync(
-    path.join(__dirname, '../../sql/exhibition/create-markers-up.sql'),
+    path.join(__dirname, 'sql/create-markers-up.sql'),
     {
         encoding: 'utf-8',
     },
 );
 const sqlDown = fs.readFileSync(
-    path.join(__dirname, '../../sql/exhibition/create-markers-down.sql'),
+    path.join(__dirname, 'sql/create-markers-down.sql'),
     {
         encoding: 'utf-8',
     },
