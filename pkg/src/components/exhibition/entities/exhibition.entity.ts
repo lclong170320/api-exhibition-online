@@ -1,20 +1,29 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import {
+    Entity,
+    OneToMany,
+    PrimaryGeneratedColumn,
+    CreateDateColumn,
+    UpdateDateColumn,
+} from 'typeorm';
+import { Pano } from './pano.entity';
 
-@Entity({ name: 'exhibition' })
+@Entity({ name: 'exhibitions' })
 export class Exhibition {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({ length: 255 })
-    name: string;
-
-    @Column({
-        type: 'date',
+    @CreateDateColumn({
+        type: 'timestamp',
+        name: 'created_at',
     })
-    created_at: any;
+    createdAt: Date;
 
-    @Column({
-        type: 'date',
+    @UpdateDateColumn({
+        type: 'timestamp',
+        name: 'updated_at',
     })
-    updated_at: any;
+    updatedAt: Date;
+
+    @OneToMany(() => Pano, (pano) => pano.exhibition)
+    panos: Pano[];
 }

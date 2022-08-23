@@ -1,12 +1,12 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import { ExhibitionService } from './exhibition.service';
 
-@Controller('exhibition')
+@Controller('exhibitions')
 export class ExhibitionController {
     constructor(private readonly exhibitionService: ExhibitionService) {}
 
-    @Get()
-    findAll() {
-        return this.exhibitionService.findAll();
+    @Get(':id')
+    getById(@Param('id') id: string) {
+        return this.exhibitionService.findById(id);
     }
 }
