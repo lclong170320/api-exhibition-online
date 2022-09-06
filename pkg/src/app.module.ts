@@ -8,6 +8,8 @@ import * as OpenApiValidator from 'express-openapi-validator';
 import { join } from 'path';
 import { APP_FILTER } from '@nestjs/core';
 import { OpenApiExceptionFilter } from '@/openapi/filters/openapi-exception.filter';
+import { EnterpriseModule } from '@/components/enterprise/enterprise.module';
+import { MockModule } from './components/mock/mock.module';
 
 @Module({
     imports: [
@@ -16,6 +18,8 @@ import { OpenApiExceptionFilter } from '@/openapi/filters/openapi-exception.filt
         }),
         ...DatabaseConnections,
         ExhibitionModule,
+        EnterpriseModule,
+        MockModule,
     ],
     controllers: [AppController],
     providers: [

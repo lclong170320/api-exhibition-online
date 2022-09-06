@@ -11,9 +11,7 @@
  */
 import { Marker } from './marker.dto';
 
-
-export interface Pano { 
+export interface Pano {
     media_id: number;
     markers: Array<Marker>;
 }
-

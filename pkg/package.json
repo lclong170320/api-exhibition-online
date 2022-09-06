@@ -22,20 +22,23 @@
     "prepare": "cd .. & husky install pkg/.husky"
   },
   "dependencies": {
+    "@nestjs/axios": "^0.1.0",
     "@nestjs/common": "^9.0.0",
     "@nestjs/config": "^2.2.0",
     "@nestjs/core": "^9.0.0",
     "@nestjs/mapped-types": "*",
     "@nestjs/platform-express": "^9.0.0",
+    "@nestjs/serve-static": "^3.0.0",
     "@nestjs/swagger": "^6.0.5",
     "@nestjs/typeorm": "^9.0.0",
     "dotenv": "^16.0.1",
     "express-openapi-validator": "^4.13.8",
+    "file-type": "^18.0.0",
     "js-yaml": "^4.1.0",
     "mysql2": "^2.3.3",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
-    "rxjs": "^7.2.0",
+    "rxjs": "^7.5.6",
     "typeorm": "^0.3.7"
   },
   "devDependencies": {

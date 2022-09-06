@@ -9,11 +9,15 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { Position } from './position.dto';
 
-export interface Marker {
-    media_id: number;
-    position: Position;
-    destination: string;
-    description: string;
+export interface Enterprise {
+    readonly id: number;
+    name: string;
+    tax_code: string;
+    ceo: string;
+    main_job: string;
+    slogan?: string;
+    business_license: string;
+    office_address: string;
+    license_date: string;
 }

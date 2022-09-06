@@ -11,9 +11,7 @@
  */
 import { Pano } from './pano.dto';
 
-
-export interface Exhibition { 
+export interface Exhibition {
     readonly id: number;
     panos: Array<Pano>;
 }
-

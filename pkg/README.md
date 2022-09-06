@@ -16,3 +16,8 @@
   openapi-generator-cli generate -g typescript-nestjs -i path/to/openapi.yaml -o ./output --additional-properties=fileNaming=kebab-case,modelFileSuffix=.dto
   ```
 - Check DTO in the `output/model` dir
+
+## Description convert between dto and entity
+- DTO: communication between controller and service
+- Entity: communication between service and repositorys
+  ![alt text](https://i.imgur.com/LXGEXh3.png)

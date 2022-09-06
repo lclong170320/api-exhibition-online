@@ -9,11 +9,10 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { Position } from './position.dto';
 
-export interface Marker {
-    media_id: number;
-    position: Position;
-    destination: string;
-    description: string;
+export interface EnterpriseDocument {
+    readonly id?: number;
+    title: string;
+    content: string;
+    medias?: Array<Blob>;
 }

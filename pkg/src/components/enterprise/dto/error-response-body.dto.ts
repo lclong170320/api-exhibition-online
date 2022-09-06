@@ -9,11 +9,9 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { Position } from './position.dto';
+import { ErrorDetail } from './error-detail.dto';
 
-export interface Marker {
-    media_id: number;
-    position: Position;
-    destination: string;
-    description: string;
+export interface ErrorResponseBody {
+    message: string;
+    details: Array<ErrorDetail>;
 }

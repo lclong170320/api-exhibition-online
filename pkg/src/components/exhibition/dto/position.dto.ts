@@ -10,10 +10,8 @@
  * Do not edit the class manually.
  */
 
-
-export interface Position { 
+export interface Position {
     x: number;
     y: number;
     z: number;
 }
-
