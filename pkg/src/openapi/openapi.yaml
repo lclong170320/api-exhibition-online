@@ -22,7 +22,7 @@ tags:
 servers:
   - url: 'http://localhost:3000/api/v1'
 paths:
-  /exhibitions:
+  '/exhibitions':
     get:
       summary: Get exhibitions
       description: Return multiple exhibitions
@@ -121,6 +121,7 @@ paths:
       parameters:
         - schema:
             type: string
+            pattern: '^[0-9]+$'
           name: id
           in: path
           required: true
@@ -146,6 +147,119 @@ paths:
                 example-1:
                   value:
                     id: 1
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Bad Request
+                    details:
+                      - field: .params.id
+                        message: 'should match pattern "^[0-9]+$"'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Internal server error
+                    details: []
+  '/enterprises/{id}/profiles':
+    post:
+      tags:
+        - Enterprise
+      summary: Add a new enterprise's profile
+      description: Add a new enterprise's profile
+      operationId: addEnterpriseProfile
+      parameters:
+        - schema:
+            type: string
+            pattern: '^[0-9]+$'
+          name: id
+          in: path
+          required: true
+          description: The enterprise's ID will be add new profile
+      requestBody:
+        description: Create a new enterprise's profile
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EnterpriseProfile'
+        required: true
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+              examples:
+                example-1:
+                  value:
+                    id: 1
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Bad Request
+                    details:
+                      - field: .params.id
+                        message: 'should match pattern "^[0-9]+$"'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Internal server error
+                    details: []
+  '/enterprises/{id}/qrcodes':
+    post:
+      tags:
+        - Enterprise
+      summary: Create a enterprise's qrcode
+      description: Create a enterprise's qrcode
+      operationId: createQrCode
+      parameters:
+        - schema:
+            type: string
+            pattern: '^[0-9]+$'
+          name: id
+          in: path
+          required: true
+          description: The enterprise's ID will be add new qrcode
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  url:
+                    type: string
+              examples:
+                example-1:
+                  value:
+                    url: 'base64'
         '400':
           description: Validation error
           content:
@@ -222,7 +336,7 @@ paths:
         - Media
       summary: Add a new media
       description: Add a new media
-      operationId: addMedia
+      operationId: createMedia
       requestBody:
         description: Create a new media
         content:
@@ -440,6 +554,26 @@ components:
           example:
             - "9j/2wCEAAIBAQIBAQICAgICAgICAwUDAwMDAwYEBAMFBwYHBwcGBwc"
             - "9j/2wCEAAIBAQIBAQICAgICAgICAwUDAwMDAwYEBAMFBwYHBwcGBwc"
+    EnterpriseProfile:
+      type: object
+      required:
+        - document_ids
+      properties:
+        id:
+          type: number
+          readOnly: true
+          example: 1
+        document_ids:
+          type: array
+          items:
+            type: number
+            minItems: 1
+            maxItems: 30
+            uniqueItems: true
+            pattern: '^[0-9]+$'
+          example:
+            - 1
+            - 2
     Address:
       type: object
       properties:
@@ -455,6 +589,8 @@ components:
           type: string
     Media:
       type: object
+      required:
+        - url
       properties:
         id:
           type: integer

@@ -5,9 +5,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { HttpService } from '@nestjs/axios';
 import { Repository } from 'typeorm';
 import { EnterpriseDocument as NewDocumentDto } from './dto/enterprise-document.dto';
+import { EnterpriseProfile as NewProfileDto } from './dto/enterprise-profile.dto';
 import { Document } from './entities/document.entity';
+import { Profile } from './entities/profile.entity';
 import { lastValueFrom, map } from 'rxjs';
 import { DocumentConverter } from './converters/enterprise-document.converter';
+import { ProfileConverter } from './converters/enterprise-profile.converter';
+import { toDataURL } from 'qrcode';
 
 @Injectable()
 export class EnterpriseService {
@@ -16,8 +20,11 @@ export class EnterpriseService {
         private readonly enterpriseRepository: Repository<Enterprise>,
         @InjectRepository(Document, DbConnection.enterpriseCon)
         private readonly documentRepository: Repository<Document>,
+        @InjectRepository(Profile, DbConnection.enterpriseCon)
+        private readonly profileRepository: Repository<Profile>,
         private readonly httpService: HttpService,
         private readonly documentConverter: DocumentConverter,
+        private readonly profileConverter: ProfileConverter,
     ) {}
 
     async createUrlMedias(data: Blob): Promise<string> {
@@ -65,5 +72,36 @@ export class EnterpriseService {
         );
 
         return { id: documentToSave.id };
+    }
+
+    async createProfile(
+        id: string,
+        newProfileDto: NewProfileDto,
+    ): Promise<object> {
+        const newProfileEntity = this.profileConverter.toEntity(newProfileDto);
+
+        newProfileEntity.enterpriseId = parseInt(id);
+
+        const profileToCreate = this.profileRepository.create(newProfileEntity);
+
+        const profileToSave = await this.profileRepository.save(
+            profileToCreate,
+        );
+
+        return { id: profileToSave.id };
+    }
+
+    async generateQR(text: string): Promise<string> {
+        let qrcode: string;
+        try {
+            qrcode = await toDataURL(text);
+        } catch (err) {}
+        return qrcode;
+    }
+
+    async createQrCode(id: string): Promise<object> {
+        const url = `${process.env.CLIENT_HOST}enterprises/${id}/profiles`;
+        const qrcode = await this.generateQR(url);
+        return { qrcode: qrcode };
     }
 }

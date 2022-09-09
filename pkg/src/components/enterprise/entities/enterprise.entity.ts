@@ -5,8 +5,10 @@ import {
     UpdateDateColumn,
     Column,
     OneToMany,
+    OneToOne,
 } from 'typeorm';
 import { Document } from './document.entity';
+import { Profile } from './profile.entity';
 
 @Entity({ name: 'enterprises' })
 export class Enterprise {
@@ -54,4 +56,7 @@ export class Enterprise {
 
     @OneToMany(() => Document, (document) => document.enterprise)
     documents: Document[];
+
+    @OneToOne(() => Profile, (profile) => profile.enterprise)
+    profile: Profile;
 }

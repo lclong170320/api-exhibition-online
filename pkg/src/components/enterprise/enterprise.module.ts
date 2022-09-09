@@ -8,13 +8,15 @@ import { Document } from './entities/document.entity';
 import { HttpModule } from '@nestjs/axios';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { DocumentConverter } from './converters/enterprise-document.converter';
+import { Profile } from './entities/profile.entity';
+import { ProfileConverter } from './converters/enterprise-profile.converter';
 
 @Module({
     controllers: [EnterpriseController],
-    providers: [EnterpriseService, DocumentConverter],
+    providers: [EnterpriseService, DocumentConverter, ProfileConverter],
     imports: [
         TypeOrmModule.forFeature(
-            [Enterprise, Document],
+            [Enterprise, Document, Profile],
             DbConnection.enterpriseCon,
         ),
         HttpModule.registerAsync({
