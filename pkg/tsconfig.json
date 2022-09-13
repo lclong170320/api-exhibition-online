@@ -22,6 +22,9 @@
       "@/constants/*": ["constants/*"],
       "@/database/*": ["database/*"],
       "@/openapi/*": ["openapi/*"],
+      "@/loggers/*": ["loggers/*"],
+      "@/middlewares/*": ["middlewares/*"],
+      "@/exceptions/*": ["exceptions/*"],
     }
   }
 }

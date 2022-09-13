@@ -31,6 +31,18 @@ DATABASE_CONNECTION_TIMEOUT=200000
 DATABASE_CONNECTION_LIMIT=50
 
 DATABASE_NAME_EXHIBITION=compaon_exhibition_dev
+DATABASE_NAME_MEDIA=compaon_media_dev
+DATABASE_NAME_ENTERPRISE=compaon_enterprise_dev
+
+HTTP_TIMEOUT=5000
+HTTP_MAX_REDIRECTS=5
+
+CLIENT_HOST=https://compaon/
+
+ERROR_LOG_FILE=D:\Dalavina\compaon-service\logs\error.log
+ACCESS_LOG_FILE=D:\Dalavina\compaon-service\logs\access.log
+
+LOG_LEVEL=info
 ```
 
 ## API Document

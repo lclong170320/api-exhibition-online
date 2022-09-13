@@ -590,15 +590,17 @@ components:
     Media:
       type: object
       required:
-        - url
+        - data
       properties:
         id:
           type: integer
           readOnly: true
-        url:
+        data:
           type: string
+          format: binary
         mime:
           type: string
+          readOnly: true
     ErrorResponseBody:
       type: object
       required:

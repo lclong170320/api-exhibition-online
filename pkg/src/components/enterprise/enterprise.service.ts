@@ -92,11 +92,7 @@ export class EnterpriseService {
     }
 
     async generateQR(text: string): Promise<string> {
-        let qrcode: string;
-        try {
-            qrcode = await toDataURL(text);
-        } catch (err) {}
-        return qrcode;
+        return await toDataURL(text);
     }
 
     async createQrCode(id: string): Promise<object> {

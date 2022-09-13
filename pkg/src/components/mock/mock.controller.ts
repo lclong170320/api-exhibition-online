@@ -1,12 +1,11 @@
 import { Controller, Post } from '@nestjs/common';
 
-@Controller()
+@Controller('medias')
 export class MockController {
-    @Post('/medias')
+    @Post('')
     getMedias() {
         return {
             media_id: 1,
-            media_url: 'https://i.imgur.com/QbFlOGR.jpg',
         };
     }
 }

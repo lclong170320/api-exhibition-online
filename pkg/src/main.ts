@@ -1,11 +1,13 @@
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
 import { apiPrefix } from '@/constants/common';
+import { NestFactory } from '@nestjs/core';
 import { OpenAPIObject, SwaggerModule } from '@nestjs/swagger';
-import { load } from 'js-yaml';
-import { readFileSync } from 'fs';
-import { join } from 'path';
 import * as bodyParser from 'body-parser';
+import { readFileSync } from 'fs';
+import { load } from 'js-yaml';
+import { join } from 'path';
+import { AppModule } from './app.module';
+import { AppExceptionFilter } from '@/exceptions/filters/app-exception.filter';
+import { Logger } from '@/loggers/default.logger';
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
@@ -16,6 +18,8 @@ async function bootstrap() {
         readFileSync(join(__dirname, 'openapi/openapi.yaml'), 'utf8'),
     ) as OpenAPIObject;
     SwaggerModule.setup('/docs', app, document);
+    const logger = app.get<Logger>(Logger);
+    app.useGlobalFilters(new AppExceptionFilter(logger));
     await app.listen(3000);
 }
 
