@@ -6,12 +6,14 @@ import { HttpService } from '@nestjs/axios';
 import { Repository } from 'typeorm';
 import { EnterpriseDocument as NewDocumentDto } from './dto/enterprise-document.dto';
 import { EnterpriseProfile as NewProfileDto } from './dto/enterprise-profile.dto';
+import { Enterprise as EnterpriseDto } from './dto/enterprise.dto';
 import { Document } from './entities/document.entity';
 import { Profile } from './entities/profile.entity';
 import { lastValueFrom, map } from 'rxjs';
 import { DocumentConverter } from './converters/enterprise-document.converter';
 import { ProfileConverter } from './converters/enterprise-profile.converter';
 import { toDataURL } from 'qrcode';
+import { EnterpriseConverter } from './converters/enterprise.converter';
 
 @Injectable()
 export class EnterpriseService {
@@ -25,7 +27,21 @@ export class EnterpriseService {
         private readonly httpService: HttpService,
         private readonly documentConverter: DocumentConverter,
         private readonly profileConverter: ProfileConverter,
+        private readonly enterpriseConverter: EnterpriseConverter,
     ) {}
+
+    async createEnterprise(
+        enterpriseDto: EnterpriseDto,
+    ): Promise<EnterpriseDto> {
+        const newEnterpriseEntity =
+            this.enterpriseConverter.toEntity(enterpriseDto);
+
+        const createdEnterprise = await this.enterpriseRepository.save(
+            newEnterpriseEntity,
+        );
+
+        return this.enterpriseConverter.toDto(createdEnterprise);
+    }
 
     async createUrlMedias(data: Blob): Promise<string> {
         const requestConfig = {

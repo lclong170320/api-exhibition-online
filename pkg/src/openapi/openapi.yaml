@@ -111,6 +111,51 @@ paths:
                     details: []
       tags:
         - Exhibition
+  '/enterprises':
+    post:
+      tags:
+        - Enterprise
+      summary: Add a new enterprise
+      description: Add a new enterprise
+      operationId: addEnterprise
+      requestBody:
+        description: Create a new enterprise
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Enterprise'
+        required: true
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Enterprise'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Bad Request
+                    details:
+                      - field: .params.id
+                        message: 'should match pattern "^[0-9]+$"'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Internal server error
+                    details: []
   '/enterprises/{id}/documents':
     post:
       tags:
@@ -492,42 +537,74 @@ components:
       type: object
       required:
         - id
-        - name
+        - international_name
+        - abbreviation
         - tax_code
+        - address
         - ceo
-        - main_job
-        - business_license
-        - office_address
-        - license_date
+        - phone
+        - active_date
+        - status
+        - type_of_business
+        - manager_by
       properties:
         id:
           type: integer
           readOnly: true
-        name:
+        international_name:
           type: string
-          example: Dalavina
+          minLength: 1
+          maxLength: 255
+          example: DALAVINA TECHNOLOGY SOLUTION JOINT STOCK TECHNOLOGY
+        abbreviation:
+          type: string
+          minLength: 1
+          maxLength: 255
+          example: DALAVINA JSC
         tax_code:
           type: string
-          example: '940000'
+          minLength: 1
+          maxLength: 255
+          example: 0371278269
+        address:
+          type: string
+          minLength: 1
+          maxLength: 255
+          example: 224, Phạm Thị Giây, ấp Tam Đông 2, Hóc Môn, Thành phố Hồ Chí Minh
         ceo:
           type: string
-          example: Mr.Timo
-        main_job:
+          minLength: 1
+          maxLength: 255
+          example: PHAN THANH TUNG
+        phone:
           type: string
-          example: Phần mềm
-        slogan:
+          pattern: '^(((\+|)84)|0)([0-9]{9})$'
+          example: 0707678777
+        active_date:
           type: string
-          example: We Can Do Everything Together
-        business_license:
+          minLength: 1
+          pattern: '^((?:(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2}:\d{2}(?:\.\d+)?))(Z|[\+-]\d{2}:\d{2})?)$'
+          example: 2020-04-03T01:58:26.000Z
+        status:
           type: string
-          example: Giấy phép kinh doanh
-        office_address:
+          minLength: 1
+          maxLength: 255
+          example: Đang hoạt động(đã được cấp GCN ĐKT)
+        type_of_business:
           type: string
-          example: 22 Nguyễn Việt Hồng
-        license_date:
+          minLength: 1
+          maxLength: 255
+          example: Công ty cổ phần ngoài NN
+        manager_by:
           type: string
-          format: date
-          example: 27-08-2022
+          minLength: 1
+          maxLength: 255
+          example: Chi cục thuế Quận 1
+        view_company_online:
+          type: string
+          minLength: 1
+          maxLength: 255
+          example: 'https://dalavina.com/view_company_online'
     EnterpriseDocument:
       type: object
       required:

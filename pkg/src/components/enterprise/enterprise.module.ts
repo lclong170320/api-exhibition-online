@@ -10,10 +10,16 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { DocumentConverter } from './converters/enterprise-document.converter';
 import { Profile } from './entities/profile.entity';
 import { ProfileConverter } from './converters/enterprise-profile.converter';
+import { EnterpriseConverter } from './converters/enterprise.converter';
 
 @Module({
     controllers: [EnterpriseController],
-    providers: [EnterpriseService, DocumentConverter, ProfileConverter],
+    providers: [
+        EnterpriseService,
+        DocumentConverter,
+        ProfileConverter,
+        EnterpriseConverter,
+    ],
     imports: [
         TypeOrmModule.forFeature(
             [Enterprise, Document, Profile],

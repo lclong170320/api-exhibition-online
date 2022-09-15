@@ -15,32 +15,38 @@ export class Enterprise {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({ length: 255 })
-    name: string;
+    @Column({ length: 255, name: 'international_name' })
+    internationalName: string;
+
+    @Column({ length: 255, name: 'abbreviation' })
+    abbreviation: string;
 
     @Column({ length: 255, name: 'tax_code' })
     taxCode: string;
 
     @Column({ length: 255 })
-    ceo: string;
-
-    @Column({ length: 255, name: 'main_job' })
-    mainJob: string;
+    address: string;
 
     @Column({ length: 255 })
-    slogan: string;
+    ceo: string;
 
-    @Column({ length: 255, name: 'business_license' })
-    businessLicense: string;
+    @Column({ length: 255 })
+    phone: string;
 
-    @Column({ length: 255, name: 'office_address' })
-    officeAddress: string;
+    @Column({ type: 'datetime', name: 'active_date' })
+    activeDate: Date;
 
-    @Column({
-        type: 'date',
-        name: 'license_date',
-    })
-    licenseDate: Date;
+    @Column({ length: 255 })
+    status: string;
+
+    @Column({ length: 255, name: 'type_of_business' })
+    typeOfBusiness: string;
+
+    @Column({ length: 255, name: 'manager_by' })
+    managerBy: string;
+
+    @Column({ length: 255, name: 'view_company_online', nullable: true })
+    viewCompanyOnline: string;
 
     @CreateDateColumn({
         type: 'timestamp',

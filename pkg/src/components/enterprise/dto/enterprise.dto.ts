@@ -12,12 +12,15 @@
 
 export interface Enterprise {
     readonly id: number;
-    name: string;
+    international_name: string;
+    abbreviation: string;
     tax_code: string;
+    address: string;
     ceo: string;
-    main_job: string;
-    slogan?: string;
-    business_license: string;
-    office_address: string;
-    license_date: string;
+    phone: string;
+    active_date: string;
+    status: string;
+    type_of_business: string;
+    manager_by: string;
+    view_company_online?: string;
 }
