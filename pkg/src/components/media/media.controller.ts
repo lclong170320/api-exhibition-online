@@ -1,4 +1,4 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param } from '@nestjs/common';
 import { Media as MediaDto } from './dto/media.dto';
 import { MediaService } from './media.service';
 
@@ -8,5 +8,10 @@ export class MediaController {
     @Post()
     createMedia(@Body() data: MediaDto) {
         return this.mediaService.createMedia(data);
+    }
+
+    @Get(':id')
+    getById(@Param('id') id: string) {
+        return this.mediaService.findById(id);
     }
 }

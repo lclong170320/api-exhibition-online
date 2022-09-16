@@ -441,13 +441,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Media'
-              examples:
-                example-1:
-                  value:
-                    id: 1
-                    url: 'https://example.local/medianame.jpg'
-                    mime: image/jpeg
+                $ref: '#/components/schemas/MediaResponse'
         '400':
           description: Bad request
           content:

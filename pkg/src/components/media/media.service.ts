@@ -60,4 +60,12 @@ export class MediaService {
 
         return this.mediaConverter.toDto(createdMedia);
     }
+
+    async findById(id: string): Promise<MediaResponse> {
+        const mediaId = parseInt(id);
+        const firstMedia = await this.mediaRepository.findOneBy({
+            id: mediaId,
+        });
+        return this.mediaConverter.toDto(firstMedia);
+    }
 }
