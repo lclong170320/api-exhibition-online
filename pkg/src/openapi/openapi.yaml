@@ -395,14 +395,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  id:
-                    type: integer
-              examples:
-                example-1:
-                  value:
-                    id: 1
+                $ref: '#/components/schemas/MediaResponse'
         '400':
           description: Validation error
           content:
@@ -668,15 +661,43 @@ components:
       type: object
       required:
         - data
+        - user_id
       properties:
         id:
           type: integer
           readOnly: true
         data:
           type: string
-          format: binary
+          minLength: 1
+          writeOnly: true
         mime:
           type: string
+          readOnly: true
+        url:
+          type: string
+          readOnly: true
+        user_id:
+          type: integer
+          readOnly: true
+    MediaResponse:
+      type: object
+      required:
+        - id
+        - mime
+        - url
+        - user_id
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        mime:
+          type: string
+          readOnly: true
+        url:
+          type: string
+          readOnly: true
+        user_id:
+          type: integer
           readOnly: true
     ErrorResponseBody:
       type: object

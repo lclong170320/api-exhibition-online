@@ -39,10 +39,17 @@ HTTP_MAX_REDIRECTS=5
 
 CLIENT_HOST=https://compaon/
 
-ERROR_LOG_FILE=D:\Dalavina\compaon-service\logs\error.log
-ACCESS_LOG_FILE=D:\Dalavina\compaon-service\logs\access.log
+ERROR_LOG_FILE=absolute\path\to\error.log
+ACCESS_LOG_FILE=absolute\path\to\access.log
+PATH_TO_RESOURCES=absolute\path\to\resources\
 
 LOG_LEVEL=info
+
+MAX_MEDIA_SIZE=128mb
+ALLOW_UPLOAD_FILE=png,jpg,jpeg,gif,mp4,glb
+SERVE_STATIC=http://localhost:3000/resources/
+
+
 ```
 
 ## API Document

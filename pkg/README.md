@@ -17,7 +17,11 @@
   ```
 - Check DTO in the `output/model` dir
 
+- serve static file: http://localhost:3000/resources/filename
+
+
 ## Description convert between dto and entity
+
 - DTO: communication between controller and service
 - Entity: communication between service and repositorys
   ![alt text](https://i.imgur.com/LXGEXh3.png)

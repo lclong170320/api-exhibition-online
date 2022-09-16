@@ -1,6 +1,5 @@
 import { EnterpriseModule } from '@/components/enterprise/enterprise.module';
 import { ExhibitionModule } from '@/components/exhibition/exhibition.module';
-import { MockModule } from '@/components/mock/mock.module';
 import { DatabaseConnections } from '@/database/connections';
 import { AccessLoggerMiddleware } from '@/middlewares/access-logger.middleware';
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
@@ -11,16 +10,22 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { HttpLogger } from '@/loggers/http.logger';
 import { Logger } from '@/loggers/default.logger';
+import { MediaModule } from '@/components/media/media.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
 
 @Module({
     imports: [
         ConfigModule.forRoot({
             isGlobal: true,
         }),
+        ServeStaticModule.forRoot({
+            rootPath: join(__dirname, '../resources'),
+            serveRoot: '/resources',
+        }),
         ...DatabaseConnections,
         ExhibitionModule,
         EnterpriseModule,
-        MockModule,
+        MediaModule,
     ],
     controllers: [AppController],
     providers: [AppService, HttpLogger, Logger],
