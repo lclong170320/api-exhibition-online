@@ -12,25 +12,22 @@
  * Do not edit the class manually.
  */
 
-
-
 /**
- * 
+ *
  * @export
  * @interface ErrorDetail
  */
 export interface ErrorDetail {
     /**
-     * 
+     *
      * @type {string}
      * @memberof ErrorDetail
      */
-    'field': string;
+    field: string;
     /**
-     * 
+     *
      * @type {string}
      * @memberof ErrorDetail
      */
-    'message': string;
+    message: string;
 }
-

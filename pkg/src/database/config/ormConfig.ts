@@ -4,7 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 export function OrmConfig(connectionName: string, databaseName: string): any {
     return TypeOrmModule.forRootAsync({
         imports: [ConfigModule],
-        useFactory: async (configService: ConfigService) => ({
+        useFactory: (configService: ConfigService) => ({
             type: 'mysql',
             host: configService.get('DATABASE_HOST'),
             port: parseInt(configService.get('DATABASE_PORT')),
@@ -21,10 +21,9 @@ export function OrmConfig(connectionName: string, databaseName: string): any {
                     configService.get('DATABASE_CONNECTION_LIMIT'),
                 ),
             },
-            entities: ['dist/**/entities/*{.ts,.js}'],
-            cli: {
-                entitiesDir: '@/components/**/entities',
-            },
+            entities: [
+                `dist/components/${connectionName}/**/entities/*{.ts,.js}`,
+            ],
         }),
         inject: [ConfigService],
         name: connectionName,

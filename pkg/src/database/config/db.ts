@@ -1,7 +1,7 @@
 export const DbConnection = {
-    exhibitionCon: 'exhibitionCon',
-    mediaCon: 'mediaCon',
-    enterpriseCon: 'enterpriseCon',
+    exhibitionCon: 'exhibition',
+    mediaCon: 'media',
+    enterpriseCon: 'enterprise',
 };
 
 // DB name read from .env

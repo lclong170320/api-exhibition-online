@@ -12,26 +12,24 @@
  * Do not edit the class manually.
  */
 
-
 import { ErrorDetail } from './error-detail.dto';
 
 /**
- * 
+ *
  * @export
  * @interface ErrorResponseBody
  */
 export interface ErrorResponseBody {
     /**
-     * 
+     *
      * @type {string}
      * @memberof ErrorResponseBody
      */
-    'message': string;
+    message: string;
     /**
-     * 
+     *
      * @type {Array<ErrorDetail>}
      * @memberof ErrorResponseBody
      */
-    'details': Array<ErrorDetail>;
+    details: Array<ErrorDetail>;
 }
-
