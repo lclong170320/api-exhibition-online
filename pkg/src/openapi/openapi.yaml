@@ -534,6 +534,8 @@ components:
         - status
         - type_of_business
         - manager_by
+        - created_by
+        - created_date
       properties:
         id:
           type: integer
@@ -569,6 +571,17 @@ components:
           example: 0707678777
         active_date:
           type: string
+          minLength: 1
+          pattern: '^((?:(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2}:\d{2}(?:\.\d+)?))(Z|[\+-]\d{2}:\d{2})?)$'
+          example: 2020-04-03T01:58:26.000Z
+        created_by:
+          type: number
+          readOnly: true
+          minLength: 1
+          example: 1
+        created_date:
+          type: string
+          readOnly: true
           minLength: 1
           pattern: '^((?:(\d{4}-\d{2}-\d{2})T(\d{2}:\d{2}:\d{2}(?:\.\d+)?))(Z|[\+-]\d{2}:\d{2})?)$'
           example: 2020-04-03T01:58:26.000Z

@@ -33,9 +33,13 @@ export class EnterpriseService {
     async createEnterprise(
         enterpriseDto: EnterpriseDto,
     ): Promise<EnterpriseDto> {
+        //TODO
+        const user_id = 1;
         const newEnterpriseEntity =
             this.enterpriseConverter.toEntity(enterpriseDto);
+        newEnterpriseEntity.createdDate = new Date().toISOString();
 
+        newEnterpriseEntity.createdBy = user_id;
         const createdEnterprise = await this.enterpriseRepository.save(
             newEnterpriseEntity,
         );

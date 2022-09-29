@@ -29,6 +29,8 @@ export class EnterpriseConverter {
             address: entity.address,
             ceo: entity.ceo,
             phone: entity.phone,
+            created_by: entity.createdBy,
+            created_date: entity.createdDate,
             status: entity.status,
             type_of_business: entity.typeOfBusiness,
             view_company_online: entity.viewCompanyOnline,

@@ -48,6 +48,9 @@ export class Enterprise {
     @Column({ length: 255, name: 'view_company_online', nullable: true })
     viewCompanyOnline: string;
 
+    @Column({ type: 'datetime', name: 'created_date' })
+    createdDate: string;
+
     @CreateDateColumn({
         type: 'timestamp',
         name: 'created_at',
@@ -65,4 +68,7 @@ export class Enterprise {
 
     @OneToOne(() => Profile, (profile) => profile.enterprise)
     profile: Profile;
+
+    @Column({ name: 'created_by' })
+    createdBy: number;
 }

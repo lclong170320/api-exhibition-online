@@ -19,6 +19,8 @@ export interface Enterprise {
     ceo: string;
     phone: string;
     active_date: string;
+    readonly created_by: number;
+    readonly created_date: string;
     status: string;
     type_of_business: string;
     manager_by: string;
