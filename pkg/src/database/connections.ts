@@ -5,4 +5,5 @@ export const DatabaseConnections = [
     OrmConfig(DbConnection.mediaCon, DbName.media),
     OrmConfig(DbConnection.exhibitionCon, DbName.exhibition),
     OrmConfig(DbConnection.enterpriseCon, DbName.enterprise),
+    OrmConfig(DbConnection.userCon, DbName.user),
 ];

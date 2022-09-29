@@ -12,6 +12,7 @@ import { HttpLogger } from '@/loggers/http.logger';
 import { Logger } from '@/loggers/default.logger';
 import { MediaModule } from '@/components/media/media.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { UserModule } from '@/components/user/user.module';
 
 @Module({
     imports: [
@@ -26,6 +27,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
         ExhibitionModule,
         EnterpriseModule,
         MediaModule,
+        UserModule,
     ],
     controllers: [AppController],
     providers: [AppService, HttpLogger, Logger],

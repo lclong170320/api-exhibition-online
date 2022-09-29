@@ -505,6 +505,51 @@ paths:
         in: path
         required: true
         description: The booth's ID will be add new template
+  '/users':
+    post:
+      tags:
+        - User
+      summary: Add a new user
+      description: Add a new user
+      operationId: addUser
+      requestBody:
+        description: Create a new user
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Bad Request
+                    details:
+                      - field: .params.id
+                        message: 'should match pattern "^[0-9]+$"'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Internal server error
+                    details: []
 components:
   schemas:
     Exhibition:
@@ -769,3 +814,65 @@ components:
           type: string
         description:
           type: string
+    User:
+        type: object
+        required:
+          - id
+          - phone
+          - password
+          - role_id
+          - status
+          - information
+        properties:
+          id:
+            type: integer
+            readOnly: true
+          phone:
+            type: string
+            pattern: '^(((\+|)84)|0)([0-9]{9})$'
+            example: 0707060142
+          password:
+            type: string
+            format: password
+            minLength: 6
+            maxLength: 255
+          department_id:
+            type: integer
+          role_id:
+            type: integer
+          status:
+            type: string
+            enum: [active, deactivate, deleted]
+          information:
+            $ref: '#/components/schemas/Information'
+    Information:
+        required: 
+          - name
+          - user_id
+        properties:
+            id:
+              type: integer
+              readOnly: true
+            name:
+              type: string
+              minLength: 1
+              maxLength: 255
+            user_id:
+              type: integer
+              readOnly: true
+            address:
+              type: string
+              minLength: 1
+              maxLength: 255
+            email:
+              type: string
+              format: email
+            media_data:
+              type: string
+              writeOnly: true
+            media_id:
+              type: number
+              readOnly: true
+            selected_media_id:
+              type: number
+              writeOnly: true

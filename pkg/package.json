@@ -33,6 +33,7 @@
     "@nestjs/serve-static": "^3.0.0",
     "@nestjs/swagger": "^6.0.5",
     "@nestjs/typeorm": "^9.0.0",
+    "bcrypt": "^5.0.1",
     "dotenv": "^16.0.1",
     "express-openapi-validator": "^4.13.8",
     "file-type": "16.5.4",
