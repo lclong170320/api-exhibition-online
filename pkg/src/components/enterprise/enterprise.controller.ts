@@ -1,4 +1,14 @@
-import { Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common';
+import {
+    Body,
+    Controller,
+    Delete,
+    Get,
+    HttpCode,
+    Param,
+    Post,
+    Put,
+    Query,
+} from '@nestjs/common';
 import { EnterpriseDocument as EnterpriseDocumentDto } from './dto/enterprise-document.dto';
 import { EnterpriseProfile as EnterpriseProfileDto } from './dto/enterprise-profile.dto';
 import { Enterprise as EnterpriseDto } from './dto/enterprise.dto';
@@ -53,5 +63,11 @@ export class EnterpriseController {
         @Body() newEnterprise: EnterpriseDto,
     ) {
         return this.enterpriseService.updateEnterprise(id, newEnterprise);
+    }
+
+    @Delete(':id')
+    @HttpCode(204)
+    deleteEnterprise(@Param('id') id: string) {
+        this.enterpriseService.deleteEnterprise(id);
     }
 }

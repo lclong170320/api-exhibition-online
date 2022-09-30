@@ -177,4 +177,11 @@ export class EnterpriseService {
         });
         return this.enterpriseConverter.toDto(newEnterprise);
     }
+
+    async deleteEnterprise(id: string) {
+        const enterpriseEntity = await this.findEnterpriseById(id);
+        await this.enterpriseRepository.update(enterpriseEntity.id, {
+            isDeleted: true,
+        });
+    }
 }
