@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 import { Document } from './document.entity';
 import { Profile } from './profile.entity';
+import { Enterprise as EnterpriseDto } from '../dto/enterprise.dto';
 
 @Entity({ name: 'enterprises' })
 export class Enterprise {
@@ -37,7 +38,7 @@ export class Enterprise {
     activeDate: Date;
 
     @Column({ length: 255 })
-    status: string;
+    status: EnterpriseDto.StatusEnum;
 
     @Column({ length: 255, name: 'type_of_business' })
     typeOfBusiness: string;
@@ -49,7 +50,7 @@ export class Enterprise {
     viewCompanyOnline: string;
 
     @Column({ type: 'datetime', name: 'created_date' })
-    createdDate: string;
+    createdDate: Date;
 
     @CreateDateColumn({
         type: 'timestamp',
@@ -71,4 +72,7 @@ export class Enterprise {
 
     @Column({ name: 'created_by' })
     createdBy: number;
+
+    @Column({ name: 'is_deleted', default: false })
+    isDeleted: boolean;
 }

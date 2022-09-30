@@ -112,6 +112,19 @@ paths:
       tags:
         - Exhibition
   '/enterprises':
+    get:
+      tags:
+        - Enterprise
+      summary: Show list enterprises
+      description: Show list enterprises
+      operationId: getEnterprise
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnterpriseList'
     post:
       tags:
         - Enterprise
@@ -329,7 +342,7 @@ paths:
                   value:
                     message: Internal server error
                     details: []
-  '/enterprise/{id}':
+  '/enterprises/{id}':
     parameters:
       - name: id
         description: ID to get enterprise
@@ -364,6 +377,19 @@ paths:
                     details:
                       - field: .params.id
                         message: 'should match pattern "^[0-9]+$"'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Not Found
+                    details:
+                      - field: .params.id
+                        message: 'The id not exist: "^[0-9]+$"'
         '500':
           description: Internal server error
           content:
@@ -632,9 +658,8 @@ components:
           example: 2020-04-03T01:58:26.000Z
         status:
           type: string
-          minLength: 1
-          maxLength: 255
-          example: Đang hoạt động(đã được cấp GCN ĐKT)
+          enum: ['active', 'inactive']
+          example: 'active'
         type_of_business:
           type: string
           minLength: 1
@@ -696,19 +721,6 @@ components:
           example:
             - 1
             - 2
-    Address:
-      type: object
-      properties:
-        number:
-          type: string
-        street:
-          type: string
-        wards:
-          type: string
-        district:
-          type: string
-        city:
-          type: string
     Media:
       type: object
       required:
@@ -846,33 +858,57 @@ components:
           information:
             $ref: '#/components/schemas/Information'
     Information:
-        required: 
-          - name
-          - user_id
-        properties:
-            id:
-              type: integer
-              readOnly: true
-            name:
-              type: string
-              minLength: 1
-              maxLength: 255
-            user_id:
-              type: integer
-              readOnly: true
-            address:
-              type: string
-              minLength: 1
-              maxLength: 255
-            email:
-              type: string
-              format: email
-            media_data:
-              type: string
-              writeOnly: true
-            media_id:
-              type: number
-              readOnly: true
-            selected_media_id:
-              type: number
-              writeOnly: true
+      required: 
+        - name
+        - user_id
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          minLength: 1
+          maxLength: 255
+        user_id:
+          type: integer
+          readOnly: true
+        address:
+          type: string
+          minLength: 1
+          maxLength: 255
+        email:
+          type: string
+          format: email
+        media_data:
+          type: string
+          writeOnly: true
+        media_id:
+          type: number
+          readOnly: true
+        selected_media_id:
+          type: number
+          writeOnly: true
+    EnterpriseList:
+      type: object
+      required:
+        - limit
+        - offset
+        - total
+        - enterprises
+      properties:
+        limit:
+          type: integer
+          format: int64
+          example: 10
+        offset:
+          type: integer
+          format: int64
+          example: 1
+        total:
+          type: integer
+          format: int64
+          example: 1
+        enterprises:
+          type: array
+          items:
+            $ref: '#/components/schemas/Enterprise'         

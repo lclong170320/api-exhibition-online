@@ -30,7 +30,7 @@ export class EnterpriseConverter {
             ceo: entity.ceo,
             phone: entity.phone,
             created_by: entity.createdBy,
-            created_date: entity.createdDate,
+            created_date: entity.createdDate.toISOString(),
             status: entity.status,
             type_of_business: entity.typeOfBusiness,
             view_company_online: entity.viewCompanyOnline,

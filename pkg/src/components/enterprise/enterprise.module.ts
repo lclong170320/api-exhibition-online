@@ -11,6 +11,7 @@ import { DocumentConverter } from './converters/enterprise-document.converter';
 import { Profile } from './entities/profile.entity';
 import { ProfileConverter } from './converters/enterprise-profile.converter';
 import { EnterpriseConverter } from './converters/enterprise.converter';
+import { EnterpriseListConverter } from './converters/enterprise-list.converter';
 
 @Module({
     controllers: [EnterpriseController],
@@ -19,6 +20,7 @@ import { EnterpriseConverter } from './converters/enterprise.converter';
         DocumentConverter,
         ProfileConverter,
         EnterpriseConverter,
+        EnterpriseListConverter,
     ],
     imports: [
         TypeOrmModule.forFeature(

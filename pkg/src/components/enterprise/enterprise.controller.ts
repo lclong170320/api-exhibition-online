@@ -1,4 +1,4 @@
-import { Body, Controller, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { EnterpriseDocument as EnterpriseDocumentDto } from './dto/enterprise-document.dto';
 import { EnterpriseProfile as EnterpriseProfileDto } from './dto/enterprise-profile.dto';
 import { Enterprise as EnterpriseDto } from './dto/enterprise.dto';
@@ -7,6 +7,19 @@ import { EnterpriseService } from './enterprise.service';
 @Controller('enterprises')
 export class EnterpriseController {
     constructor(private readonly enterpriseService: EnterpriseService) {}
+
+    @Get()
+    getEnterprises(
+        @Query('offset') offset: string,
+        @Query('limit') limit: string,
+    ) {
+        return this.enterpriseService.getEnterprises(offset, limit);
+    }
+
+    @Get(':id')
+    getEnterpriseById(@Param('id') id: string) {
+        return this.enterpriseService.getEnterpriseById(id);
+    }
 
     @Post()
     createEnterprise(@Body() enterprise: EnterpriseDto) {

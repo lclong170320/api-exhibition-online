@@ -21,8 +21,16 @@ export interface Enterprise {
     active_date: string;
     readonly created_by: number;
     readonly created_date: string;
-    status: string;
+    status: Enterprise.StatusEnum;
     type_of_business: string;
     manager_by: string;
     view_company_online?: string;
+}
+// eslint-disable-next-line @typescript-eslint/no-namespace
+export namespace Enterprise {
+    export type StatusEnum = 'active' | 'inactive';
+    export const StatusEnum = {
+        Active: 'active' as StatusEnum,
+        Inactive: 'inactive' as StatusEnum,
+    };
 }

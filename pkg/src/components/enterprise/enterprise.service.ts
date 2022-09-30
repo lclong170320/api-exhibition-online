@@ -1,6 +1,6 @@
 import { DbConnection } from '@/database/config/db';
 import { Enterprise } from './entities/enterprise.entity';
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { HttpService } from '@nestjs/axios';
 import { Repository } from 'typeorm';
@@ -14,9 +14,12 @@ import { DocumentConverter } from './converters/enterprise-document.converter';
 import { ProfileConverter } from './converters/enterprise-profile.converter';
 import { toDataURL } from 'qrcode';
 import { EnterpriseConverter } from './converters/enterprise.converter';
+import { EnterpriseListConverter } from './converters/enterprise-list.converter';
 
 @Injectable()
 export class EnterpriseService {
+    private readonly offsetDefault = 0;
+    private readonly limitDefault = 10;
     constructor(
         @InjectRepository(Enterprise, DbConnection.enterpriseCon)
         private readonly enterpriseRepository: Repository<Enterprise>,
@@ -28,7 +31,38 @@ export class EnterpriseService {
         private readonly documentConverter: DocumentConverter,
         private readonly profileConverter: ProfileConverter,
         private readonly enterpriseConverter: EnterpriseConverter,
+        private readonly enterpriseListConverter: EnterpriseListConverter,
     ) {}
+
+    async getEnterprises(offset: string, limit: string) {
+        const offsetQuery = parseInt(offset)
+            ? parseInt(offset)
+            : this.offsetDefault;
+        const limitQuery = parseInt(limit)
+            ? parseInt(limit)
+            : this.limitDefault;
+        const [enterprisesEntity, count] =
+            await this.enterpriseRepository.findAndCount({
+                where: {
+                    isDeleted: false,
+                },
+                order: {
+                    createdAt: 'DESC',
+                },
+                skip: offsetQuery,
+                take: limitQuery,
+            });
+        return this.enterpriseListConverter.toDto(
+            enterprisesEntity,
+            limitQuery,
+            offsetQuery,
+            count,
+        );
+    }
+    async getEnterpriseById(id: string) {
+        const enterpriseEntity = await this.findEnterpriseById(id);
+        return this.enterpriseConverter.toDto(enterpriseEntity);
+    }
 
     async createEnterprise(
         enterpriseDto: EnterpriseDto,
@@ -37,7 +71,7 @@ export class EnterpriseService {
         const user_id = 1;
         const newEnterpriseEntity =
             this.enterpriseConverter.toEntity(enterpriseDto);
-        newEnterpriseEntity.createdDate = new Date().toISOString();
+        newEnterpriseEntity.createdDate = new Date();
 
         newEnterpriseEntity.createdBy = user_id;
         const createdEnterprise = await this.enterpriseRepository.save(
@@ -119,5 +153,17 @@ export class EnterpriseService {
         const url = `${process.env.CLIENT_HOST}enterprises/${id}/profiles`;
         const qrcode = await this.generateQR(url);
         return { qrcode: qrcode };
+    }
+
+    private async findEnterpriseById(id: string) {
+        const enterpriseId = parseInt(id);
+        const enterpriseEntity = await this.enterpriseRepository.findOneBy({
+            id: enterpriseId,
+            isDeleted: false,
+        });
+        if (!enterpriseEntity) {
+            throw new NotFoundException('The id not exist: ' + enterpriseId);
+        }
+        return enterpriseEntity;
     }
 }
