@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { EnterpriseDocument as EnterpriseDocumentDto } from './dto/enterprise-document.dto';
 import { EnterpriseProfile as EnterpriseProfileDto } from './dto/enterprise-profile.dto';
 import { Enterprise as EnterpriseDto } from './dto/enterprise.dto';
@@ -45,5 +45,13 @@ export class EnterpriseController {
     @Post(':id/qrcodes')
     createQrCode(@Param('id') id: string) {
         return this.enterpriseService.createQrCode(id);
+    }
+
+    @Put(':id')
+    updateEnterprise(
+        @Param('id') id: string,
+        @Body() newEnterprise: EnterpriseDto,
+    ) {
+        return this.enterpriseService.updateEnterprise(id, newEnterprise);
     }
 }

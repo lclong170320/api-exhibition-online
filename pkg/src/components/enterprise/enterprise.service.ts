@@ -166,4 +166,15 @@ export class EnterpriseService {
         }
         return enterpriseEntity;
     }
+
+    async updateEnterprise(id: string, newEnterpriseDto: EnterpriseDto) {
+        const enterpriseEntity = await this.findEnterpriseById(id);
+        const newEnterpriseEntity =
+            this.enterpriseConverter.toEntity(newEnterpriseDto);
+        const newEnterprise = await this.enterpriseRepository.save({
+            ...enterpriseEntity,
+            ...newEnterpriseEntity,
+        });
+        return this.enterpriseConverter.toDto(newEnterprise);
+    }
 }

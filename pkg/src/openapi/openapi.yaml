@@ -401,6 +401,70 @@ paths:
                   value:
                     message: Internal server error
                     details: []
+    put:
+      tags:
+        - Enterprise
+      summary: Update an existing enterprise
+      description: Update an existing enterprise by Id
+      operationId: updateEnterprise
+      parameters:
+        - name: id
+          description: ID to update enterprise
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^[0-9]+$'
+      requestBody:
+        description: Update an existent enterprise
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Enterprise'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Enterprise'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Bad Request
+                    details:
+                      - field: .params.id
+                        message: 'should match pattern "^[0-9]+$"'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Not Found
+                    details:
+                      - field: .params.id
+                        message: 'The id not exist: "^[0-9]+$"'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Internal server error
+                    details: []
   '/medias':
     post:
       tags:
