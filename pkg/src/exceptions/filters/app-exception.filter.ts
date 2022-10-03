@@ -9,7 +9,8 @@ import {
     HttpStatus,
 } from '@nestjs/common';
 import { Response } from 'express';
-import { HttpError } from 'express-openapi-validator/dist/framework/types';
+import { HttpError as OpenapiHttpError } from 'express-openapi-validator/dist/framework/types';
+import { isHttpError, HttpError } from 'http-errors';
 
 @Catch(Error)
 export class AppExceptionFilter implements ExceptionFilter<Error> {
@@ -17,6 +18,7 @@ export class AppExceptionFilter implements ExceptionFilter<Error> {
 
     catch(error: Error, host: ArgumentsHost) {
         const ctx = host.switchToHttp();
+
         const response = ctx.getResponse<Response>();
 
         const { status, responseBody } = this.handleError(error);
@@ -25,9 +27,18 @@ export class AppExceptionFilter implements ExceptionFilter<Error> {
     }
 
     handleError(error: Error) {
-        if (error instanceof HttpError) {
+        if (isHttpError(error)) {
+            if (error.status < 500) {
+                this.logger.warn(error.message, error.stack);
+            } else {
+                this.logger.error(error.message, error.stack);
+            }
+            return this.handleHTTPErrors(error);
+        }
+
+        if (error instanceof OpenapiHttpError) {
             this.logger.warn(error.message, error.stack);
-            return this.handleHTTPError(error);
+            return this.handleOpenapiHttpError(error);
         }
 
         if (error instanceof HttpException) {
@@ -41,6 +52,23 @@ export class AppExceptionFilter implements ExceptionFilter<Error> {
 
         this.logger.error(error.message, error.stack);
         return this.handleUnknownError(error);
+    }
+
+    handleHTTPErrors(error: HttpError) {
+        const responseBody: ErrorResponseBody = {
+            message: error.name,
+            details: [
+                {
+                    field: '',
+                    message: error.message,
+                },
+            ],
+        };
+
+        return {
+            status: error.status,
+            responseBody: responseBody,
+        };
     }
 
     handleHTTPException(exception: HttpException) {
@@ -60,7 +88,7 @@ export class AppExceptionFilter implements ExceptionFilter<Error> {
         };
     }
 
-    handleHTTPError(error: HttpError) {
+    handleOpenapiHttpError(error: OpenapiHttpError) {
         const responseBody: ErrorResponseBody = {
             message: error.name,
             details: error.errors.map((e): ErrorDetail => {

@@ -19,8 +19,11 @@ export class BoothTemplate {
     @Column({ name: 'name' })
     name: string;
 
-    @Column({ name: 'media_id' })
-    mediaId: number;
+    @Column({ name: 'model_id' })
+    modelId: number;
+
+    @Column({ name: 'thumbnail_id' })
+    thumbnailId: number;
 
     @CreateDateColumn({
         type: 'timestamp',

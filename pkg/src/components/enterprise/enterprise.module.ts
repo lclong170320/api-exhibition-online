@@ -6,7 +6,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Enterprise } from './entities/enterprise.entity';
 import { Document } from './entities/document.entity';
 import { HttpModule } from '@nestjs/axios';
-import { ConfigModule, ConfigService } from '@nestjs/config';
 import { DocumentConverter } from './converters/enterprise-document.converter';
 import { Profile } from './entities/profile.entity';
 import { ProfileConverter } from './converters/enterprise-profile.converter';
@@ -27,14 +26,7 @@ import { EnterpriseListConverter } from './converters/enterprise-list.converter'
             [Enterprise, Document, Profile],
             DbConnection.enterpriseCon,
         ),
-        HttpModule.registerAsync({
-            imports: [ConfigModule],
-            useFactory: async (configService: ConfigService) => ({
-                timeout: configService.get('HTTP_TIMEOUT'),
-                maxRedirects: configService.get('HTTP_MAX_REDIRECTS'),
-            }),
-            inject: [ConfigService],
-        }),
+        HttpModule,
     ],
     exports: [TypeOrmModule],
 })

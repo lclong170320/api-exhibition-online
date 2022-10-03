@@ -1,1 +1,1 @@
-DROP TABLE IF EXISTS `booth-datas`;
+DROP TABLE IF EXISTS `booth_datas`;

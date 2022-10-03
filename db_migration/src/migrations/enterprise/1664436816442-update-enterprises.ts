@@ -9,12 +9,11 @@ const sqlUp = fs.readFileSync(
 );
 
 export class updateEnterprises1664436816442 implements MigrationInterface {
-
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`${sqlUp}`);
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
+        await queryRunner.query(``);
     }
-
 }

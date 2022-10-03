@@ -19,6 +19,8 @@ tags:
     description: API to interact with the Media
   - name: Enterprise
     description: API to interact with the Enterprise
+  - name: CategoryExhibition
+    description: API to interact with the CategoryExhibition
 servers:
   - url: 'http://localhost:3000/api/v1'
 paths:
@@ -168,6 +170,43 @@ paths:
                     details: []
       tags:
         - Exhibition
+  '/booth-templates':
+    get:
+      summary: Get list of booth templates
+      description: Return list of booth templates
+      operationId: getBoothTemplates
+      parameters:
+        - in: query
+          name: offset
+          schema:
+            type: integer
+          description: The number of items to skip before starting to collect the result set
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: The numbers of items to return
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BoothTemplateList'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+      tags:
+        - Booth
   '/booths/{id}':
      put:
       tags:
@@ -1102,6 +1141,43 @@ components:
         media_data:
           type: string
           writeOnly: true
+    BoothTemplateList:
+      type: object
+      properties:
+        offset:
+          type: integer
+          format: int64
+          example: 1
+        limit:
+          type: integer
+          format: int64
+          example: 10
+        total:
+          type: integer
+          format: int64
+          example: 1
+        booth_templates:
+          type: array
+          items:
+            $ref: '#/components/schemas/BoothTemplate'
+    BoothTemplate:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          minLength: 1
+          maxLength: 255
+        model_id:
+          type: integer
+          readOnly: true
+        thumbnail_id:
+          type: integer
+          readOnly: true
     Enterprise:
       type: object
       required:
