@@ -297,6 +297,32 @@ paths:
                     message: Internal server error
                     details: []
   '/enterprises':
+    get:
+      tags:
+        - Enterprise
+      summary: Show list enterprises
+      description: Show list enterprises
+      operationId: getEnterprise
+      parameters:
+        - in: query
+          name: offset
+          schema:
+            type: integer
+            default: 0
+          description: The number of items to skip before starting to collect the result set
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 10
+          description: The numbers of items to return
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnterpriseList'
     post:
       tags:
         - Enterprise
@@ -514,7 +540,7 @@ paths:
                   value:
                     message: Internal server error
                     details: []
-  '/enterprise/{id}':
+  '/enterprises/{id}':
     parameters:
       - name: id
         description: ID to get enterprise
@@ -549,6 +575,137 @@ paths:
                     details:
                       - field: .params.id
                         message: 'should match pattern "^[0-9]+$"'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Not Found
+                    details:
+                      - field: .params.id
+                        message: 'The id not exist: "^[0-9]+$"'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Internal server error
+                    details: []
+    put:
+      tags:
+        - Enterprise
+      summary: Update an existing enterprise
+      description: Update an existing enterprise by Id
+      operationId: updateEnterprise
+      parameters:
+        - name: id
+          description: ID to update enterprise
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^[0-9]+$'
+      requestBody:
+        description: Update an existent enterprise
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Enterprise'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Enterprise'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Bad Request
+                    details:
+                      - field: .params.id
+                        message: 'should match pattern "^[0-9]+$"'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Not Found
+                    details:
+                      - field: .params.id
+                        message: 'The id not exist: "^[0-9]+$"'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Internal server error
+                    details: []
+    delete:
+      tags:
+        - Enterprise
+      summary: Delete an existing enterprise
+      description: Delete an existing enterprise by Id
+      operationId: deleteEnterprise
+      parameters:
+        - name: id
+          description: ID to delete enterprise
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^[0-9]+$'
+      responses:
+        '204':
+          description: OK
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Bad Request
+                    details:
+                      - field: .params.id
+                        message: 'should match pattern "^[0-9]+$"'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Not Found
+                    details:
+                      - field: .params.id
+                        message: 'The id not exist: "^[0-9]+$"'
         '500':
           description: Internal server error
           content:
@@ -959,6 +1116,8 @@ components:
         - status
         - type_of_business
         - manager_by
+        - created_by
+        - created_date
       properties:
         id:
           type: integer
@@ -996,12 +1155,22 @@ components:
           type: string
           minLength: 1
           pattern: '^[1-9]\d{3}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$'
-          example: 2020-04-03T01:58:26.000Z
+          example: '2022-01-01T00:00:00.000Z'
+        created_by:
+          type: number
+          readOnly: true
+          minLength: 1
+          example: 1
+        created_date:
+          type: string
+          readOnly: true
+          minLength: 1
+          pattern: '^[1-9]\d{3}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$'
+          example: '2022-01-01T00:00:00.000Z'
         status:
           type: string
-          minLength: 1
-          maxLength: 255
-          example: Đang hoạt động(đã được cấp GCN ĐKT)
+          enum: ['active', 'inactive']
+          example: 'active'
         type_of_business:
           type: string
           minLength: 1
@@ -1140,4 +1309,27 @@ components:
           type: string
         message:
           type: string
-
+    EnterpriseList:
+      type: object
+      required:
+        - limit
+        - offset
+        - total
+        - enterprises
+      properties:
+        limit:
+          type: integer
+          format: int64
+          example: 10
+        offset:
+          type: integer
+          format: int64
+          example: 0
+        total:
+          type: integer
+          format: int64
+          example: 1
+        enterprises:
+          type: array
+          items:
+            $ref: '#/components/schemas/Enterprise'
