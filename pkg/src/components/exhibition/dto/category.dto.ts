@@ -9,9 +9,8 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { ErrorDetail } from './error-detail.dto';
 
-export interface ErrorResponseBody {
-    message: string;
-    details: Array<ErrorDetail>;
+export interface Category {
+    readonly id: number;
+    name: string;
 }

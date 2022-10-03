@@ -9,9 +9,10 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { Marker } from './marker.dto';
+import { SpaceData } from './space-data.dto';
 
-export interface Pano {
-    media_id: number;
-    markers: Array<Marker>;
+export interface Space {
+    readonly id: number;
+    space_template_id?: number;
+    datas?: Array<SpaceData>;
 }

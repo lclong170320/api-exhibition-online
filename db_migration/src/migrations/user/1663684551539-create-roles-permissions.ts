@@ -16,7 +16,6 @@ const sqlDown = fs.readFileSync(
 );
 
 export class createRolesPermissions1663684551539 implements MigrationInterface {
-
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`${sqlUp}`);
     }
@@ -24,5 +23,4 @@ export class createRolesPermissions1663684551539 implements MigrationInterface {
     public async down(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`${sqlDown}`);
     }
-
 }

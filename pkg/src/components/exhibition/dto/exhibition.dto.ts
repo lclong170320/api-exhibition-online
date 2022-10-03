@@ -9,9 +9,19 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { Pano } from './pano.dto';
 
 export interface Exhibition {
     readonly id: number;
-    panos: Array<Pano>;
+    name: string;
+    exhibition_code: string;
+    category_id: number;
+    booth_number: number;
+    description: string;
+    date_exhibition_start: string;
+    date_exhibition_end: string;
+    date_input_data_start: string;
+    date_input_data_end: string;
+    booth_template_ids?: Array<number>;
+    readonly booth_ids?: Array<number>;
+    readonly space_id?: number;
 }

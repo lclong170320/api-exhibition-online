@@ -9,9 +9,12 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { BoothData } from './booth-data.dto';
 
-export interface Position {
-    x: number;
-    y: number;
-    z: number;
+export interface Booth {
+    readonly id: number;
+    booth_template_id: number;
+    readonly user_id: number;
+    name: string;
+    datas: Array<BoothData>;
 }

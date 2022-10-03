@@ -9,9 +9,11 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { ErrorDetail } from './error-detail.dto';
 
-export interface ErrorResponseBody {
-    message: string;
-    details: Array<ErrorDetail>;
+export interface SpaceData {
+    readonly id: number;
+    position_template_id?: number;
+    selected_media_id?: number;
+    readonly media_id?: number;
+    media_data?: string;
 }
