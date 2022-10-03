@@ -27,6 +27,19 @@ paths:
       summary: Get exhibitions
       description: Return multiple exhibitions
       operationId: getExhibitions
+      parameters:
+        - in: query
+          name: offset
+          schema:
+            type: integer
+            default: 0
+          description: The number of items to skip before starting to collect the result set
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 10
+          description: The numbers of items to return
       responses:
         '200':
           description: OK
@@ -35,15 +48,15 @@ paths:
               schema:
                 type: object
                 properties:
-                  start:
+                  offset:
                     type: integer
                     format: int64
-                    example: 1
+                    example: 0
                   limit:
                     type: integer
                     format: int64
                     example: 10
-                  row_count:
+                  total:
                     type: integer
                     format: int64
                     example: 1
@@ -118,6 +131,19 @@ paths:
       summary: Show list enterprises
       description: Show list enterprises
       operationId: getEnterprise
+      parameters:
+        - in: query
+          name: offset
+          schema:
+            type: integer
+            default: 0
+          description: The number of items to skip before starting to collect the result set
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 10
+          description: The numbers of items to return
       responses:
         '200':
           description: OK
@@ -1021,7 +1047,7 @@ components:
         offset:
           type: integer
           format: int64
-          example: 1
+          example: 0
         total:
           type: integer
           format: int64
