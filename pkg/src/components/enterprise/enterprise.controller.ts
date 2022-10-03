@@ -67,7 +67,7 @@ export class EnterpriseController {
 
     @Delete(':id')
     @HttpCode(204)
-    deleteEnterprise(@Param('id') id: string) {
-        this.enterpriseService.deleteEnterprise(id);
+    async deleteEnterprise(@Param('id') id: string) {
+        await this.enterpriseService.deleteEnterprise(id);
     }
 }

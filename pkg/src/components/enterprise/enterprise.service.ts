@@ -43,9 +43,6 @@ export class EnterpriseService {
             : this.limitDefault;
         const [enterprisesEntity, count] =
             await this.enterpriseRepository.findAndCount({
-                where: {
-                    isDeleted: false,
-                },
                 order: {
                     createdAt: 'DESC',
                 },
@@ -159,7 +156,6 @@ export class EnterpriseService {
         const enterpriseId = parseInt(id);
         const enterpriseEntity = await this.enterpriseRepository.findOneBy({
             id: enterpriseId,
-            isDeleted: false,
         });
         if (!enterpriseEntity) {
             throw new NotFoundException('The id not exist: ' + enterpriseId);
@@ -179,9 +175,12 @@ export class EnterpriseService {
     }
 
     async deleteEnterprise(id: string) {
-        const enterpriseEntity = await this.findEnterpriseById(id);
-        await this.enterpriseRepository.update(enterpriseEntity.id, {
-            isDeleted: true,
-        });
+        const enterpriseId = parseInt(id);
+        const deleteResponse = await this.enterpriseRepository.softDelete(
+            enterpriseId,
+        );
+        if (!deleteResponse.affected) {
+            throw new NotFoundException('The id not exist: ');
+        }
     }
 }

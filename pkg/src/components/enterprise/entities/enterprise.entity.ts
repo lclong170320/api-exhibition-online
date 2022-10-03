@@ -6,6 +6,7 @@ import {
     Column,
     OneToMany,
     OneToOne,
+    DeleteDateColumn,
 } from 'typeorm';
 import { Document } from './document.entity';
 import { Profile } from './profile.entity';
@@ -73,6 +74,9 @@ export class Enterprise {
     @Column({ name: 'created_by' })
     createdBy: number;
 
-    @Column({ name: 'is_deleted', default: false })
-    isDeleted: boolean;
+    @DeleteDateColumn({
+        type: 'timestamp',
+        name: 'deleted_at',
+    })
+    deletedAt: Date;
 }
