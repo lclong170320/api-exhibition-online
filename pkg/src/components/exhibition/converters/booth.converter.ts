@@ -10,7 +10,7 @@ export class BoothConverter {
     toEntity(dto: BoothDto) {
         const entity = new Booth();
         entity.name = dto.name;
-        entity.boothDatas = dto.datas.map((data) =>
+        entity.boothDatas = dto.boothDatas.map((data) =>
             this.boothDataConverter.toEntity(data),
         );
         return entity;
@@ -21,7 +21,7 @@ export class BoothConverter {
             id: entity.id,
             name: entity.name,
             booth_template_id: entity.boothTemplate?.id,
-            datas: entity.boothDatas.map((data) =>
+            boothDatas: entity.boothDatas.map((data) =>
                 this.boothDataConverter.toDto(data),
             ),
             exhibition_id: entity.exhibition?.id,

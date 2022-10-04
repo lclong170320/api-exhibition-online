@@ -11,8 +11,8 @@ import { DbConnection } from '@/database/config/db';
 import { ExhibitionConverter } from '@/components/exhibition/converters/exhibition.converter';
 import { Exhibition as ExhibitionDto } from '@/components/exhibition/dto/exhibition.dto';
 
-import { BoothTemplate } from '../entities/booth-template.entity';
-import { SpaceTemplate } from '../entities/space-template.entity';
+import { BoothTemplate } from '@/components/exhibition/entities/booth-template.entity';
+import { SpaceTemplate } from '@/components/exhibition/entities/space-template.entity';
 
 @Injectable()
 export class ExhibitionService {

@@ -1,6 +1,7 @@
 import { DbConnection } from '@/database/config/db';
 import { ExhibitionService } from './services/exhibition.service';
 import { ExhibitionController } from './controllers/exhibition.controller';
+import { BoothController } from './controllers/booth.controller';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Exhibition } from './entities/exhibition.entity';
@@ -19,14 +20,20 @@ import { SpaceData } from './entities/space-data.entity';
 import { SpaceTemplate } from './entities/space-template.entity';
 import { Space } from './entities/space.entity';
 import { BoothTemplateService } from './services/booth-template.service';
+import { BoothService } from './services/booth.service';
 import { BoothTemplateListConverter } from './converters/booth-template-list.converter';
 import { BoothTemplateConverter } from './converters/booth-template.converter';
 import { BoothTemplateController } from './controllers/booth-template.controller';
 
 @Module({
-    controllers: [ExhibitionController, BoothTemplateController],
+    controllers: [
+        ExhibitionController,
+        BoothTemplateController,
+        BoothController,
+    ],
     providers: [
         ExhibitionService,
+        BoothService,
         BoothTemplateService,
         CategoryConverter,
         ExhibitionConverter,

@@ -16,5 +16,5 @@ export interface Booth {
     booth_template_id: number;
     readonly user_id: number;
     name: string;
-    datas: Array<BoothData>;
+    boothDatas: Array<BoothData>;
 }
