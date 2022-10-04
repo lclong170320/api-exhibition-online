@@ -1,16 +1,17 @@
 import { DbConnection } from '@/database/config/db';
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Buffer } from 'buffer';
+import * as fileType from 'file-type';
 import { promises } from 'fs';
+import * as path from 'path';
 import { Repository } from 'typeorm';
+import { uuid } from 'uuidv4';
+import { MediaConverter } from './converters/media.converter';
+import { MediaResponse } from './dto/media-response.dto';
 import { Media as MediaDto } from './dto/media.dto';
 import { Media } from './entities/media.entity';
-import * as fileType from 'file-type';
-import { Buffer } from 'buffer';
-import { ConfigService } from '@nestjs/config';
-import { MediaConverter } from './converters/media.converter';
-import { uuid } from 'uuidv4';
-import { MediaResponse } from './dto/media-response.dto';
 
 @Injectable()
 export class MediaService {
@@ -29,11 +30,13 @@ export class MediaService {
         const buf = Buffer.from(mediaDto.data, 'base64');
         const type = await fileType.fromBuffer(buf);
         const fileName = uuid();
-        const pathToResource =
-            this.configService.get<string>('PATH_TO_RESOURCES');
         const serveStatic = this.configService.get<string>('SERVE_STATIC');
 
-        const path = `${pathToResource}${fileName}.${type.ext}`;
+        const filePath = path.join(
+            __dirname,
+            `../../../resources/${fileName}.${type.ext}`,
+        );
+
         const url = `${serveStatic}${fileName}.${type.ext}`;
 
         const ext = type.mime.split('/')[1];
@@ -42,7 +45,7 @@ export class MediaService {
             throw new BadRequestException('Not allowed extension: ' + ext);
         }
 
-        await promises.writeFile(path, buf);
+        await promises.writeFile(filePath, buf);
 
         return {
             url: url,
