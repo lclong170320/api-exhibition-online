@@ -84,16 +84,23 @@ export class ExhibitionService {
         boothRepository: Repository<Booth>,
     ): Promise<Booth[]> {
         const boothEntities: Booth[] = [];
+
+        const boothEntity = new Booth();
+        boothEntity.name = `Gian hàng ban tổ chức`;
+        boothEntity.userId = 1; // TODO: handle getUserId from access token
+        boothEntity.boothTemplate = exhibition.boothTemplates[0];
+        boothEntity.exhibition = exhibition;
+        boothEntity.isOrganization = true;
+        boothEntities.push(boothEntity);
+
         let start = 1;
         while (start <= exhibition.boothNumber) {
             const boothEntity = new Booth();
-            boothEntity.name = `Mau ${start}`;
+            boothEntity.name = `Gian hàng ${start}`;
             boothEntity.userId = 1; // TODO: handle getUserId from access token
             boothEntity.boothTemplate = exhibition.boothTemplates[0];
             boothEntity.exhibition = exhibition;
-
             boothEntities.push(boothEntity);
-
             start++;
         }
         const createdBooths = await boothRepository.save(boothEntities);
@@ -187,6 +194,7 @@ export class ExhibitionService {
                 return createdExhibition;
             },
         );
+
         return this.exhibitionConverter.toDto(createdExhibition);
     }
 }

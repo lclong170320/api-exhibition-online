@@ -965,6 +965,10 @@ components:
           type: integer
           readOnly: true
           example: 1
+        organization_booth_id:
+          type: integer
+          readOnly: true
+          example: 1
     BoothRequestBody:
       type: object
       required:

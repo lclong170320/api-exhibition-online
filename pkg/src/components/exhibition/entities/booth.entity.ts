@@ -23,6 +23,9 @@ export class Booth {
     @Column({ name: 'user_id' })
     userId: number;
 
+    @Column({ name: 'is_organization', default: false })
+    isOrganization: boolean;
+
     @CreateDateColumn({
         type: 'timestamp',
         name: 'created_at',

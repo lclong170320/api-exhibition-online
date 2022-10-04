@@ -29,6 +29,9 @@ export class ExhibitionConverter {
             booth_template_ids: entity.boothTemplates.map((data) => data.id),
             booth_ids: entity.booths.map((data) => data.id),
             space_id: entity.space.id,
+            organization_booth_id: entity.booths.filter(
+                (data) => data.isOrganization,
+            )[0].id,
         } as ExhibitionDto;
 
         return dto;

@@ -24,4 +24,5 @@ export interface Exhibition {
     booth_template_ids?: Array<number>;
     readonly booth_ids?: Array<number>;
     readonly space_id?: number;
+    readonly organization_booth_id?: number;
 }
