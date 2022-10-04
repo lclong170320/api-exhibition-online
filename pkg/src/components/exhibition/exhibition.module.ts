@@ -21,9 +21,10 @@ import { Space } from './entities/space.entity';
 import { BoothTemplateService } from './services/booth-template.service';
 import { BoothTemplateListConverter } from './converters/booth-template-list.converter';
 import { BoothTemplateConverter } from './converters/booth-template.converter';
+import { BoothTemplateController } from './controllers/booth-template.controller';
 
 @Module({
-    controllers: [ExhibitionController],
+    controllers: [ExhibitionController, BoothTemplateController],
     providers: [
         ExhibitionService,
         BoothTemplateService,
@@ -46,6 +47,7 @@ import { BoothTemplateConverter } from './converters/booth-template.converter';
                 BoothTemplate,
                 SpaceTemplate,
                 PositionSpace,
+                PositionBooth,
             ],
             DbConnection.exhibitionCon,
         ),
