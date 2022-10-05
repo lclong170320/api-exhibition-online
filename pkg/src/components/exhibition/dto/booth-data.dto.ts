@@ -12,7 +12,7 @@
 
 export interface BoothData {
     readonly id: number;
-    position_template_id: number;
+    position_booth_id: number;
     selected_media_id?: number;
     readonly media_id?: number;
     media_data?: string;

@@ -19,8 +19,8 @@ tags:
     description: API to interact with the Media
   - name: Enterprise
     description: API to interact with the Enterprise
-  - name: CategoryExhibition
-    description: API to interact with the CategoryExhibition
+  - name: Space
+    description: API to interact with the Space
 servers:
   - url: 'http://localhost:3000/api/v1'
 paths:
@@ -208,6 +208,64 @@ paths:
       tags:
         - Booth
   '/booths/{id}':
+     get:
+      summary: Get booth by ID
+      description: Return a single booth
+      operationId: getBoothById
+      parameters:
+      - name: id
+        description: ID to update booth
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: '^[0-9]+$'
+      tags:
+        - Booth
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BoothResponeBody'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Bad Request
+                    details:
+                      - field: .params.id
+                        message: 'should match pattern "^[0-9]+$"'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Not Found
+                    details:
+                      - field: .params.id
+                        message: 'The id not exist: "^[0-9]+$"'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Internal server error
+                    details: []
      put:
       tags:
         - Booth
@@ -999,17 +1057,17 @@ components:
           items:
             $ref: '#/components/schemas/BoothData'
           example:
-           - position_template_id: 1
+           - position_booth_id: 1
              selected_media_id: 1
              media_data:
              title:
              description:
-           - position_template_id: 2
+           - position_booth_id: 2
              selected_media_id:
              media_data: 'base64 string'
              title:
              description:
-           - position_template_id: 3
+           - position_booth_id: 3
              selected_media_id:
              media_data:
              title: Dự án Compaon
@@ -1045,17 +1103,17 @@ components:
             $ref: '#/components/schemas/BoothData'
           example:
            - id: 1
-             position_template_id: 1
+             position_booth_id: 1
              media_id: 1
              title:
              description:
            - id: 2
-             position_template_id: 2
+             position_booth_id: 2
              media_id: 1
              title:
              description:
            - id: 3
-             position_template_id: 3
+             position_booth_id: 3
              media_id:
              title: Dự án Compaon
              description: Đây là hệ thống quản trị doanh nghiệp phục vụ nhu cầu điều hành, quản lý, giám sát, kiểm tra, giao việc, kết nối và lưu trữ dữ liệu hoạt động của doanh nghiệp.
@@ -1063,13 +1121,13 @@ components:
       type: object
       required:
         - id
-        - position_template_id
+        - position_booth_id
       properties:
         id:
           type: integer
           readOnly: true
           example:
-        position_template_id:
+        position_booth_id:
           type: integer
         selected_media_id:
           type: integer

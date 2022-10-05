@@ -17,13 +17,34 @@ import { ConfigService } from '@nestjs/config';
 @Injectable()
 export class BoothService {
     constructor(
+        @InjectDataSource(DbConnection.exhibitionCon)
+        private readonly dataSource: DataSource,
         private boothConverter: BoothConverter,
         private boothDataConverter: BoothDataConverter,
         private readonly httpService: HttpService,
-        @InjectDataSource(DbConnection.exhibitionCon)
-        private readonly dataSource: DataSource,
         private readonly configService: ConfigService,
     ) {}
+
+    async getBoothById(boothId: string) {
+        const boothRepository = this.dataSource.getRepository(Booth);
+        const firstBooth = await boothRepository.findOne({
+            where: {
+                id: parseInt(boothId),
+            },
+            relations: [
+                'boothDatas',
+                'boothTemplate',
+                'boothDatas.positionBooth',
+            ],
+        });
+
+        if (!firstBooth) {
+            throw new BadRequestException(
+                `The 'booth_id' ${boothId} is not found`,
+            );
+        }
+        return this.boothConverter.toDto(firstBooth);
+    }
 
     async updateBooth(boothId: string, boothDto: BoothDto): Promise<BoothDto> {
         const updatedExhibition = await this.dataSource.transaction(
@@ -123,13 +144,13 @@ export class BoothService {
         boothDataEntity.booth = booth;
 
         const positionTemplateEntity = await positionBoothRepository.findOneBy({
-            id: data.position_template_id,
+            id: data.position_booth_id,
         });
 
         if (!positionTemplateEntity) {
             throw new BadRequestException(
                 'The "position_template_id" not found: ' +
-                    data.position_template_id,
+                    data.position_booth_id,
             );
         }
 
