@@ -1,16 +1,16 @@
 import { DbConnection } from '@/database/config/db';
 import { HttpService } from '@nestjs/axios';
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { toDataURL } from 'qrcode';
 import { lastValueFrom, map } from 'rxjs';
 import { Repository } from 'typeorm';
+import { DocumentListConverter } from './converters/document-list.converter';
 import { DocumentConverter } from './converters/enterprise-document.converter';
 import { EnterpriseListConverter } from './converters/enterprise-list.converter';
-import { ProfileConverter } from './converters/enterprise-profile.converter';
 import { EnterpriseConverter } from './converters/enterprise.converter';
 import { EnterpriseDocument as NewDocumentDto } from './dto/enterprise-document.dto';
-import { EnterpriseProfile as NewProfileDto } from './dto/enterprise-profile.dto';
 import { EnterpriseQuery } from './dto/enterprise-query.dto';
 import { Enterprise as EnterpriseDto } from './dto/enterprise.dto';
 import {
@@ -18,7 +18,6 @@ import {
     EnterpriseRepository,
 } from './enterprise.repository';
 import { Document } from './entities/document.entity';
-import { Profile } from './entities/profile.entity';
 
 @Injectable()
 export class EnterpriseService {
@@ -30,13 +29,12 @@ export class EnterpriseService {
         private readonly enterpriseRepository: EnterpriseRepository,
         @InjectRepository(Document, DbConnection.enterpriseCon)
         private readonly documentRepository: Repository<Document>,
-        @InjectRepository(Profile, DbConnection.enterpriseCon)
-        private readonly profileRepository: Repository<Profile>,
-        private readonly httpService: HttpService,
         private readonly documentConverter: DocumentConverter,
-        private readonly profileConverter: ProfileConverter,
         private readonly enterpriseConverter: EnterpriseConverter,
         private readonly enterpriseListConverter: EnterpriseListConverter,
+        private readonly documentListConverter: DocumentListConverter,
+        private readonly httpService: HttpService,
+        private readonly configService: ConfigService,
     ) {}
 
     async getEnterprises(query: EnterpriseQuery) {
@@ -100,6 +98,33 @@ export class EnterpriseService {
         return this.enterpriseConverter.toDto(enterpriseEntity);
     }
 
+    async getEnterprisesDocuments(id: string, offset: string, limit: string) {
+        const enterpriseId = parseInt(id);
+        const offsetQuery = parseInt(offset)
+            ? parseInt(offset)
+            : this.offsetDefault;
+        const limitQuery = parseInt(limit)
+            ? parseInt(limit)
+            : this.limitDefault;
+        const [enterprisesDocumentEntity, count] =
+            await this.documentRepository.findAndCount({
+                where: {
+                    enterpriseId: enterpriseId,
+                },
+                order: {
+                    createdAt: 'DESC',
+                },
+                skip: offsetQuery,
+                take: limitQuery,
+            });
+        return this.documentListConverter.toDto(
+            enterprisesDocumentEntity,
+            limitQuery,
+            offsetQuery,
+            count,
+        );
+    }
+
     async createEnterprise(
         enterpriseDto: EnterpriseDto,
     ): Promise<EnterpriseDto> {
@@ -117,25 +142,24 @@ export class EnterpriseService {
         return this.enterpriseConverter.toDto(createdEnterprise);
     }
 
-    async createUrlMedias(data: Blob): Promise<string> {
+    async createUrlMedias(data: string): Promise<number> {
         const requestConfig = {
+            maxBodyLength: Infinity,
             headers: {
                 'Content-Type': 'application/json',
             },
         };
 
-        const url = 'http://localhost:3000/api/v1/medias';
-
+        const url = this.configService.get('CREATING_MEDIA_URL');
         const media = this.httpService.post(url, { data }, requestConfig);
-
         const response = media.pipe(
             map((res) => {
                 return res.data;
             }),
         );
-
         const result = await lastValueFrom(response);
-        return result;
+
+        return result.id;
     }
 
     async createDocument(
@@ -145,13 +169,13 @@ export class EnterpriseService {
         const newDocumentEntity =
             this.documentConverter.toEntity(newDocumentDto);
 
-        const medias = await Promise.all(
-            newDocumentDto.medias.map(async (media) => {
-                return await this.createUrlMedias(media);
-            }),
-        );
+        newDocumentEntity.mediaId = newDocumentDto.selected_media_id;
 
-        newDocumentEntity.medias = medias;
+        if (newDocumentDto.media_data) {
+            newDocumentEntity.mediaId = await this.createUrlMedias(
+                newDocumentDto.media_data,
+            );
+        }
         newDocumentEntity.enterpriseId = parseInt(id);
 
         const documentToCreate =
@@ -161,24 +185,7 @@ export class EnterpriseService {
             documentToCreate,
         );
 
-        return { id: documentToSave.id };
-    }
-
-    async createProfile(
-        id: string,
-        newProfileDto: NewProfileDto,
-    ): Promise<object> {
-        const newProfileEntity = this.profileConverter.toEntity(newProfileDto);
-
-        newProfileEntity.enterpriseId = parseInt(id);
-
-        const profileToCreate = this.profileRepository.create(newProfileEntity);
-
-        const profileToSave = await this.profileRepository.save(
-            profileToCreate,
-        );
-
-        return { id: profileToSave.id };
+        return this.documentConverter.toDto(documentToSave);
     }
 
     async generateQR(text: string): Promise<string> {
@@ -197,9 +204,24 @@ export class EnterpriseService {
             id: enterpriseId,
         });
         if (!enterpriseEntity) {
-            throw new NotFoundException('The id not exist: ' + enterpriseId);
+            throw new NotFoundException(
+                'The id enterprise not exist: ' + enterpriseId,
+            );
         }
         return enterpriseEntity;
+    }
+
+    private async findDocumentById(id: string, enterpriseId: string) {
+        const documentEntity = await this.documentRepository.findOneBy({
+            id: parseInt(id),
+            enterpriseId: parseInt(enterpriseId),
+        });
+        if (!documentEntity) {
+            throw new NotFoundException(
+                `The document with enterprise id: ${enterpriseId}, document not exist with document id: ${id}`,
+            );
+        }
+        return documentEntity;
     }
 
     async updateEnterprise(id: string, newEnterpriseDto: EnterpriseDto) {

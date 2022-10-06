@@ -10,11 +10,9 @@ import {
     Query,
 } from '@nestjs/common';
 import { EnterpriseDocument as EnterpriseDocumentDto } from './dto/enterprise-document.dto';
-import { EnterpriseProfile as EnterpriseProfileDto } from './dto/enterprise-profile.dto';
 import { EnterpriseQuery } from './dto/enterprise-query.dto';
 import { Enterprise as EnterpriseDto } from './dto/enterprise.dto';
 import { EnterpriseService } from './enterprise.service';
-
 @Controller('enterprises')
 export class EnterpriseController {
     constructor(private readonly enterpriseService: EnterpriseService) {}
@@ -22,6 +20,19 @@ export class EnterpriseController {
     @Get()
     getEnterprises(@Query() query: EnterpriseQuery) {
         return this.enterpriseService.getEnterprises(query);
+    }
+
+    @Get(':id/documents')
+    getEnterprisesDocuments(
+        @Query('offset') offset: string,
+        @Query('limit') limit: string,
+        @Param('id') id: string,
+    ) {
+        return this.enterpriseService.getEnterprisesDocuments(
+            id,
+            offset,
+            limit,
+        );
     }
 
     @Get(':id')
@@ -40,14 +51,6 @@ export class EnterpriseController {
         @Body() document: EnterpriseDocumentDto,
     ) {
         return this.enterpriseService.createDocument(id, document);
-    }
-
-    @Post(':id/profiles')
-    createProfile(
-        @Param('id') id: string,
-        @Body() profile: EnterpriseProfileDto,
-    ) {
-        return this.enterpriseService.createProfile(id, profile);
     }
 
     @Post(':id/qrcodes')

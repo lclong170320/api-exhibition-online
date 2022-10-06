@@ -7,25 +7,24 @@ import { Enterprise } from './entities/enterprise.entity';
 import { Document } from './entities/document.entity';
 import { HttpModule } from '@nestjs/axios';
 import { DocumentConverter } from './converters/enterprise-document.converter';
-import { Profile } from './entities/profile.entity';
-import { ProfileConverter } from './converters/enterprise-profile.converter';
 import { EnterpriseConverter } from './converters/enterprise.converter';
 import { EnterpriseListConverter } from './converters/enterprise-list.converter';
 import { EnterpriseRepository } from './enterprise.repository';
+import { DocumentListConverter } from './converters/document-list.converter';
 
 @Module({
     controllers: [EnterpriseController],
     providers: [
         EnterpriseService,
         DocumentConverter,
-        ProfileConverter,
         EnterpriseConverter,
         EnterpriseListConverter,
         EnterpriseRepository,
+        DocumentListConverter,
     ],
     imports: [
         TypeOrmModule.forFeature(
-            [Enterprise, Document, Profile],
+            [Enterprise, Document],
             DbConnection.enterpriseCon,
         ),
         HttpModule,

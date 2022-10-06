@@ -8,7 +8,20 @@ export class DocumentConverter {
         const entity = {
             title: dto.title,
             content: dto.content,
+            isProfile: dto.is_profile,
         } as Document;
         return entity;
+    }
+
+    toDto(entity: Document) {
+        const dto = {
+            id: entity.id,
+            title: entity.title,
+            content: entity.content,
+            is_profile: entity.isProfile,
+            media_id: entity.mediaId ?? undefined,
+        } as DocumentDto;
+
+        return dto;
     }
 }

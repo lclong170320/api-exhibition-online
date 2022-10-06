@@ -622,14 +622,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  id:
-                    type: integer
-              examples:
-                example-1:
-                  value:
-                    id: 1
+                $ref: '#/components/schemas/EnterpriseDocument'
         '400':
           description: Validation error
           content:
@@ -654,42 +647,39 @@ paths:
                   value:
                     message: Internal server error
                     details: []
-  '/enterprises/{id}/profiles':
-    post:
+    get:
       tags:
         - Enterprise
-      summary: Add a new enterprise's profile
-      description: Add a new enterprise's profile
-      operationId: addEnterpriseProfile
+      summary: Get documents of enterprise
+      description: Return a documents
+      operationId: getDocument
       parameters:
-        - schema:
-            type: string
-            pattern: '^[0-9]+$'
-          name: id
+        - name: id
+          description: ID of enterprises to get documents 
           in: path
           required: true
-          description: The enterprise's ID will be add new profile
-      requestBody:
-        description: Create a new enterprise's profile
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/EnterpriseProfile'
-        required: true
+          schema:
+            type: string
+            pattern: '^[0-9]+$'
+        - in: query
+          name: offset
+          schema:
+            type: integer
+            default: 0
+          description: The number of items to skip before starting to collect the result set
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 10
+          description: The numbers of items to return
       responses:
-        '201':
-          description: Created
+        '200':
+          description: OK
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  id:
-                    type: integer
-              examples:
-                example-1:
-                  value:
-                    id: 1
+                $ref: '#/components/schemas/DocumentList'
         '400':
           description: Validation error
           content:
@@ -703,6 +693,19 @@ paths:
                     details:
                       - field: .params.id
                         message: 'should match pattern "^[0-9]+$"'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Not Found
+                    details:
+                      - field: .params.id
+                        message: 'The id not exist: "^[0-9]+$"'
         '500':
           description: Internal server error
           content:
@@ -1474,11 +1477,12 @@ components:
       required:
         - title
         - content
+        - is_profile
       properties:
         id:
           type: number
           readOnly: true
-          example: Tiêu đề ....
+          example: 1
         title:
           type: string
           example: Tiêu đề ....
@@ -1486,35 +1490,19 @@ components:
         content:
           type: string
           example: Nội dung...
-        medias:
-          type: array
-          items:
-            type: string
-            format: binary
-            pattern: '^[\/iRU][A-Za-z0-9+\/=]+$'
-          example:
-            - "9j/2wCEAAIBAQIBAQICAgICAgICAwUDAwMDAwYEBAMFBwYHBwcGBwc"
-            - "9j/2wCEAAIBAQIBAQICAgICAgICAwUDAwMDAwYEBAMFBwYHBwcGBwc"
-    EnterpriseProfile:
-      type: object
-      required:
-        - document_ids
-      properties:
-        id:
+        is_profile:
+          type: boolean
+          example: false
+        media_id:
           type: number
           readOnly: true
           example: 1
-        document_ids:
-          type: array
-          items:
-            type: number
-            minItems: 1
-            maxItems: 30
-            uniqueItems: true
-            pattern: '^[0-9]+$'
-          example:
-            - 1
-            - 2
+        selected_media_id:
+          type: integer
+          writeOnly: true
+        media_data:
+          type: string
+          writeOnly: true
     Address:
       type: object
       properties:
@@ -1616,3 +1604,27 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Enterprise'
+    DocumentList:
+      type: object
+      required:
+        - limit
+        - offset
+        - total
+        - documents
+      properties:
+        limit:
+          type: integer
+          format: int64
+          example: 10
+        offset:
+          type: integer
+          format: int64
+          example: 0
+        total:
+          type: integer
+          format: int64
+          example: 1
+        documents:
+          type: array
+          items:
+            $ref: '#/components/schemas/EnterpriseDocument'

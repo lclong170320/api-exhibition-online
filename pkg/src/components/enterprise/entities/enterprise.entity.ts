@@ -5,11 +5,9 @@ import {
     UpdateDateColumn,
     Column,
     OneToMany,
-    OneToOne,
     DeleteDateColumn,
 } from 'typeorm';
 import { Document } from './document.entity';
-import { Profile } from './profile.entity';
 import { Enterprise as EnterpriseDto } from '../dto/enterprise.dto';
 
 @Entity({ name: 'enterprises' })
@@ -67,9 +65,6 @@ export class Enterprise {
 
     @OneToMany(() => Document, (document) => document.enterprise)
     documents: Document[];
-
-    @OneToOne(() => Profile, (profile) => profile.enterprise)
-    profile: Profile;
 
     @Column({ name: 'created_by' })
     createdBy: number;

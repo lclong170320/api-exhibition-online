@@ -9,13 +9,11 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { EnterpriseDocument } from './enterprise-document.dto';
 
-export interface EnterpriseDocument {
-    readonly id?: number;
-    title: string;
-    content: string;
-    is_profile: boolean;
-    readonly media_id?: number;
-    selected_media_id?: number;
-    media_data?: string;
+export interface DocumentList {
+    limit: number;
+    offset: number;
+    total: number;
+    documents: Array<EnterpriseDocument>;
 }

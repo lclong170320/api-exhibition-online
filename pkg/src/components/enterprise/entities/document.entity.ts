@@ -20,6 +20,12 @@ export class Document {
     enterpriseId: number;
 
     @Column({
+        name: 'is_profile',
+        default: false,
+    })
+    isProfile: boolean;
+
+    @Column({
         length: 255,
         name: 'title',
     })
@@ -31,12 +37,8 @@ export class Document {
     })
     content: string;
 
-    @Column({
-        type: 'json',
-        name: 'medias',
-        nullable: true,
-    })
-    medias: Array<string>;
+    @Column({ name: 'media_id', nullable: true })
+    mediaId: number;
 
     @CreateDateColumn({
         type: 'timestamp',
