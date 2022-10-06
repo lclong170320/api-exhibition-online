@@ -3,7 +3,11 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
 import { lastValueFrom, map } from 'rxjs';
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+    NotFoundException,
+    BadRequestException,
+    Injectable,
+} from '@nestjs/common';
 import { Space as SpaceDto } from '@/components/exhibition/dto/space.dto';
 import { SpaceData as SpaceDataDto } from '@/components/exhibition/dto/space-data.dto';
 import { Space } from '@/components/exhibition/entities/space.entity';
@@ -23,6 +27,27 @@ export class SpaceService {
         private readonly spaceConverter: SpaceConverter,
     ) {}
 
+    async getSpaceById(spaceId: string) {
+        const spaceRepository = this.dataSource.getRepository(Space);
+        const firstSpace = await spaceRepository.findOne({
+            where: {
+                id: parseInt(spaceId),
+            },
+            relations: [
+                'spaceDatas',
+                'spaceTemplate',
+                'spaceDatas.positionSpace',
+            ],
+        });
+
+        if (!firstSpace) {
+            throw new NotFoundException(
+                `The 'space_id' ${spaceId} is not found`,
+            );
+        }
+        return this.spaceConverter.toDto(firstSpace);
+    }
+
     async updateSpace(spaceId: string, spaceDto: SpaceDto) {
         const updatedSpace = await this.dataSource.transaction(
             async (manager) => {
@@ -41,8 +66,8 @@ export class SpaceService {
                 });
 
                 if (!spaceEntity) {
-                    throw new BadRequestException(
-                        "The 'space_id' is not found ",
+                    throw new NotFoundException(
+                        `The 'space_id' ${spaceId} is not found`,
                     );
                 }
 

@@ -390,6 +390,64 @@ paths:
                     message: Internal server error
                     details: []
   '/spaces/{id}':
+    get:
+      summary: Get space by ID
+      description: Return a single space
+      operationId: getSpaceById
+      parameters:
+      - name: id
+        description: ID to update space
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: '^[0-9]+$'
+      tags:
+        - Space
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SpaceResponseBody'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Bad Request
+                    details:
+                      - field: .params.id
+                        message: 'should match pattern "^[0-9]+$"'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Not Found
+                    details:
+                      - field: .params.id
+                        message: 'The id not exist: "^[0-9]+$"'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Internal server error
+                    details: []
     put:
       tags:
         - Space
@@ -1238,12 +1296,15 @@ components:
           example: 1
         space_template_id:
           type: integer
-          example: 1
-
         user_id:
           type: integer
           readOnly: true
           example: 1
+        name:
+          type: string
+          minLength: 1
+          maxLength: 255
+          example: Mẫu không gian tiền sảnh mặc định
         spaceDatas:
           type: array
           items:
