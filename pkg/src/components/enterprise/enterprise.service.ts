@@ -100,6 +100,13 @@ export class EnterpriseService {
         return this.enterpriseConverter.toDto(enterpriseEntity);
     }
 
+    async getEnterpriseDocumentById(id: string) {
+        const enterpriseDocumentEntity = await this.findEnterpriseDocumentById(
+            id,
+        );
+        return this.documentConverter.toDto(enterpriseDocumentEntity);
+    }
+
     async createEnterprise(
         enterpriseDto: EnterpriseDto,
     ): Promise<EnterpriseDto> {
@@ -221,5 +228,16 @@ export class EnterpriseService {
         if (!deleteResponse.affected) {
             throw new NotFoundException('The id not exist: ');
         }
+    }
+
+    private async findEnterpriseDocumentById(id: string) {
+        const documentId = parseInt(id);
+        const documentEntity = await this.documentRepository.findOneBy({
+            id: documentId,
+        });
+        if (!documentEntity) {
+            throw new NotFoundException('The id not exist: ' + documentId);
+        }
+        return documentEntity;
     }
 }

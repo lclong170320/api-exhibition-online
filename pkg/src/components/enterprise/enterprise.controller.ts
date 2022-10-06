@@ -29,6 +29,11 @@ export class EnterpriseController {
         return this.enterpriseService.getEnterpriseById(id);
     }
 
+    @Get(':id/documents')
+    getEnterpriseDocumentById(@Param('id') id: string) {
+        return this.enterpriseService.getEnterpriseDocumentById(id);
+    }
+
     @Post()
     createEnterprise(@Body() enterprise: EnterpriseDto) {
         return this.enterpriseService.createEnterprise(enterprise);
