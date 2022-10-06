@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+    BadRequestException,
+    Injectable,
+    NotFoundException,
+} from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 
@@ -42,13 +46,20 @@ export class ExhibitionService {
 
     async findById(id: string): Promise<ExhibitionDto> {
         const exhibitionId = parseInt(id);
-        const entity = await this.exhibitionRepository.findOne({
+        const exhibitionEntity = await this.exhibitionRepository.findOne({
             where: {
                 id: exhibitionId,
             },
-            relations: ['panos', 'panos.markers'],
+            relations: ['category', 'booths', 'space', 'boothTemplates'],
         });
-        return this.exhibitionConverter.toDto(entity);
+
+        console.log(typeof exhibitionEntity.dateExhibitionEnd);
+        if (!exhibitionEntity) {
+            throw new NotFoundException(
+                `The 'exhibition_id' ${exhibitionId} not found`,
+            );
+        }
+        return this.exhibitionConverter.toDto(exhibitionEntity);
     }
 
     private async findCategoryById(

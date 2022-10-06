@@ -34,16 +34,16 @@ export class Exhibition {
     exhibitionCode: string;
 
     @Column({ type: 'datetime', name: 'date_exhibition_start' })
-    dateExhibitionStart: string;
+    dateExhibitionStart: Date;
 
     @Column({ type: 'datetime', name: 'date_exhibition_end' })
-    dateExhibitionEnd: string;
+    dateExhibitionEnd: Date;
 
     @Column({ type: 'datetime', name: 'date_input_data_start' })
-    dateInputDataStart: string;
+    dateInputDataStart: Date;
 
     @Column({ type: 'datetime', name: 'date_input_data_end' })
-    dateInputDataEnd: string;
+    dateInputDataEnd: Date;
 
     @CreateDateColumn({
         type: 'timestamp',

@@ -8,10 +8,10 @@ export class ExhibitionConverter {
         entity.description = dto.description;
         entity.boothNumber = dto.booth_number;
         entity.exhibitionCode = dto.exhibition_code.toUpperCase();
-        entity.dateExhibitionStart = dto.date_exhibition_start;
-        entity.dateExhibitionEnd = dto.date_exhibition_end;
-        entity.dateInputDataStart = dto.date_input_data_start;
-        entity.dateInputDataEnd = dto.date_input_data_end;
+        entity.dateExhibitionStart = new Date(dto.date_exhibition_start);
+        entity.dateExhibitionEnd = new Date(dto.date_exhibition_end);
+        entity.dateInputDataStart = new Date(dto.date_input_data_start);
+        entity.dateInputDataEnd = new Date(dto.date_input_data_end);
         return entity;
     }
     toDto(entity: Exhibition) {
@@ -22,10 +22,10 @@ export class ExhibitionConverter {
             booth_number: entity.boothNumber,
             category_id: entity.category.id,
             exhibition_code: entity.exhibitionCode,
-            date_exhibition_start: entity.dateExhibitionStart,
-            date_exhibition_end: entity.dateExhibitionEnd,
-            date_input_data_start: entity.dateInputDataStart,
-            date_input_data_end: entity.dateInputDataEnd,
+            date_exhibition_start: entity.dateExhibitionStart.toISOString(),
+            date_exhibition_end: entity.dateExhibitionEnd.toISOString(),
+            date_input_data_start: entity.dateInputDataStart.toISOString(),
+            date_input_data_end: entity.dateInputDataEnd.toISOString(),
             booth_template_ids: entity.boothTemplates.map((data) => data.id),
             booth_ids: entity.booths.map((data) => data.id),
             space_id: entity.space.id,
