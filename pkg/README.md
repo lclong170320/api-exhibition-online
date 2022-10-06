@@ -20,6 +20,16 @@
 - serve static file: http://localhost:3000/resources/filename
 
 
+### STEP TO CREATE MIGRATION MODELS
+- Create migrate file `yarn typeorm migration:create src/migrations/{dataFolderName}/scripts/{modelName}`
+
+### START MIGRATION
+- `yarn typeorm migration:run -d src/migrations/{datasourceConfigFile}/index.ts`
+
+
+### REVERT MIGRATION
+- `yarn typeorm migration:revert -d src/migrations/{datasourceConfigFile}/index.ts`
+
 ## Description convert between dto and entity
 
 - DTO: communication between controller and service
