@@ -1,6 +1,10 @@
 import { DbConnection } from '@/database/config/db';
 import { HttpService } from '@nestjs/axios';
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+    BadRequestException,
+    NotFoundException,
+    Injectable,
+} from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { lastValueFrom, map } from 'rxjs';
 import { DataSource, Repository } from 'typeorm';
@@ -39,7 +43,7 @@ export class BoothService {
         });
 
         if (!firstBooth) {
-            throw new BadRequestException(
+            throw new NotFoundException(
                 `The 'booth_id' ${boothId} is not found`,
             );
         }
@@ -64,8 +68,8 @@ export class BoothService {
                 });
 
                 if (!boothEntity) {
-                    throw new BadRequestException(
-                        "The 'booth_id' is not found ",
+                    throw new NotFoundException(
+                        `The 'booth_id' ${boothId} is not found`,
                     );
                 }
 
