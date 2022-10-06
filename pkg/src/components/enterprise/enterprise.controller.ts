@@ -66,6 +66,19 @@ export class EnterpriseController {
         return this.enterpriseService.updateEnterprise(id, newEnterprise);
     }
 
+    @Put(':id/document/:document_id')
+    async updateDocuments(
+        @Param('id') id: string,
+        @Param('document_id') documentId: string,
+        @Body() enterpriseDocumentDto: EnterpriseDocumentDto,
+    ) {
+        return await this.enterpriseService.updateDocuments(
+            id,
+            documentId,
+            enterpriseDocumentDto,
+        );
+    }
+
     @Delete(':id')
     @HttpCode(204)
     async deleteEnterprise(@Param('id') id: string) {

@@ -211,17 +211,38 @@ export class EnterpriseService {
         return enterpriseEntity;
     }
 
-    private async findDocumentById(id: string, enterpriseId: string) {
+    private async findDocumentById(documentId: string, enterpriseId: string) {
         const documentEntity = await this.documentRepository.findOneBy({
-            id: parseInt(id),
+            id: parseInt(documentId),
             enterpriseId: parseInt(enterpriseId),
         });
         if (!documentEntity) {
             throw new NotFoundException(
-                `The document with enterprise id: ${enterpriseId}, document not exist with document id: ${id}`,
+                `The document is not found: enterprise_id: ${enterpriseId} and document_id: ${documentId}`,
             );
         }
         return documentEntity;
+    }
+
+    async updateDocuments(
+        enterpriseId: string,
+        documentId: string,
+        enterpriseDocumentDto: NewDocumentDto,
+    ): Promise<object> {
+        await this.findEnterpriseById(enterpriseId);
+        const firstDocumentEntity = await this.findDocumentById(
+            documentId,
+            enterpriseId,
+        );
+        const updateDocumentEntity = this.documentConverter.toEntity(
+            enterpriseDocumentDto,
+        );
+        const updateDocument = await this.documentRepository.save({
+            ...firstDocumentEntity,
+            ...updateDocumentEntity,
+        });
+
+        return this.documentConverter.toDto(updateDocument);
     }
 
     async updateEnterprise(id: string, newEnterpriseDto: EnterpriseDto) {
