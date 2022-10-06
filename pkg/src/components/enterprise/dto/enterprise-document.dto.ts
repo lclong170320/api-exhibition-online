@@ -12,7 +12,6 @@
 
 export interface EnterpriseDocument {
     readonly id?: number;
-    readonly user_id: number;
     title: string;
     content: string;
     medias?: Array<Blob>;

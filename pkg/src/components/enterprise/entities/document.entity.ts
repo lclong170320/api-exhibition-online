@@ -15,11 +15,6 @@ export class Document {
     id: number;
 
     @Column({
-        name: 'user_id',
-    })
-    userId: number;
-
-    @Column({
         name: 'enterprise_id',
     })
     enterpriseId: number;
