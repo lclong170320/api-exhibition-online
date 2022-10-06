@@ -1,5 +1,5 @@
 import { DbConnection } from '@/database/config/db';
-import { Injectable } from '@nestjs/common';
+import { NotFoundException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { BoothTemplate } from '@/components/exhibition/entities/booth-template.entity';
@@ -23,6 +23,10 @@ export class BoothTemplateService {
                 id: parseInt(id),
             },
         );
+
+        if (!firstBoothTemplate) {
+            throw new NotFoundException(`The 'booth_id' ${id} is not found`);
+        }
 
         return this.boothTemplateConverter.toDto(firstBoothTemplate);
     }
