@@ -17,8 +17,14 @@ export class SpaceTemplate {
     @Column({ name: 'name' })
     name: string;
 
-    @Column({ name: 'media_id' })
-    mediaId: number;
+    @Column({ name: 'model_id' })
+    modelId: number;
+
+    @Column({ name: 'thumbnail_id' })
+    thumbnailId: number;
+
+    @Column({ name: 'exhibition_map_id' })
+    exhibitionMapId: number;
 
     @CreateDateColumn({
         type: 'timestamp',

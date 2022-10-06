@@ -51,7 +51,7 @@ export class BoothService {
     }
 
     async updateBooth(boothId: string, boothDto: BoothDto): Promise<BoothDto> {
-        const updatedExhibition = await this.dataSource.transaction(
+        const updatedBooth = await this.dataSource.transaction(
             async (manager) => {
                 const boothRepository = manager.getRepository(Booth);
                 const boothDataRepository = manager.getRepository(BoothData);
@@ -98,7 +98,7 @@ export class BoothService {
                 return boothEntity;
             },
         );
-        return this.boothConverter.toDto(updatedExhibition);
+        return this.boothConverter.toDto(updatedBooth);
     }
 
     private async createUrlMedias(data: string): Promise<number> {

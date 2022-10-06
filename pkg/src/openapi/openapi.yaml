@@ -23,6 +23,7 @@ tags:
     description: API to interact with the Space
 servers:
   - url: 'http://localhost:3000/api/v1'
+  - url: 'http://52.74.156.150:3000/api/v1'
 paths:
   '/exhibitions':
     get:
@@ -391,7 +392,7 @@ paths:
   '/spaces/{id}':
     put:
       tags:
-        - Exhibition
+        - Space
       summary: Update an existing space
       description: Update an existing space by Id
       operationId: updateSpace
@@ -1209,49 +1210,61 @@ components:
         id:
           type: integer
           readOnly: true
+          example: 1
         space_template_id:
           type: integer
+          example: 1
         spaceDatas:
           type: array
           items:
             $ref: '#/components/schemas/SpaceData'
           example:
-            - position_template_id: 1
+            - position_space_id: 1
               selected_media_id: 1
               media_data:
-            - position_template_id: 2
+            - position_space_id: 2
               selected_media_id:
               media_data: base64 string
     SpaceResponseBody:
       type: object
       required:
         - id
+        - space_template_id
+        - user_id
       properties:
         id:
           type: integer
           readOnly: true
+          example: 1
         space_template_id:
           type: integer
+          example: 1
+
+        user_id:
+          type: integer
+          readOnly: true
+          example: 1
         spaceDatas:
           type: array
           items:
             $ref: '#/components/schemas/SpaceData'
           example:
            - id: 1
-             position_template_id: 1
+             position_space_id: 1
              media_id: 1
            - id: 2
-             position_template_id: 2
+             position_space_id: 2
              media_id: 2
     SpaceData:
       type: object
       required:
         - id
+        - position_space_id
       properties:
         id:
           type: integer
           readOnly: true
-        position_template_id:
+        position_space_id:
           type: integer
         selected_media_id:
           type: integer

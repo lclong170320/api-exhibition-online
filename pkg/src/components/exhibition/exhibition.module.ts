@@ -24,16 +24,22 @@ import { BoothService } from './services/booth.service';
 import { BoothTemplateListConverter } from './converters/booth-template-list.converter';
 import { BoothTemplateConverter } from './converters/booth-template.converter';
 import { BoothTemplateController } from './controllers/booth-template.controller';
+import { SpaceController } from './controllers/space.controller';
+import { SpaceService } from './services/space.service';
+import { SpaceConverter } from './converters/space.converter';
+import { SpaceDataConverter } from './converters/space-data.converter';
 
 @Module({
     controllers: [
         ExhibitionController,
         BoothTemplateController,
         BoothController,
+        SpaceController,
     ],
     providers: [
         ExhibitionService,
         BoothService,
+        SpaceService,
         BoothTemplateService,
         CategoryConverter,
         ExhibitionConverter,
@@ -41,6 +47,8 @@ import { BoothTemplateController } from './controllers/booth-template.controller
         BoothDataConverter,
         BoothTemplateConverter,
         BoothTemplateListConverter,
+        SpaceConverter,
+        SpaceDataConverter,
     ],
     imports: [
         TypeOrmModule.forFeature(

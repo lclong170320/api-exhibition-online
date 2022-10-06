@@ -14,5 +14,6 @@ import { SpaceData } from './space-data.dto';
 export interface Space {
     readonly id: number;
     space_template_id?: number;
-    datas?: Array<SpaceData>;
+    readonly user_id: number;
+    spaceDatas?: Array<SpaceData>;
 }
