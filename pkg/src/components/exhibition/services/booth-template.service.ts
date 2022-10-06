@@ -3,7 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { BoothTemplate } from '@/components/exhibition/entities/booth-template.entity';
-import { BoothTemplateListConverter } from '../converters/booth-template-list.converter';
+import { BoothTemplateListConverter } from '@/components/exhibition/converters/booth-template-list.converter';
+import { BoothTemplateConverter } from '@/components/exhibition/converters/booth-template.converter';
 
 @Injectable()
 export class BoothTemplateService {
@@ -13,7 +14,18 @@ export class BoothTemplateService {
         @InjectRepository(BoothTemplate, DbConnection.exhibitionCon)
         private readonly boothTemplateRepository: Repository<BoothTemplate>,
         private boothTemplateListConverter: BoothTemplateListConverter,
+        private boothTemplateConverter: BoothTemplateConverter,
     ) {}
+
+    async findBoothTemplateById(id: string) {
+        const firstBoothTemplate = await this.boothTemplateRepository.findOneBy(
+            {
+                id: parseInt(id),
+            },
+        );
+
+        return this.boothTemplateConverter.toDto(firstBoothTemplate);
+    }
 
     async findBoothTemplates(offset: string, limit: string) {
         const offsetQuery = parseInt(offset)

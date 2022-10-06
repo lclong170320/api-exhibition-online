@@ -170,6 +170,52 @@ paths:
                     details: []
       tags:
         - Exhibition
+  '/booth-templates/{id}':
+    get:
+      summary: Get booth template by ID
+      description: Return a single booth template
+      operationId: getBoothTemplateById
+      parameters:
+        - name: id
+          description: ID to get booth template
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^[0-9]+$'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BoothTemplate'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Bad Request
+                    details:
+                      - field: .params.id
+                        message: 'should match pattern "^[0-9]+$"'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Internal server error
+                    details: []
+      tags:
+        - Booth
   '/booth-templates':
     get:
       summary: Get list of booth templates
