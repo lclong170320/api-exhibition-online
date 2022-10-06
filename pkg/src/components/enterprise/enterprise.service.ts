@@ -1,28 +1,33 @@
 import { DbConnection } from '@/database/config/db';
-import { Enterprise } from './entities/enterprise.entity';
+import { HttpService } from '@nestjs/axios';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { HttpService } from '@nestjs/axios';
+import { toDataURL } from 'qrcode';
+import { lastValueFrom, map } from 'rxjs';
 import { Repository } from 'typeorm';
+import { DocumentConverter } from './converters/enterprise-document.converter';
+import { EnterpriseListConverter } from './converters/enterprise-list.converter';
+import { ProfileConverter } from './converters/enterprise-profile.converter';
+import { EnterpriseConverter } from './converters/enterprise.converter';
 import { EnterpriseDocument as NewDocumentDto } from './dto/enterprise-document.dto';
 import { EnterpriseProfile as NewProfileDto } from './dto/enterprise-profile.dto';
+import { EnterpriseQuery } from './dto/enterprise-query.dto';
 import { Enterprise as EnterpriseDto } from './dto/enterprise.dto';
+import {
+    ALLOWED_SORT_COLUMNS,
+    EnterpriseRepository,
+} from './enterprise.repository';
 import { Document } from './entities/document.entity';
 import { Profile } from './entities/profile.entity';
-import { lastValueFrom, map } from 'rxjs';
-import { DocumentConverter } from './converters/enterprise-document.converter';
-import { ProfileConverter } from './converters/enterprise-profile.converter';
-import { toDataURL } from 'qrcode';
-import { EnterpriseConverter } from './converters/enterprise.converter';
-import { EnterpriseListConverter } from './converters/enterprise-list.converter';
 
 @Injectable()
 export class EnterpriseService {
     private readonly offsetDefault = 0;
     private readonly limitDefault = 10;
+    private readonly ascending = 'ASC';
+    private readonly descending = 'DESC';
     constructor(
-        @InjectRepository(Enterprise, DbConnection.enterpriseCon)
-        private readonly enterpriseRepository: Repository<Enterprise>,
+        private readonly enterpriseRepository: EnterpriseRepository,
         @InjectRepository(Document, DbConnection.enterpriseCon)
         private readonly documentRepository: Repository<Document>,
         @InjectRepository(Profile, DbConnection.enterpriseCon)
@@ -34,28 +39,62 @@ export class EnterpriseService {
         private readonly enterpriseListConverter: EnterpriseListConverter,
     ) {}
 
-    async getEnterprises(offset: string, limit: string) {
-        const offsetQuery = parseInt(offset)
-            ? parseInt(offset)
+    async getEnterprises(query: EnterpriseQuery) {
+        const sortValue = this.parseSort(query.sort);
+        if (sortValue.size === 0) {
+            sortValue.set('created_at', 'DESC');
+        }
+
+        const searchValue = query.search ? query.search : '';
+
+        const offsetValue = query.offset
+            ? parseInt(query.offset)
             : this.offsetDefault;
-        const limitQuery = parseInt(limit)
-            ? parseInt(limit)
+        const limitValue = query.limit
+            ? parseInt(query.limit)
             : this.limitDefault;
+
+        //TODO add column search createdBy
         const [enterprisesEntity, count] =
-            await this.enterpriseRepository.findAndCount({
-                order: {
-                    createdAt: 'DESC',
-                },
-                skip: offsetQuery,
-                take: limitQuery,
-            });
+            await this.enterpriseRepository.getEnterprises(
+                searchValue,
+                limitValue,
+                offsetValue,
+                sortValue,
+            );
+
         return this.enterpriseListConverter.toDto(
             enterprisesEntity,
-            limitQuery,
-            offsetQuery,
+            limitValue,
+            offsetValue,
             count,
         );
     }
+
+    private parseSort(sortParam: string) {
+        const sort: Map<string, string> = new Map();
+        if (!sortParam || sortParam.length === 0) {
+            return sort;
+        }
+        sortParam.split(',').map((sortItem) => {
+            const [fieldName, ordering] = sortItem.split('-');
+            if (
+                ALLOWED_SORT_COLUMNS.includes(fieldName) &&
+                this.isValidOrdering(ordering)
+            ) {
+                sort.set(fieldName, ordering.toUpperCase());
+            }
+        });
+        return sort;
+    }
+
+    private isValidOrdering(ordering: string) {
+        return (
+            ordering.toUpperCase() === this.ascending ||
+            ordering.toUpperCase() === this.descending
+        );
+    }
+
     async getEnterpriseById(id: string) {
         const enterpriseEntity = await this.findEnterpriseById(id);
         return this.enterpriseConverter.toDto(enterpriseEntity);

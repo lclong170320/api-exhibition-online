@@ -517,7 +517,7 @@ paths:
         - Enterprise
       summary: Show list enterprises
       description: Show list enterprises
-      operationId: getEnterprise
+      operationId: getEnterprises
       parameters:
         - in: query
           name: offset
@@ -531,6 +531,18 @@ paths:
             type: integer
             default: 10
           description: The numbers of items to return
+        - in: query
+          name: search
+          schema:
+            type: string
+          description: Searching keyword
+        - in: query
+          name: sort
+          allowReserved: true
+          schema: 
+            type: string
+          example: 'created_date-desc'
+          description: column name for ordering and value [desc,asc]
       responses:
         '200':
           description: OK
