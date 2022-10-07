@@ -2,7 +2,7 @@
 FROM node:16-alpine
 
 # Set working directory
-WORKDIR /pkg
+WORKDIR /app
 
 COPY . .
 

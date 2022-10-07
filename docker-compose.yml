@@ -2,12 +2,12 @@ version: "3.8"
 services:
   main:
     build:
-      context: ./pkg
+      context: ./
     container_name: compaon.main
     volumes:
-      - ./pkg:/pkg
+      - ./:/app
       # Exclude container directory overwritten by host.
-      - /pkg/node_modules
+      - /app/node_modules
     ports:
       - "3000:3000"
   mysql:

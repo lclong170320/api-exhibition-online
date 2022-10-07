@@ -1,56 +1,37 @@
-# COMPAON SERVICE LAYER
+# compaon-service
+## Required
+- node
+- yarn
+- mysql
 
-## FOR DEVELOP ENVIRONMENT
+## Start project
+- Create `.env` from the `.env.example` and fulfill all environment variables
+- Run migration to create database structure
+- Start project with command `yarn start:dev`
+- Then, access http://localhost:3000/docs to check the result
 
-### Required
+## For dev
+- Create DTO from openapi definition
+  ```
+  openapi-generator-cli generate -g typescript-nestjs -i path/to/openapi.yaml -o ./output --additional-properties=fileNaming=kebab-case,modelFileSuffix=.dto
+  ```
+- Check DTO in the `output/model` dir
 
-- OS: macOS, linux, ubuntu, windows
-- Install [Docker Desktop](https://www.docker.com/products/docker-desktop/) or [Ubuntu Docker engine](https://docs.docker.com/engine/install/ubuntu/)
-
-### Start/Stop Project locally
-
-- Start Project with command `docker-compose up -d`
-- Stop Project with command `docker-compose down`
-- Clear image with command
-    ```
-    docker stop $(docker ps -a -q)
-    docker rm $(docker ps -a -q)
-    ```
-- Then, access http://localhost:3000/ to check the result.
-
-
-### Setup .env local
-```
-NODE_ENV=development
-
-DATABASE_HOST=mysql
-DATABASE_PORT=3306
-DATABASE_USERNAME=root
-DATABASE_PASSWORD=
-DATABASE_CONNECTION_TIMEOUT=200000
-DATABASE_CONNECTION_LIMIT=50
-
-DATABASE_NAME_EXHIBITION=compaon_exhibition_dev
-DATABASE_NAME_MEDIA=compaon_media_dev
-DATABASE_NAME_ENTERPRISE=compaon_enterprise_dev
-
-HTTP_TIMEOUT=5000
-HTTP_MAX_REDIRECTS=5
-
-CLIENT_HOST=https://compaon/
-
-ERROR_LOG_FILE=absolute\path\to\error.log
-ACCESS_LOG_FILE=absolute\path\to\access.log
-PATH_TO_RESOURCES=absolute\path\to\resources\
-
-LOG_LEVEL=info
-
-MAX_MEDIA_SIZE=128mb
-ALLOW_UPLOAD_FILE=png,jpg,jpeg,gif,mp4,glb
-SERVE_STATIC=http://localhost:3000/resources/
+- serve static file: http://localhost:3000/resources/filename
 
 
-```
+### STEP TO CREATE MIGRATION MODELS
+- Create migrate file `yarn typeorm migration:create src/migrations/{dataFolderName}/scripts/{modelName}`
 
-## API Document
-Access https://dalavina.stoplight.io/docs/compaon/branches/main
+### START MIGRATION
+- `yarn typeorm migration:run -d src/migrations/{datasourceConfigFile}/index.ts`
+
+
+### REVERT MIGRATION
+- `yarn typeorm migration:revert -d src/migrations/{datasourceConfigFile}/index.ts`
+
+## Description convert between dto and entity
+
+- DTO: communication between controller and service
+- Entity: communication between service and repositorys
+  ![alt text](https://i.imgur.com/LXGEXh3.png)
