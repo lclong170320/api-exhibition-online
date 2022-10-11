@@ -14,9 +14,11 @@ export class SpaceConverter {
             user_id: entity.userId,
             exhibition_id: entity.exhibition?.id,
             space_template_id: entity.spaceTemplate?.id,
-            spaceDatas: entity.spaceDatas.map((data) =>
-                this.spaceDataConverter.toDto(data),
-            ),
+            spaceDatas: entity.spaceDatas
+                ? entity.spaceDatas.map((data) =>
+                      this.spaceDataConverter.toDto(data),
+                  )
+                : undefined,
         } as SpaceDto;
 
         return dto;

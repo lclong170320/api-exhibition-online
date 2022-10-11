@@ -9,12 +9,14 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { SpaceData } from './space-data.dto';
+import { Space } from './space.dto';
+import { PositionSpace } from './position-space.dto';
 
-export interface Space {
+export interface SpaceTemplate {
     readonly id: number;
-    space_template_id?: number;
-    readonly user_id: number;
     name: string;
-    spaceDatas?: Array<SpaceData>;
+    readonly model_id: number;
+    readonly thumbnail_id: number;
+    position_spaces?: Array<PositionSpace>;
+    spaces?: Array<Space>;
 }

@@ -389,6 +389,75 @@ paths:
                   value:
                     message: Internal server error
                     details: []
+  '/space-templates/{id}':
+    get:
+      summary: Get space template by ID
+      description: Return a single space template
+      operationId: getSpaceTemplateById
+      parameters:
+        - name: id
+          description: ID to get space template
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^[0-9]+$'
+        - in: query
+          name: populate
+          schema:
+            type: array
+            items:
+              type: string
+              example: 'position_spaces'
+          description:
+           " Searching on allow columns:['position_spaces', 'spaces']\n
+            example: http://localhost:3000/api/v1/medias?search=image"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SpaceTemplate'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Bad Request
+                    details:
+                      - field: .params.id
+                        message: 'should match pattern "^[0-9]+$"'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Not Found
+                    details:
+                      - field: .params.id
+                        message: 'The id not exist: "^[0-9]+$"'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Internal server error
+                    details: []
+      tags:
+        - Space
   '/spaces/{id}':
     get:
       summary: Get space by ID
@@ -1452,7 +1521,7 @@ components:
       type: object
       required:
         - id
-        - space_template_id
+        - name
         - user_id
       properties:
         id:
@@ -1546,6 +1615,53 @@ components:
         thumbnail_id:
           type: integer
           readOnly: true
+    SpaceTemplate:
+      type: object
+      required:
+        - id
+        - name
+        - model_id
+        - thumbnail_id
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          minLength: 1
+          maxLength: 255
+        model_id:
+          type: integer
+          readOnly: true
+        thumbnail_id:
+          type: integer
+          readOnly: true
+        position_spaces:
+          type: array
+          items:
+            $ref: '#/components/schemas/PositionSpace'
+        spaces:
+          type: array
+          items:
+            $ref: '#/components/schemas/SpaceResponseBody'
+    PositionSpace:
+      type: object
+      required:
+       - id
+       - object_3d_id
+       - type
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        object_3d_id:
+          type: string
+          pattern: '^[a-zA-Z\d\-_.,\s]+$'
+          maxLength: 255
+        type:
+          type: string
+          minLength: 1
+          maxLength: 255
     Enterprise:
       type: object
       required:

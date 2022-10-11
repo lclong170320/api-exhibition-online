@@ -53,7 +53,6 @@ export class ExhibitionService {
             relations: ['category', 'booths', 'space', 'boothTemplates'],
         });
 
-        console.log(typeof exhibitionEntity.dateExhibitionEnd);
         if (!exhibitionEntity) {
             throw new NotFoundException(
                 `The 'exhibition_id' ${exhibitionId} not found`,
