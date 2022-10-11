@@ -1,24 +1,21 @@
-import { Injectable, Logger as NestLogger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { pino } from 'pino';
+import PinoPretty from 'pino-pretty';
 
 @Injectable()
-export class Logger extends NestLogger {
+export class Logger {
     private logger = pino(
         {
             level: process.env.LOG_LEVEL,
         },
-        pino.destination(process.env.ERROR_LOG_FILE),
+        PinoPretty(),
     );
 
-    error(message: string, stackTrace: string) {
-        this.logger.error(message, stackTrace);
+    error(error: Error) {
+        this.logger.error(error);
     }
 
-    warn(message: string, stackTrace?: string) {
-        this.logger.warn(message, stackTrace);
-    }
-
-    info(message: string, stackTrace?: string) {
-        this.logger.info(message, stackTrace);
+    warn(error: Error) {
+        this.logger.warn(error);
     }
 }

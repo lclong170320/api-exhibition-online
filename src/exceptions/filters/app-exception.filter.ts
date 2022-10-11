@@ -29,28 +29,28 @@ export class AppExceptionFilter implements ExceptionFilter<Error> {
     handleError(error: Error) {
         if (isHttpError(error)) {
             if (error.status < 500) {
-                this.logger.warn(error.message, error.stack);
+                this.logger.warn(error);
             } else {
-                this.logger.error(error.message, error.stack);
+                this.logger.error(error);
             }
             return this.handleHTTPErrors(error);
         }
 
         if (error instanceof OpenapiHttpError) {
-            this.logger.warn(error.message, error.stack);
+            this.logger.warn(error);
             return this.handleOpenapiHttpError(error);
         }
 
         if (error instanceof HttpException) {
             if (error.getStatus() < 500) {
-                this.logger.warn(error.message, error.stack);
+                this.logger.warn(error);
             } else {
-                this.logger.error(error.message, error.stack);
+                this.logger.error(error);
             }
             return this.handleHTTPException(error);
         }
 
-        this.logger.error(error.message, error.stack);
+        this.logger.error(error);
         return this.handleUnknownError(error);
     }
 

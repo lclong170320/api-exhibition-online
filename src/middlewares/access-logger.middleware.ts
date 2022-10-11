@@ -1,4 +1,5 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { NextFunction, Request, Response } from 'express';
 import { HttpLogger } from 'loggers/http.logger';
 
@@ -6,10 +7,15 @@ import { HttpLogger } from 'loggers/http.logger';
 export class AccessLoggerMiddleware
     implements NestMiddleware<Request, Response>
 {
-    constructor(private readonly httpLogger: HttpLogger) {}
+    constructor(
+        private readonly httpLogger: HttpLogger,
+        private readonly configService: ConfigService,
+    ) {}
 
     use(req: Request, res: Response, next: NextFunction) {
-        this.httpLogger.log(req, res);
+        if (this.configService.get('IS_ENABLE_ACCESS_LOGGER') === 'true') {
+            this.httpLogger.log(req, res);
+        }
         next();
     }
 }
