@@ -515,7 +515,7 @@ paths:
     put:
       tags:
         - Enterprise
-      summary: Update document by id enterprise  
+      summary: Update document by id enterprise
       description: Update document by id enterprise
       operationId: updateDocumentsEnterprise
       parameters:
@@ -612,7 +612,7 @@ paths:
         - in: query
           name: sort
           allowReserved: true
-          schema: 
+          schema:
             type: string
           example: 'created_date-desc'
           description: column name for ordering and value [desc,asc]
@@ -728,7 +728,7 @@ paths:
       operationId: getDocument
       parameters:
         - name: id
-          description: ID of enterprises to get documents 
+          description: ID of enterprises to get documents
           in: path
           required: true
           schema:
@@ -1371,6 +1371,9 @@ components:
             - position_space_id: 2
               selected_media_id:
               media_data: base64 string
+            - position_space_id: 3
+              title: 'Tiêu đề vị trí 3'
+              description: 'Mô tả vị trí 3'
     SpaceResponseBody:
       type: object
       required:
@@ -1404,6 +1407,10 @@ components:
            - id: 2
              position_space_id: 2
              media_id: 2
+           - id: 3
+             position_space_id: 3
+             title: 'Tiêu đề vị trí 3'
+             description: 'Mô tả vị trí 3'
     SpaceData:
       type: object
       required:
@@ -1424,6 +1431,10 @@ components:
         media_data:
           type: string
           writeOnly: true
+        title:
+          type: string
+        description:
+          type: string
     BoothTemplateList:
       type: object
       properties:

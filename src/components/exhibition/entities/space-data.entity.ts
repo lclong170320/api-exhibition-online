@@ -18,6 +18,9 @@ export class SpaceData {
     @Column({ name: 'media_id', nullable: true })
     mediaId: number;
 
+    @Column({ length: 255, nullable: true })
+    title: string;
+
     @Column({ nullable: true })
     description: string;
 

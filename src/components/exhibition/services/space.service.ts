@@ -16,6 +16,7 @@ import { SpaceTemplate } from '@/components/exhibition/entities/space-template.e
 import { PositionSpace } from '@/components/exhibition/entities/position-space.entity';
 import { SpaceConverter } from '@/components/exhibition/converters/space.converter';
 import { HttpService } from '@nestjs/axios';
+import { SpaceDataConverter } from '@/components/exhibition/converters/space-data.converter';
 
 @Injectable()
 export class SpaceService {
@@ -25,6 +26,7 @@ export class SpaceService {
         private readonly configService: ConfigService,
         private readonly httpService: HttpService,
         private readonly spaceConverter: SpaceConverter,
+        private readonly spaceDataConverter: SpaceDataConverter,
     ) {}
 
     async getSpaceById(spaceId: string) {
@@ -134,7 +136,7 @@ export class SpaceService {
         spaceDataRepository: Repository<SpaceData>,
         positionSpaceRepository: Repository<PositionSpace>,
     ) {
-        const spaceDataEntity = new SpaceData();
+        const spaceDataEntity = this.spaceDataConverter.toEntity(data);
 
         spaceDataEntity.mediaId = data.selected_media_id;
 

@@ -4,11 +4,20 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class SpaceDataConverter {
+    toEntity(dto: SpaceDataDto) {
+        const entity = new SpaceData();
+        entity.title = dto.title;
+        entity.description = dto.description;
+        return entity;
+    }
+
     toDto(entity: SpaceData) {
         const dto = {
             id: entity.id,
             position_space_id: entity.positionSpace.id,
-            media_id: entity.mediaId,
+            media_id: entity.mediaId ?? undefined,
+            title: entity.title ?? undefined,
+            description: entity.description ?? undefined,
         } as SpaceDataDto;
 
         return dto;

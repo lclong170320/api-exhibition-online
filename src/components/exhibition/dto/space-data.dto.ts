@@ -16,4 +16,6 @@ export interface SpaceData {
     selected_media_id?: number;
     readonly media_id?: number;
     media_data?: string;
+    title?: string;
+    description?: string;
 }
