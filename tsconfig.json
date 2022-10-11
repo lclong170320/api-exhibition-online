@@ -25,6 +25,8 @@
       "@/loggers/*": ["loggers/*"],
       "@/middlewares/*": ["middlewares/*"],
       "@/exceptions/*": ["exceptions/*"],
+      "@/decorators/*": ["decorators/*"],
+
     }
   }
 }

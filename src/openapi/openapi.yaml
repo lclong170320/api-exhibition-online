@@ -1021,6 +1021,80 @@ paths:
                     message: Internal server error
                     details: []
   '/medias':
+    get:
+      tags:
+        - Media
+      summary: Show list medias
+      description: Show list medias
+      operationId: getMedias
+      parameters:
+      - in: query
+        name: page
+        schema:
+          type: string
+          pattern: '^[0-9]+'
+          example: '1'
+        description: The number of items to skip before starting to collect the result set
+      - in: query
+        name: limit
+        schema:
+          type: string
+          pattern: '^[0-9]+'
+          example: '10'
+        description: The numbers of items to return
+      - in: query
+        name: search
+        schema:
+          type: string
+          example: 'image'
+        description:
+         " Searching on allow columns:['id', 'mime', 'user_id', 'created_at']\n
+          example: http://localhost:3000/api/v1/medias?search=image"
+      - in: query
+        name: sortBy
+        allowReserved: true
+        schema:
+          type: string
+          example: 'mime:DESC'
+        description: "Sort on allow columns:[['id', 'mime', 'user_id', 'created_at'],[DESC,ASC]]\n default column:['created_at', 'DESC']"
+      - in: query
+        name: filter.user_id
+        allowReserved: true
+        schema:
+          type: string
+          example: $eq:1
+        description: Filter on the `user_id` field.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MediaList'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Bad Request
+                    details:
+                      - field: .params.id
+                        message: 'should match pattern "^[0-9]+$"'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Internal server error
+                    details: []
     post:
       tags:
         - Media
@@ -1600,11 +1674,32 @@ components:
           type: string
         city:
           type: string
-    Media:
+    MediaList:
       type: object
       required:
-        - data
-        - user_id
+        - page
+        - limit
+        - total
+        - medias
+      properties:
+        page:
+          type: integer
+          example: 0
+          description: The number of items to skip before starting to collect the result set.
+        limit:
+          type: integer
+          example: 10
+          description: The number of items to return.
+        total:
+          type: integer
+          format: int64
+          example: 1
+        medias:
+          type: array
+          items:
+            $ref: '#/components/schemas/Media'
+    Media:
+      type: object
       properties:
         id:
           type: integer

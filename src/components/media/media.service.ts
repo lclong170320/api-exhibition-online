@@ -7,20 +7,47 @@ import * as fileType from 'file-type';
 import { promises } from 'fs';
 import * as path from 'path';
 import { Repository } from 'typeorm';
+import { paginate, FilterOperator } from 'nestjs-paginate';
+import { PaginateQuery } from '@/decorators/paginate.decorator';
 import { uuid } from 'uuidv4';
 import { MediaConverter } from './converters/media.converter';
 import { MediaResponse } from './dto/media-response.dto';
 import { Media as MediaDto } from './dto/media.dto';
 import { Media } from './entities/media.entity';
+import { MediaListConverter } from './converters/media-list.converter';
 
 @Injectable()
 export class MediaService {
+    private readonly limitDefault = 10;
+
     constructor(
         @InjectRepository(Media, DbConnection.mediaCon)
         private readonly mediaRepository: Repository<Media>,
         private configService: ConfigService,
         private mediaConverter: MediaConverter,
+        private mediaListConverter: MediaListConverter,
     ) {}
+
+    async getMedias(query: PaginateQuery) {
+        query.sortBy;
+        const medias = await paginate(query, this.mediaRepository, {
+            maxLimit: query.limit,
+            defaultLimit: this.limitDefault,
+            sortableColumns: ['id', 'mime', 'userId', 'createdAt'],
+            defaultSortBy: [['createdAt', 'DESC']],
+            searchableColumns: ['id', 'mime', 'userId', 'createdAt'],
+            filterableColumns: {
+                userId: [FilterOperator.EQ, FilterOperator.IN],
+            },
+        });
+
+        return this.mediaListConverter.toDto(
+            medias.meta.currentPage,
+            medias.meta.itemsPerPage,
+            medias.meta.totalItems,
+            medias.data,
+        );
+    }
 
     async generateMedia(mediaDto: MediaDto): Promise<MediaDto> {
         const allowExtension = this.configService
