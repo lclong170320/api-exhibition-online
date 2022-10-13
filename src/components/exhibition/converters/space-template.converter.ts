@@ -16,6 +16,7 @@ export class SpaceTemplateConverter {
             name: entity.name,
             model_id: entity.modelId,
             thumbnail_id: entity.thumbnailId,
+            exhibition_map_id: entity.exhibitionMapId,
             position_spaces: entity.positionSpaces
                 ? entity.positionSpaces.map((data) =>
                       this.positionSpaceConverter.toDto(data),

@@ -17,6 +17,7 @@ export interface SpaceTemplate {
     name: string;
     readonly model_id: number;
     readonly thumbnail_id: number;
+    readonly exhibition_map_id?: number;
     position_spaces?: Array<PositionSpace>;
     spaces?: Array<Space>;
 }

@@ -270,11 +270,11 @@ paths:
     post:
       tags:
         - Booth
-      summary: Add a booth 
-      description: Add a booth 
+      summary: Add a booth
+      description: Add a booth
       operationId: addBooth
       requestBody:
-        description: Create a booth 
+        description: Create a booth
         content:
           application/json:
             schema:
@@ -454,8 +454,7 @@ paths:
               type: string
               example: 'position_spaces'
           description:
-           " Searching on allow columns:['position_spaces', 'spaces']\n
-            example: http://localhost:3000/api/v1/medias?search=image"
+           " Searching on allow columns:['position_spaces', 'spaces']"
       responses:
         '200':
           description: OK
@@ -523,7 +522,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SpaceResponseBody'
+                $ref: '#/components/schemas/Space'
         '400':
           description: Bad request
           content:
@@ -580,7 +579,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SpaceRequestBody'
+              $ref: '#/components/schemas/Space'
         required: true
       responses:
         '200':
@@ -588,7 +587,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SpaceResponseBody'
+                $ref: '#/components/schemas/Space'
         '400':
           description: Validation error
           content:
@@ -1535,38 +1534,13 @@ components:
           type: string
         description:
           type: string
-    SpaceRequestBody:
+    Space:
       type: object
       required:
         - id
-      properties:
-        id:
-          type: integer
-          readOnly: true
-          example: 1
-        space_template_id:
-          type: integer
-          example: 1
-        spaceDatas:
-          type: array
-          items:
-            $ref: '#/components/schemas/SpaceData'
-          example:
-            - position_space_id: 1
-              selected_media_id: 1
-              media_data:
-            - position_space_id: 2
-              selected_media_id:
-              media_data: base64 string
-            - position_space_id: 3
-              title: 'Tiêu đề vị trí 3'
-              description: 'Mô tả vị trí 3'
-    SpaceResponseBody:
-      type: object
-      required:
-        - id
+        - space_template_id
         - name
-        - user_id
+        - space_datas
       properties:
         id:
           type: integer
@@ -1574,35 +1548,26 @@ components:
           example: 1
         space_template_id:
           type: integer
-        user_id:
-          type: integer
-          readOnly: true
           example: 1
         name:
           type: string
           minLength: 1
           maxLength: 255
-          example: Mẫu không gian tiền sảnh mặc định
-        spaceDatas:
+          example: 'Mau khong gian tien sanh mac dinh'
+        user_id:
+          type: integer
+          readOnly: true
+          example: 1
+        space_data:
           type: array
           items:
             $ref: '#/components/schemas/SpaceData'
-          example:
-           - id: 1
-             position_space_id: 1
-             media_id: 1
-           - id: 2
-             position_space_id: 2
-             media_id: 2
-           - id: 3
-             position_space_id: 3
-             title: 'Tiêu đề vị trí 3'
-             description: 'Mô tả vị trí 3'
     SpaceData:
       type: object
       required:
         - id
         - position_space_id
+        - media_id
       properties:
         id:
           type: integer
@@ -1671,7 +1636,7 @@ components:
           readOnly: true
         thumbnail_id:
           type: integer
-          readOnly: true  
+          readOnly: true
         position_booths:
           type: array
           items:
@@ -1697,6 +1662,9 @@ components:
         thumbnail_id:
           type: integer
           readOnly: true
+        exhibition_map_id:
+          type: integer
+          readOnly: true
         position_spaces:
           type: array
           items:
@@ -1704,7 +1672,7 @@ components:
         spaces:
           type: array
           items:
-            $ref: '#/components/schemas/SpaceResponseBody'
+            $ref: '#/components/schemas/Space'
     PositionSpace:
       type: object
       required:
@@ -1715,6 +1683,10 @@ components:
         id:
           type: integer
           readOnly: true
+        name:
+          type: string
+          minLength: 1
+          maxLength: 255
         object_3d_id:
           type: string
           pattern: '^[a-zA-Z\d\-_.,\s]+$'
@@ -1838,19 +1810,6 @@ components:
         media_data:
           type: string
           writeOnly: true
-    Address:
-      type: object
-      properties:
-        number:
-          type: string
-        street:
-          type: string
-        wards:
-          type: string
-        district:
-          type: string
-        city:
-          type: string
     MediaList:
       type: object
       required:
@@ -1983,7 +1942,7 @@ components:
         documents:
           type: array
           items:
-            $ref: '#/components/schemas/EnterpriseDocument'     
+            $ref: '#/components/schemas/EnterpriseDocument'
     PositionBooth:
           type: object
           required:

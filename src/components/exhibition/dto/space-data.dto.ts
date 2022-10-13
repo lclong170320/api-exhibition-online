@@ -12,9 +12,9 @@
 
 export interface SpaceData {
     readonly id: number;
+    readonly media_id: number;
     position_space_id: number;
     selected_media_id?: number;
-    readonly media_id?: number;
     media_data?: string;
     title?: string;
     description?: string;

@@ -16,6 +16,9 @@ export class PositionSpace {
     @PrimaryGeneratedColumn()
     id: number;
 
+    @Column({ length: 255 })
+    name: string;
+
     @Column({ name: 'object_3d_id', length: 255 })
     object3dId: string;
 

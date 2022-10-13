@@ -8,6 +8,7 @@ export class PositionSpaceConverter {
         const dto = {
             id: entity.id,
             object_3d_id: entity.object3dId,
+            name: entity.name,
             type: entity.type,
         } as PositionSpaceDto;
 

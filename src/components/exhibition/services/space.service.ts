@@ -172,7 +172,7 @@ export class SpaceService {
         positionSpaceRepository: Repository<PositionSpace>,
     ) {
         const newSpaceDatas = await Promise.all(
-            spaceDto.spaceDatas.map(async (data) => {
+            spaceDto.space_datas.map(async (data) => {
                 const newSpaceData = await this.createSpaceData(
                     data,
                     space,

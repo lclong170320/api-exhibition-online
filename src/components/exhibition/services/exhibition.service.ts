@@ -187,6 +187,7 @@ export class ExhibitionService {
                 const createdExhibition = await exhibitionRepository.save(
                     exhibitionEntity,
                 );
+
                 const booths = await this.createBooths(
                     createdExhibition,
                     boothRepository,

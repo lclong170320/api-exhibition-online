@@ -12,6 +12,7 @@
 
 export interface PositionSpace {
     readonly id: number;
+    name?: string;
     object_3d_id: string;
     type: string;
 }
