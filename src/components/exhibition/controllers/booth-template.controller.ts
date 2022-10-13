@@ -1,5 +1,6 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { BoothTemplateService } from '@/components/exhibition/services/booth-template.service';
+import { BoothTemplate as BoothTemplateDto } from '@/components/exhibition/dto/booth-template.dto';
 
 @Controller('booth-templates')
 export class BoothTemplateController {
@@ -16,5 +17,10 @@ export class BoothTemplateController {
         @Query('limit') limit: string,
     ) {
         return this.boothTemplateService.findBoothTemplates(offset, limit);
+    }
+
+    @Post()
+    createBoothTemplate(@Body() boothTemplate: BoothTemplateDto) {
+        return this.boothTemplateService.createBoothTemplate(boothTemplate);
     }
 }

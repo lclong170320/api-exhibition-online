@@ -16,6 +16,9 @@ export class PositionBooth {
     @PrimaryGeneratedColumn()
     id: number;
 
+    @Column({ name: 'location_name', length: 255 })
+    locationName: string;
+
     @Column({ name: 'object_3d_id', length: 255 })
     object3dId: string;
 

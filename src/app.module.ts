@@ -43,7 +43,7 @@ export class AppModule implements NestModule {
                         allowUnknownQueryParameters: true,
                         coerceTypes: false,
                     },
-                    validateResponses: true,
+                    // validateResponses: true,
                     validateFormats: 'full',
                 }),
             )

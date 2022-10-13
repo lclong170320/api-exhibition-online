@@ -16,6 +16,9 @@ export class BoothTemplate {
     @PrimaryGeneratedColumn()
     id: number;
 
+    @Column({ name: 'user_id' })
+    userId: number;
+
     @Column({ name: 'name' })
     name: string;
 

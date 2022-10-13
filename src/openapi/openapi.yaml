@@ -267,6 +267,50 @@ paths:
                 $ref: '#/components/schemas/ErrorResponseBody'
       tags:
         - Booth
+    post:
+      tags:
+        - Booth
+      summary: Add a booth 
+      description: Add a booth 
+      operationId: addBooth
+      requestBody:
+        description: Create a booth 
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BoothTemplate'
+        required: true
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BoothTemplate'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Bad Request
+                    details:
+                      - field: .params.id
+                        message: 'should match pattern "^[0-9]+$"'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Internal server error
+                    details: []
   '/booths/{id}':
      get:
       summary: Get booth by ID
@@ -1601,10 +1645,23 @@ components:
       type: object
       required:
         - id
+        - model_data
+        - thumbnail_data
+        - name
+        - user_id
       properties:
         id:
           type: integer
           readOnly: true
+        user_id:
+          type: integer
+          readOnly: true
+        model_data:
+          type: string
+          writeOnly: true
+        thumbnail_data:
+          type: string
+          writeOnly: true
         name:
           type: string
           minLength: 1
@@ -1614,7 +1671,11 @@ components:
           readOnly: true
         thumbnail_id:
           type: integer
-          readOnly: true
+          readOnly: true  
+        position_booths:
+          type: array
+          items:
+            $ref: '#/components/schemas/PositionBooth'
     SpaceTemplate:
       type: object
       required:
@@ -1922,4 +1983,26 @@ components:
         documents:
           type: array
           items:
-            $ref: '#/components/schemas/EnterpriseDocument'
+            $ref: '#/components/schemas/EnterpriseDocument'     
+    PositionBooth:
+          type: object
+          required:
+            - id
+            - type
+            - object_3d_id
+            - location_name
+          properties:
+            id:
+              type: number
+              readOnly: true
+              example: 1
+            location_name:
+              type: string
+              example: 'LOGO'
+            type:
+              type: string
+              example: 'img'
+            object_3d_id:
+              type: string
+              pattern: '^[a-zA-Z\d\-_.,\s]+$'
+              maxLength: 255

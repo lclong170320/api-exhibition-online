@@ -32,6 +32,7 @@ import { SpaceTemplateController } from './controllers/space-template.controller
 import { SpaceTemplateService } from './services/space-template.service';
 import { SpaceTemplateConverter } from './converters/space-template.converter';
 import { PositionSpaceConverter } from './converters/position-space.converter';
+import { PositionBoothConverter } from './converters/position-booth.converter';
 
 @Module({
     controllers: [
@@ -57,6 +58,7 @@ import { PositionSpaceConverter } from './converters/position-space.converter';
         SpaceDataConverter,
         SpaceTemplateConverter,
         PositionSpaceConverter,
+        PositionBoothConverter,
     ],
     imports: [
         TypeOrmModule.forFeature(

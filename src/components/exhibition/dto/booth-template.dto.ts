@@ -1,3 +1,4 @@
+import { PositionBooth } from './position-booth.dto';
 /**
  * COMPAON API
  * API definition for COMPAON
@@ -9,10 +10,14 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-
+// eslint-disable-next-line @typescript-eslint/no-namespace
 export interface BoothTemplate {
     readonly id: number;
-    name?: string;
+    readonly user_id: number;
+    model_data: string;
+    thumbnail_data: string;
+    name: string;
     readonly model_id?: number;
     readonly thumbnail_id?: number;
+    position_booths?: Array<PositionBooth>;
 }
