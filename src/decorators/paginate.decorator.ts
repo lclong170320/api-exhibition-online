@@ -37,14 +37,15 @@ export const Paginate = createParamDecorator(
         const searchBy: string[] = [];
         const populate: string[] = [];
 
-        if (query.sortBy) {
-            const params = !Array.isArray(query.sortBy)
-                ? [query.sortBy]
-                : query.sortBy;
+        if (query.sort_by) {
+            const params = !Array.isArray(query.sort_by)
+                ? [query.sort_by]
+                : query.sort_by;
             for (const param of params) {
                 if (isString(param)) {
                     const items = param.split(':');
                     items[0] = camelCase(items[0]);
+                    items[1] = items[1].toUpperCase();
                     if (items.length === 2) {
                         sortBy.push(items as [string, string]);
                     }
@@ -93,9 +94,7 @@ export const Paginate = createParamDecorator(
                 ? parseInt(query.limit.toString(), 10)
                 : undefined,
             sortBy: sortBy.length ? sortBy : undefined,
-            search: query.search
-                ? camelCase(query.search.toString())
-                : undefined,
+            search: query.search ? query.search.toString() : undefined,
             searchBy: searchBy.length ? searchBy : undefined,
             filter: Object.keys(filter).length ? filter : undefined,
             populate: populate.length ? populate : undefined,

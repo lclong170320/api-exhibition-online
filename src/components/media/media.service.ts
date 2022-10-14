@@ -29,7 +29,6 @@ export class MediaService {
     ) {}
 
     async getMedias(query: PaginateQuery) {
-        query.sortBy;
         const medias = await paginate(query, this.mediaRepository, {
             maxLimit: query.limit,
             defaultLimit: this.limitDefault,

@@ -9,7 +9,6 @@ import { HttpModule } from '@nestjs/axios';
 import { DocumentConverter } from './converters/enterprise-document.converter';
 import { EnterpriseConverter } from './converters/enterprise.converter';
 import { EnterpriseListConverter } from './converters/enterprise-list.converter';
-import { EnterpriseRepository } from './enterprise.repository';
 import { DocumentListConverter } from './converters/document-list.converter';
 
 @Module({
@@ -19,7 +18,6 @@ import { DocumentListConverter } from './converters/document-list.converter';
         DocumentConverter,
         EnterpriseConverter,
         EnterpriseListConverter,
-        EnterpriseRepository,
         DocumentListConverter,
     ],
     imports: [

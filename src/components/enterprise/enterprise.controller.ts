@@ -9,8 +9,8 @@ import {
     Put,
     Query,
 } from '@nestjs/common';
+import { Paginate, PaginateQuery } from '@/decorators/paginate.decorator';
 import { EnterpriseDocument as EnterpriseDocumentDto } from './dto/enterprise-document.dto';
-import { EnterpriseQuery } from './dto/enterprise-query.dto';
 import { Enterprise as EnterpriseDto } from './dto/enterprise.dto';
 import { EnterpriseService } from './enterprise.service';
 @Controller('enterprises')
@@ -18,7 +18,7 @@ export class EnterpriseController {
     constructor(private readonly enterpriseService: EnterpriseService) {}
 
     @Get()
-    getEnterprises(@Query() query: EnterpriseQuery) {
+    getEnterprises(@Paginate() query: PaginateQuery) {
         return this.enterpriseService.getEnterprises(query);
     }
 

@@ -3,6 +3,8 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
+import { paginate } from 'nestjs-paginate';
+import { PaginateQuery } from '@/decorators/paginate.decorator';
 import { toDataURL } from 'qrcode';
 import { lastValueFrom, map } from 'rxjs';
 import { Repository } from 'typeorm';
@@ -11,22 +13,18 @@ import { DocumentConverter } from './converters/enterprise-document.converter';
 import { EnterpriseListConverter } from './converters/enterprise-list.converter';
 import { EnterpriseConverter } from './converters/enterprise.converter';
 import { EnterpriseDocument as NewDocumentDto } from './dto/enterprise-document.dto';
-import { EnterpriseQuery } from './dto/enterprise-query.dto';
 import { Enterprise as EnterpriseDto } from './dto/enterprise.dto';
-import {
-    ALLOWED_SORT_COLUMNS,
-    EnterpriseRepository,
-} from './enterprise.repository';
+
 import { Document } from './entities/document.entity';
+import { Enterprise } from './entities/enterprise.entity';
 
 @Injectable()
 export class EnterpriseService {
     private readonly offsetDefault = 0;
     private readonly limitDefault = 10;
-    private readonly ascending = 'ASC';
-    private readonly descending = 'DESC';
     constructor(
-        private readonly enterpriseRepository: EnterpriseRepository,
+        @InjectRepository(Enterprise, DbConnection.enterpriseCon)
+        private readonly enterpriseRepository: Repository<Enterprise>,
         @InjectRepository(Document, DbConnection.enterpriseCon)
         private readonly documentRepository: Repository<Document>,
         private readonly documentConverter: DocumentConverter,
@@ -37,59 +35,25 @@ export class EnterpriseService {
         private readonly configService: ConfigService,
     ) {}
 
-    async getEnterprises(query: EnterpriseQuery) {
-        const sortValue = this.parseSort(query.sort);
-        if (sortValue.size === 0) {
-            sortValue.set('created_at', 'DESC');
-        }
-
-        const searchValue = query.search ? query.search : '';
-
-        const offsetValue = query.offset
-            ? parseInt(query.offset)
-            : this.offsetDefault;
-        const limitValue = query.limit
-            ? parseInt(query.limit)
-            : this.limitDefault;
-
-        //TODO add column search createdBy
-        const [enterprisesEntity, count] =
-            await this.enterpriseRepository.getEnterprises(
-                searchValue,
-                limitValue,
-                offsetValue,
-                sortValue,
-            );
+    async getEnterprises(query: PaginateQuery) {
+        const enterprises = await paginate(query, this.enterpriseRepository, {
+            maxLimit: query.limit,
+            defaultLimit: this.limitDefault,
+            sortableColumns: [
+                'abbreviation',
+                'createdBy',
+                'createdAt',
+                'internationalName',
+            ],
+            defaultSortBy: [['createdAt', 'DESC']],
+            searchableColumns: ['abbreviation', 'createdBy'],
+        });
 
         return this.enterpriseListConverter.toDto(
-            enterprisesEntity,
-            limitValue,
-            offsetValue,
-            count,
-        );
-    }
-
-    private parseSort(sortParam: string) {
-        const sort: Map<string, string> = new Map();
-        if (!sortParam || sortParam.length === 0) {
-            return sort;
-        }
-        sortParam.split(',').map((sortItem) => {
-            const [fieldName, ordering] = sortItem.split('-');
-            if (
-                ALLOWED_SORT_COLUMNS.includes(fieldName) &&
-                this.isValidOrdering(ordering)
-            ) {
-                sort.set(fieldName, ordering.toUpperCase());
-            }
-        });
-        return sort;
-    }
-
-    private isValidOrdering(ordering: string) {
-        return (
-            ordering.toUpperCase() === this.ascending ||
-            ordering.toUpperCase() === this.descending
+            enterprises.data,
+            enterprises.meta.itemsPerPage,
+            enterprises.meta.currentPage,
+            enterprises.meta.totalItems,
         );
     }
 

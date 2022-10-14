@@ -705,28 +705,33 @@ paths:
       operationId: getEnterprises
       parameters:
         - in: query
-          name: offset
+          name: page
           schema:
-            type: integer
-            default: 0
-          description: The number of items to skip before starting to collect the result set
+            type: string
+            pattern: '^[0-9]+$'
+            example: '1'
+          description: Results page you want to retrieve
         - in: query
           name: limit
           schema:
-            type: integer
-            default: 10
+            type: string
+            pattern: '^[0-9]+$'
+            default: '10'
           description: The numbers of items to return
         - in: query
           name: search
           schema:
             type: string
+            example: 'davavina'
           description: Searching keyword
         - in: query
-          name: sort
+          name: sort_by
           allowReserved: true
           schema:
-            type: string
-          example: 'created_date-desc'
+            type: array
+            items:
+              type: string
+          example: 'abbreviation:desc'
           description: column name for ordering and value [desc,asc]
       responses:
         '200':
@@ -963,7 +968,7 @@ paths:
         required: true
         schema:
           type: string
-          pattern: '^[0-9]+'
+          pattern: '^[0-9]+$'
     get:
       summary: Get enterprise by ID
       description: Return a single enterprise
@@ -1163,7 +1168,7 @@ paths:
          " Searching on allow columns:['id', 'mime', 'user_id', 'created_at']\n
           example: http://localhost:3000/api/v1/medias?search=image"
       - in: query
-        name: sortBy
+        name: sort_by
         allowReserved: true
         schema:
           type: string
@@ -1899,18 +1904,18 @@ components:
       type: object
       required:
         - limit
-        - offset
+        - page
         - total
         - enterprises
       properties:
+        page:
+          type: integer
+          example: 0
+          description: The number of items to skip before starting to collect the result set.
         limit:
           type: integer
-          format: int64
           example: 10
-        offset:
-          type: integer
-          format: int64
-          example: 0
+          description: The number of items to return.
         total:
           type: integer
           format: int64

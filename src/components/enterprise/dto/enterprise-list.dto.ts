@@ -13,7 +13,7 @@ import { Enterprise } from './enterprise.dto';
 
 export interface EnterpriseList {
     limit: number;
-    offset: number;
+    page: number;
     total: number;
     enterprises: Array<Enterprise>;
 }
