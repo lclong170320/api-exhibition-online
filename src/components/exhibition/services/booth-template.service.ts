@@ -113,17 +113,18 @@ export class BoothTemplateService {
                 const positionBoothRepository =
                     manager.getRepository(PositionBooth);
 
-                const user_id = 1; // TODO: handle getUserId from access token
+                const created_by = 1; // TODO: handle getUserId from access token
                 const boothTemplateEntity =
                     this.boothTemplateConverter.toEntity(boothTemplateDto);
                 boothTemplateEntity.modelId = await this.createUrlMedias(
                     boothTemplateDto.model_data,
                 );
+
                 boothTemplateEntity.thumbnailId = await this.createUrlMedias(
                     boothTemplateDto.thumbnail_data,
                 );
-                boothTemplateEntity.userId = user_id;
-
+                boothTemplateEntity.createdBy = created_by;
+                boothTemplateEntity.createdDate = new Date();
                 const createdBoothTemplate = await boothTemplateRepository.save(
                     boothTemplateEntity,
                 );

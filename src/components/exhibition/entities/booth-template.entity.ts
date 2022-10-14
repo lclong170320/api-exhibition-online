@@ -16,11 +16,14 @@ export class BoothTemplate {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({ name: 'user_id' })
-    userId: number;
+    @Column({ name: 'created_by' })
+    createdBy: number;
 
     @Column({ name: 'name' })
     name: string;
+
+    @Column({ type: 'datetime', name: 'created_date' })
+    createdDate: Date;
 
     @Column({ name: 'model_id' })
     modelId: number;

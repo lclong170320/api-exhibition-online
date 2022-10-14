@@ -13,7 +13,8 @@ import { PositionBooth } from './position-booth.dto';
 // eslint-disable-next-line @typescript-eslint/no-namespace
 export interface BoothTemplate {
     readonly id: number;
-    readonly user_id: number;
+    readonly created_by: number;
+    readonly created_date: string;
     model_data: string;
     thumbnail_data: string;
     name: string;

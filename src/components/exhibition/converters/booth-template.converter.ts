@@ -16,8 +16,9 @@ export class BoothTemplateConverter {
     toDto(entity: BoothTemplate) {
         const dto = {
             id: entity.id,
-            user_id: entity.userId,
+            created_by: entity.createdBy,
             name: entity.name,
+            created_date: entity.createdDate.toISOString(),
             model_id: entity.modelId,
             thumbnail_id: entity.thumbnailId,
             position_booths: entity.positionBooth
