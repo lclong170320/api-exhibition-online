@@ -29,17 +29,26 @@ export class SpaceService {
         private readonly spaceDataConverter: SpaceDataConverter,
     ) {}
 
-    async getSpaceById(spaceId: string) {
+    async getSpaceById(spaceId: string, populate: string[]) {
+        const allowPopulate = [
+            'spaceDatas',
+            'spaceDatas.positionSpace',
+            'spaceTemplate',
+        ];
+
+        populate &&
+            populate.map((value) => {
+                if (!allowPopulate.includes(value)) {
+                    throw new BadRequestException('Query value is not allowed');
+                }
+            });
+
         const spaceRepository = this.dataSource.getRepository(Space);
         const firstSpace = await spaceRepository.findOne({
             where: {
                 id: parseInt(spaceId),
             },
-            relations: [
-                'spaceDatas',
-                'spaceTemplate',
-                'spaceDatas.positionSpace',
-            ],
+            relations: populate,
         });
 
         if (!firstSpace) {

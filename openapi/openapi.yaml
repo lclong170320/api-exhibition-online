@@ -1,0 +1,1995 @@
+openapi: 3.0.0
+info:
+  title: COMPAON API
+  version: 1.0.0
+  contact:
+    email: compaon@dalavina.com
+    name: Compaon
+    url: 'https://dalavina.com/compaon'
+  license:
+    name: EULA
+    url: 'https://en.wikipedia.org/wiki/End-user_license_agreement'
+  description: API definition for COMPAON
+tags:
+  - name: Booth
+    description: API to interact with the Booth
+  - name: Exhibition
+    description: API to interact with the Exhibition
+  - name: Media
+    description: API to interact with the Media
+  - name: Enterprise
+    description: API to interact with the Enterprise
+  - name: Space
+    description: API to interact with the Space
+servers:
+  - url: 'http://localhost:3000/api/v1'
+  - url: 'http://52.74.156.150:3000/api/v1'
+paths:
+  '/exhibitions':
+    get:
+      summary: Get exhibitions
+      description: Return multiple exhibitions
+      operationId: getExhibitions
+      parameters:
+        - in: query
+          name: offset
+          schema:
+            type: integer
+            default: 0
+          description: The number of items to skip before starting to collect the result set
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 10
+          description: The numbers of items to return
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  offset:
+                    type: integer
+                    format: int64
+                    example: 0
+                  limit:
+                    type: integer
+                    format: int64
+                    example: 10
+                  total:
+                    type: integer
+                    format: int64
+                    example: 1
+                  exhibitions:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Exhibition'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+      tags:
+        - Exhibition
+    post:
+      tags:
+        - Exhibition
+      summary: Add a basic information of exhibition
+      description: Add a basic information of exhibition
+      operationId: addInfoExhibition
+      requestBody:
+        description: Create a basic information exhibition
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Exhibition'
+        required: true
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Exhibition'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Bad Request
+                    details:
+                      - field: .params.id
+                        message: 'should match pattern "^[0-9]+$"'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Internal server error
+                    details: []
+  '/exhibitions/{id}':
+    get:
+      summary: Get exhibition by ID
+      description: Return a single exhibition
+      operationId: getExhibitionById
+      parameters:
+        - name: id
+          description: ID to get exhibition
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^[0-9]+$'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Exhibition'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Bad Request
+                    details:
+                      - field: .params.id
+                        message: 'should match pattern "^[0-9]+$"'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Internal server error
+                    details: []
+      tags:
+        - Exhibition
+  '/booth-templates/{id}':
+    get:
+      summary: Get booth template by ID
+      description: Return a single booth template
+      operationId: getBoothTemplateById
+      parameters:
+        - name: id
+          description: ID to get booth template
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^[0-9]+$'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BoothTemplate'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Bad Request
+                    details:
+                      - field: .params.id
+                        message: 'should match pattern "^[0-9]+$"'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Not Found
+                    details:
+                      - field: .params.id
+                        message: 'The id not exist: "^[0-9]+$"'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Internal server error
+                    details: []
+      tags:
+        - Booth
+  '/booth-templates':
+    get:
+      summary: Get list of booth templates
+      description: Return list of booth templates
+      operationId: getBoothTemplates
+      parameters:
+        - in: query
+          name: offset
+          schema:
+            type: integer
+          description: The number of items to skip before starting to collect the result set
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: The numbers of items to return
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BoothTemplateList'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+      tags:
+        - Booth
+    post:
+      tags:
+        - Booth
+      summary: Add a booth
+      description: Add a booth
+      operationId: addBooth
+      requestBody:
+        description: Create a booth
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BoothTemplate'
+        required: true
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BoothTemplate'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Bad Request
+                    details:
+                      - field: .params.id
+                        message: 'should match pattern "^[0-9]+$"'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Internal server error
+                    details: []
+  '/booths/{id}':
+     get:
+      summary: Get booth by ID
+      description: Return a single booth
+      operationId: getBoothById
+      parameters:
+      - name: id
+        description: ID to update booth
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: '^[0-9]+$'
+      tags:
+        - Booth
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BoothResponeBody'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Bad Request
+                    details:
+                      - field: .params.id
+                        message: 'should match pattern "^[0-9]+$"'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Not Found
+                    details:
+                      - field: .params.id
+                        message: 'The id not exist: "^[0-9]+$"'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Internal server error
+                    details: []
+     put:
+      tags:
+        - Booth
+      summary: Update an existing booth
+      description: Update an existing booth by Id
+      operationId: updateBooth
+      parameters:
+        - name: id
+          description: ID to update booth
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^[0-9]+$'
+      requestBody:
+        description: Update an existing booth
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BoothRequestBody'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BoothResponeBody'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Bad Request
+                    details:
+                      - field: .params.id
+                        message: 'should match pattern "^[0-9]+$"'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Not found
+                    details: []
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Internal server error
+                    details: []
+  '/space-templates/{id}':
+    get:
+      summary: Get space template by ID
+      description: Return a single space template
+      operationId: getSpaceTemplateById
+      parameters:
+        - name: id
+          description: ID to get space template
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^[0-9]+$'
+        - in: query
+          name: populate
+          schema:
+            type: array
+            items:
+              type: string
+              example: 'position_spaces'
+          description:
+           " Searching on allow columns:['position_spaces', 'spaces']"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SpaceTemplate'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Bad Request
+                    details:
+                      - field: .params.id
+                        message: 'should match pattern "^[0-9]+$"'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Not Found
+                    details:
+                      - field: .params.id
+                        message: 'The id not exist: "^[0-9]+$"'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Internal server error
+                    details: []
+      tags:
+        - Space
+  '/spaces/{id}':
+    get:
+      summary: Get space by ID
+      description: Return a single space
+      operationId: getSpaceById
+      parameters:
+      - name: id
+        description: ID to update space
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: '^[0-9]+$'
+      - in: query
+        name: populate
+        schema:
+          type: array
+          items:
+            type: string
+            example: 'position_spaces'
+        description:
+         " Searching on allow columns:['space_datas, space_datas.position_space, space_template']"
+      tags:
+        - Space
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Space'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Bad Request
+                    details:
+                      - field: .params.id
+                        message: 'should match pattern "^[0-9]+$"'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Not Found
+                    details:
+                      - field: .params.id
+                        message: 'The id not exist: "^[0-9]+$"'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Internal server error
+                    details: []
+    put:
+      tags:
+        - Space
+      summary: Update an existing space
+      description: Update an existing space by Id
+      operationId: updateSpace
+      parameters:
+        - name: id
+          description: ID to update space
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^[0-9]+$'
+      requestBody:
+        description: Update an existing space
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Space'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Space'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Bad Request
+                    details:
+                      - field: .params.id
+                        message: 'should match pattern "^[0-9]+$"'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Not found
+                    details: []
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Internal server error
+                    details: []
+  '/enterprises/{id}/document/{document_id}':
+    put:
+      tags:
+        - Enterprise
+      summary: Update document by id enterprise
+      description: Update document by id enterprise
+      operationId: updateDocumentsEnterprise
+      parameters:
+        - in: path
+          schema:
+            type: string
+            pattern: '^[0-9]+$'
+          name: id
+          required: true
+          description: The enterprise's ID will be update documents
+        - in: path
+          name: document_id
+          required: true
+          schema:
+            type: string
+            pattern: '^[0-9]+$'
+          description: The document's ID will be update documents
+      requestBody:
+        description: Update document enterprise's
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EnterpriseDocument'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnterpriseDocument'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Bad Request
+                    details:
+                      - field: .params.id
+                        message: 'should match pattern "^[0-9]+$"'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Not Found
+                    details:
+                      - field: .params.id
+                        message: 'The id not exist: "^[0-9]+$"'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Internal server error
+                    details: []
+  '/enterprises':
+    get:
+      tags:
+        - Enterprise
+      summary: Show list enterprises
+      description: Show list enterprises
+      operationId: getEnterprises
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: string
+            pattern: '^[0-9]+$'
+            example: '1'
+          description: Results page you want to retrieve
+        - in: query
+          name: limit
+          schema:
+            type: string
+            pattern: '^[0-9]+$'
+            default: '10'
+          description: The numbers of items to return
+        - in: query
+          name: search
+          schema:
+            type: string
+            example: 'davavina'
+          description: Searching keyword
+        - in: query
+          name: sort_by
+          allowReserved: true
+          schema:
+            type: array
+            items:
+              type: string
+          example: 'abbreviation:desc'
+          description: column name for ordering and value [desc,asc]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnterpriseList'
+    post:
+      tags:
+        - Enterprise
+      summary: Add a new enterprise
+      description: Add a new enterprise
+      operationId: addEnterprise
+      requestBody:
+        description: Create a new enterprise
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Enterprise'
+        required: true
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Enterprise'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Bad Request
+                    details:
+                      - field: .params.id
+                        message: 'should match pattern "^[0-9]+$"'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Internal server error
+                    details: []
+  '/enterprises/{id}/documents':
+    post:
+      tags:
+        - Enterprise
+      summary: Add a new enterprise's document
+      description: Add a new enterprise's document
+      operationId: addEnterpriseDocument
+      parameters:
+        - schema:
+            type: string
+            pattern: '^[0-9]+$'
+          name: id
+          in: path
+          required: true
+          description: The enterprise's ID will be add new document
+      requestBody:
+        description: Create a new enterprise's document
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EnterpriseDocument'
+        required: true
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnterpriseDocument'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Bad Request
+                    details:
+                      - field: .params.id
+                        message: 'should match pattern "^[0-9]+$"'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Internal server error
+                    details: []
+    get:
+      tags:
+        - Enterprise
+      summary: Get documents of enterprise
+      description: Return a documents
+      operationId: getDocument
+      parameters:
+        - name: id
+          description: ID of enterprises to get documents
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^[0-9]+$'
+        - in: query
+          name: offset
+          schema:
+            type: integer
+            default: 0
+          description: The number of items to skip before starting to collect the result set
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 10
+          description: The numbers of items to return
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentList'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Bad Request
+                    details:
+                      - field: .params.id
+                        message: 'should match pattern "^[0-9]+$"'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Not Found
+                    details:
+                      - field: .params.id
+                        message: 'The id not exist: "^[0-9]+$"'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Internal server error
+                    details: []
+  '/enterprises/{id}/qrcodes':
+    post:
+      tags:
+        - Enterprise
+      summary: Create a enterprise's qrcode
+      description: Create a enterprise's qrcode
+      operationId: createQrCode
+      parameters:
+        - schema:
+            type: string
+            pattern: '^[0-9]+$'
+          name: id
+          in: path
+          required: true
+          description: The enterprise's ID will be add new qrcode
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  url:
+                    type: string
+              examples:
+                example-1:
+                  value:
+                    url: 'base64'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Bad Request
+                    details:
+                      - field: .params.id
+                        message: 'should match pattern "^[0-9]+$"'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Internal server error
+                    details: []
+  '/enterprises/{id}':
+    parameters:
+      - name: id
+        description: ID to get enterprise
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: '^[0-9]+$'
+    get:
+      summary: Get enterprise by ID
+      description: Return a single enterprise
+      operationId: getEnterpriseById
+      tags:
+        - Enterprise
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Enterprise'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Bad Request
+                    details:
+                      - field: .params.id
+                        message: 'should match pattern "^[0-9]+$"'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Not Found
+                    details:
+                      - field: .params.id
+                        message: 'The id not exist: "^[0-9]+$"'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Internal server error
+                    details: []
+    put:
+      tags:
+        - Enterprise
+      summary: Update an existing enterprise
+      description: Update an existing enterprise by Id
+      operationId: updateEnterprise
+      parameters:
+        - name: id
+          description: ID to update enterprise
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^[0-9]+$'
+      requestBody:
+        description: Update an existent enterprise
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Enterprise'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Enterprise'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Bad Request
+                    details:
+                      - field: .params.id
+                        message: 'should match pattern "^[0-9]+$"'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Not Found
+                    details:
+                      - field: .params.id
+                        message: 'The id not exist: "^[0-9]+$"'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Internal server error
+                    details: []
+    delete:
+      tags:
+        - Enterprise
+      summary: Delete an existing enterprise
+      description: Delete an existing enterprise by Id
+      operationId: deleteEnterprise
+      parameters:
+        - name: id
+          description: ID to delete enterprise
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^[0-9]+$'
+      responses:
+        '204':
+          description: OK
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Bad Request
+                    details:
+                      - field: .params.id
+                        message: 'should match pattern "^[0-9]+$"'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Not Found
+                    details:
+                      - field: .params.id
+                        message: 'The id not exist: "^[0-9]+$"'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Internal server error
+                    details: []
+  '/medias':
+    get:
+      tags:
+        - Media
+      summary: Show list medias
+      description: Show list medias
+      operationId: getMedias
+      parameters:
+      - in: query
+        name: page
+        schema:
+          type: string
+          pattern: '^[0-9]+'
+          example: '1'
+        description: The number of items to skip before starting to collect the result set
+      - in: query
+        name: limit
+        schema:
+          type: string
+          pattern: '^[0-9]+'
+          example: '10'
+        description: The numbers of items to return
+      - in: query
+        name: search
+        schema:
+          type: string
+          example: 'image'
+        description:
+         " Searching on allow columns:['id', 'mime', 'user_id', 'created_at']\n
+          example: http://localhost:3000/api/v1/medias?search=image"
+      - in: query
+        name: sort_by
+        allowReserved: true
+        schema:
+          type: string
+          example: 'mime:DESC'
+        description: "Sort on allow columns:[['id', 'mime', 'user_id', 'created_at'],[DESC,ASC]]\n default column:['created_at', 'DESC']"
+      - in: query
+        name: filter.user_id
+        allowReserved: true
+        schema:
+          type: string
+          example: $eq:1
+        description: Filter on the `user_id` field.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MediaList'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Bad Request
+                    details:
+                      - field: .params.id
+                        message: 'should match pattern "^[0-9]+$"'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Internal server error
+                    details: []
+    post:
+      tags:
+        - Media
+      summary: Add a new media
+      description: Add a new media
+      operationId: createMedia
+      requestBody:
+        description: Create a new media
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Media'
+        required: true
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MediaResponse'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Bad Request
+                    details:
+                      - field: .params.id
+                        message: 'should match pattern "^[0-9]+$"'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Internal server error
+                    details: []
+  '/medias/{id}':
+    parameters:
+      - name: id
+        description: ID to get media
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: '^[0-9]+$'
+    get:
+      summary: Get media by ID
+      description: Return a single media
+      operationId: getMediaById
+      tags:
+        - Media
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MediaResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Bad Request
+                    details:
+                      - field: .params.id
+                        message: 'should match pattern "^[0-9]+$"'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Internal server error
+                    details: []
+  '/booths/{id}/templates':
+    post:
+      summary: ''
+      operationId: post-templates
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+              examples:
+                example-1:
+                  value:
+                    id: 1
+      description: Create a new template for a booth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+            examples:
+              example-1:
+                value:
+                  slot1: 'https://domain.dev/image1.jpg'
+                  slot2: 'https://domain.dev/video1.mp4'
+                  slot3: 'https://domain.dev/video1.mp4'
+      tags:
+        - Booth
+    parameters:
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+        description: The booth's ID will be add new template
+components:
+  schemas:
+    Exhibition:
+      type: object
+      required:
+        - id
+        - name
+        - category_id
+        - booth_number
+        - exhibition_code
+        - description
+        - date_exhibition_start
+        - date_exhibition_end
+        - date_input_data_start
+        - date_input_data_end
+      properties:
+        id:
+          type: integer
+          readOnly: true
+          example: 1
+        name:
+          type: string
+          minLength: 1
+          maxLength: 255
+          example: Triển lãm xúc tiến đầu tư thương mại
+        exhibition_code:
+          type: string
+          minLength: 1
+          maxLength: 255
+          pattern: '^[a-zA-Z0-9_-]+$'
+          example: TL0001
+        category_id:
+          type: integer
+          example: 1
+        booth_number:
+          type: integer
+          example: 100
+        description:
+          type: string
+          example: '<p>Triển lãm xúc tiến đầu tư thương mại</p>'
+        date_exhibition_start:
+          type: string
+          minLength: 1
+          pattern: '^[1-9]\d{3}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$'
+          example: '2022-01-01T00:00:00.000Z'
+        date_exhibition_end:
+          type: string
+          minLength: 1
+          pattern: '^[1-9]\d{3}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$'
+          example: '2022-12-01T00:00:00.000Z'
+        date_input_data_start:
+          type: string
+          minLength: 1
+          pattern: '^[1-9]\d{3}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$'
+          example: '2022-02-01T00:00:00.000Z'
+        date_input_data_end:
+          type: string
+          minLength: 1
+          pattern: '^[1-9]\d{3}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$'
+          example: '2022-08-01T00:00:00.000Z'
+        booth_template_ids:
+          type: array
+          items:
+            type: integer
+          example:
+            - 1
+            - 2
+        booth_ids:
+          type: array
+          items:
+            type: integer
+          readOnly: true
+          example:
+           - 1
+           - 2
+        space_id:
+          type: integer
+          readOnly: true
+          example: 1
+        organization_booth_id:
+          type: integer
+          readOnly: true
+          example: 1
+    BoothRequestBody:
+      type: object
+      required:
+        - id
+        - booth_template_id
+        - user_id
+        - name
+        - boothDatas
+      properties:
+        id:
+          type: integer
+          readOnly: true
+          example: 1
+        booth_template_id:
+          type: integer
+          example: 1
+        user_id:
+          type: integer
+          readOnly: true
+          example: 1
+        name:
+          type: string
+          minLength: 1
+          maxLength: 255
+          example: Gian hàng ban tổ chức
+        boothDatas:
+          type: array
+          items:
+            $ref: '#/components/schemas/BoothData'
+          example:
+           - position_booth_id: 1
+             selected_media_id: 1
+             media_data:
+             title:
+             description:
+           - position_booth_id: 2
+             selected_media_id:
+             media_data: 'base64 string'
+             title:
+             description:
+           - position_booth_id: 3
+             selected_media_id:
+             media_data:
+             title: Dự án Compaon
+             description: Đây là hệ thống quản trị doanh nghiệp phục vụ nhu cầu điều hành, quản lý, giám sát, kiểm tra, giao việc, kết nối và lưu trữ dữ liệu hoạt động của doanh nghiệp.
+    BoothResponeBody:
+      type: object
+      required:
+        - id
+        - booth_template_id
+        - user_id
+        - name
+        - boothDatas
+      properties:
+        id:
+          type: integer
+          readOnly: true
+          example: 1
+        booth_template_id:
+          type: integer
+          example: 1
+        user_id:
+          type: integer
+          readOnly: true
+          example: 1
+        name:
+          type: string
+          minLength: 1
+          maxLength: 255
+          example: Gian hàng ban tổ chức
+        boothDatas:
+          type: array
+          items:
+            $ref: '#/components/schemas/BoothData'
+          example:
+           - id: 1
+             position_booth_id: 1
+             media_id: 1
+             title:
+             description:
+           - id: 2
+             position_booth_id: 2
+             media_id: 1
+             title:
+             description:
+           - id: 3
+             position_booth_id: 3
+             media_id:
+             title: Dự án Compaon
+             description: Đây là hệ thống quản trị doanh nghiệp phục vụ nhu cầu điều hành, quản lý, giám sát, kiểm tra, giao việc, kết nối và lưu trữ dữ liệu hoạt động của doanh nghiệp.
+    BoothData:
+      type: object
+      required:
+        - id
+        - position_booth_id
+      properties:
+        id:
+          type: integer
+          readOnly: true
+          example:
+        position_booth_id:
+          type: integer
+        selected_media_id:
+          type: integer
+          writeOnly: true
+        media_id:
+          type: integer
+          readOnly: true
+        media_data:
+          type: string
+          writeOnly: true
+        title:
+          type: string
+        description:
+          type: string
+    Space:
+      type: object
+      required:
+        - id
+        - space_template_id
+        - name
+        - space_datas
+      properties:
+        id:
+          type: integer
+          readOnly: true
+          example: 1
+        space_template_id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          minLength: 1
+          maxLength: 255
+          example: 'Mau khong gian tien sanh mac dinh'
+        user_id:
+          type: integer
+          readOnly: true
+          example: 1
+        space_datas:
+          type: array
+          items:
+            $ref: '#/components/schemas/SpaceData'
+    SpaceData:
+      type: object
+      required:
+        - id
+        - position_space_id
+        - media_id
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        position_space_id:
+          type: integer
+          writeOnly: true
+        position_space:
+          $ref: '#/components/schemas/PositionSpace'
+        selected_media_id:
+          type: integer
+          writeOnly: true
+        media_id:
+          type: integer
+          readOnly: true
+        media_data:
+          type: string
+          writeOnly: true
+        title:
+          type: string
+        description:
+          type: string
+    BoothTemplateList:
+      type: object
+      properties:
+        offset:
+          type: integer
+          format: int64
+          example: 1
+        limit:
+          type: integer
+          format: int64
+          example: 10
+        total:
+          type: integer
+          format: int64
+          example: 1
+        booth_templates:
+          type: array
+          items:
+            $ref: '#/components/schemas/BoothTemplate'
+    BoothTemplate:
+      type: object
+      required:
+        - id
+        - model_data
+        - thumbnail_data
+        - name
+        - created_by
+        - created_date
+        - model_id
+        - thumbnail_id
+        - position_booths
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        created_by:
+          type: integer
+          readOnly: true
+        created_date:
+          type: string
+          readOnly: true
+        model_data:
+          type: string
+          description: 'input base64 string /n example: iVBORw0KGgoAAAANSUhEUgAABuIAAASxCAYAAADF8I...'
+          writeOnly: true
+        thumbnail_data:
+          type: string
+          description: "input base64 string example: iVBORw0KGgoAAAANSUhEUgAABuIAAASxCAYAAADF8I..."
+          writeOnly: true
+        name:
+          type: string
+          minLength: 1
+          maxLength: 255
+        model_id:
+          type: integer
+          readOnly: true
+        thumbnail_id:
+          type: integer
+          readOnly: true
+        position_booths:
+          type: array
+          items:
+            $ref: '#/components/schemas/PositionBooth'
+    SpaceTemplate:
+      type: object
+      required:
+        - id
+        - name
+        - model_id
+        - thumbnail_id
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          minLength: 1
+          maxLength: 255
+        model_id:
+          type: integer
+          readOnly: true
+        thumbnail_id:
+          type: integer
+          readOnly: true
+        exhibition_map_id:
+          type: integer
+          readOnly: true
+        position_spaces:
+          type: array
+          items:
+            $ref: '#/components/schemas/PositionSpace'
+        spaces:
+          type: array
+          items:
+            $ref: '#/components/schemas/Space'
+    PositionSpace:
+      type: object
+      readOnly: true
+      required:
+       - id
+       - object_3d_id
+       - type
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          minLength: 1
+          maxLength: 255
+        object_3d_id:
+          type: string
+          pattern: '^[a-zA-Z\d\-_.,\s]+$'
+          maxLength: 255
+        type:
+          type: string
+          description: "input value [image, video, text]"
+          minLength: 1
+          maxLength: 255
+    Enterprise:
+      type: object
+      required:
+        - id
+        - international_name
+        - abbreviation
+        - tax_code
+        - address
+        - ceo
+        - phone
+        - active_date
+        - status
+        - type_of_business
+        - manager_by
+        - created_by
+        - created_date
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        international_name:
+          type: string
+          minLength: 1
+          maxLength: 255
+          example: DALAVINA TECHNOLOGY SOLUTION JOINT STOCK TECHNOLOGY
+        abbreviation:
+          type: string
+          minLength: 1
+          maxLength: 255
+          example: DALAVINA JSC
+        tax_code:
+          type: string
+          minLength: 1
+          maxLength: 255
+          example: 0371278269
+        address:
+          type: string
+          minLength: 1
+          maxLength: 255
+          example: 224, Phạm Thị Giây, ấp Tam Đông 2, Hóc Môn, Thành phố Hồ Chí Minh
+        ceo:
+          type: string
+          minLength: 1
+          maxLength: 255
+          example: PHAN THANH TUNG
+        phone:
+          type: string
+          pattern: '^(((\+|)84)|0)([0-9]{9})$'
+          example: 0707678777
+        active_date:
+          type: string
+          minLength: 1
+          pattern: '^[1-9]\d{3}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$'
+          example: '2022-01-01T00:00:00.000Z'
+        created_by:
+          type: number
+          readOnly: true
+          minLength: 1
+          example: 1
+        created_date:
+          type: string
+          readOnly: true
+          minLength: 1
+          pattern: '^[1-9]\d{3}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$'
+          example: '2022-01-01T00:00:00.000Z'
+        status:
+          type: string
+          enum: ['active', 'inactive']
+          example: 'active'
+        type_of_business:
+          type: string
+          minLength: 1
+          maxLength: 255
+          example: Công ty cổ phần ngoài NN
+        manager_by:
+          type: string
+          minLength: 1
+          maxLength: 255
+          example: Chi cục thuế Quận 1
+        view_company_online:
+          type: string
+          minLength: 1
+          maxLength: 255
+          example: 'https://dalavina.com/view_company_online'
+    EnterpriseDocument:
+      type: object
+      required:
+        - title
+        - content
+        - is_profile
+      properties:
+        id:
+          type: number
+          readOnly: true
+          example: 1
+        title:
+          type: string
+          example: Tiêu đề ....
+          maxLength: 255
+        content:
+          type: string
+          example: Nội dung...
+        is_profile:
+          type: boolean
+          example: false
+        media_id:
+          type: number
+          readOnly: true
+          example: 1
+        selected_media_id:
+          type: integer
+          writeOnly: true
+        media_data:
+          type: string
+          writeOnly: true
+    MediaList:
+      type: object
+      required:
+        - page
+        - limit
+        - total
+        - medias
+      properties:
+        page:
+          type: integer
+          example: 0
+          description: The number of items to skip before starting to collect the result set.
+        limit:
+          type: integer
+          example: 10
+          description: The number of items to return.
+        total:
+          type: integer
+          format: int64
+          example: 1
+        medias:
+          type: array
+          items:
+            $ref: '#/components/schemas/Media'
+    Media:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        data:
+          type: string
+          minLength: 1
+          writeOnly: true
+        mime:
+          type: string
+          readOnly: true
+        url:
+          type: string
+          readOnly: true
+        user_id:
+          type: integer
+          readOnly: true
+    MediaResponse:
+      type: object
+      required:
+        - id
+        - mime
+        - url
+        - user_id
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        mime:
+          type: string
+          readOnly: true
+        url:
+          type: string
+          readOnly: true
+        user_id:
+          type: integer
+          readOnly: true
+    ErrorResponseBody:
+      type: object
+      required:
+        - message
+        - details
+      properties:
+        message:
+          type: string
+        details:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorDetail'
+    ErrorDetail:
+      type: object
+      required:
+        - field
+        - message
+      properties:
+        field:
+          type: string
+        message:
+          type: string
+    EnterpriseList:
+      type: object
+      required:
+        - limit
+        - page
+        - total
+        - enterprises
+      properties:
+        page:
+          type: integer
+          example: 0
+          description: The number of items to skip before starting to collect the result set.
+        limit:
+          type: integer
+          example: 10
+          description: The number of items to return.
+        total:
+          type: integer
+          format: int64
+          example: 1
+        enterprises:
+          type: array
+          items:
+            $ref: '#/components/schemas/Enterprise'
+    DocumentList:
+      type: object
+      required:
+        - limit
+        - offset
+        - total
+        - documents
+      properties:
+        limit:
+          type: integer
+          format: int64
+          example: 10
+        offset:
+          type: integer
+          format: int64
+          example: 0
+        total:
+          type: integer
+          format: int64
+          example: 1
+        documents:
+          type: array
+          items:
+            $ref: '#/components/schemas/EnterpriseDocument'
+    PositionBooth:
+          type: object
+          required:
+            - id
+            - type
+            - object_3d_id
+            - location_name
+          properties:
+            id:
+              type: number
+              readOnly: true
+              example: 1
+            location_name:
+              type: string
+              example: 'LOGO'
+            type:
+              type: string
+              example: 'img'
+            object_3d_id:
+              type: string
+              pattern: '^[a-zA-Z\d\-_.,\s]+$'
+              maxLength: 255

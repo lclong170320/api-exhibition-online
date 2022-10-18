@@ -71,7 +71,16 @@ export const Paginate = createParamDecorator(
 
             for (const param of params) {
                 if (isString(param)) {
-                    populate.push(camelCase(param));
+                    if (param.includes('.')) {
+                        const subParam = param.split('.');
+                        const subParamConvert = subParam.map((value) =>
+                            camelCase(value),
+                        );
+
+                        populate.push(subParamConvert.join('.'));
+                    } else {
+                        populate.push(camelCase(param));
+                    }
                 }
             }
         }

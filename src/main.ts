@@ -22,7 +22,7 @@ async function bootstrap() {
         }),
     );
     const document = load(
-        readFileSync(join(__dirname, 'openapi/openapi.yaml'), 'utf8'),
+        readFileSync(join(__dirname, '../openapi/openapi.yaml'), 'utf8'),
     ) as OpenAPIObject;
     SwaggerModule.setup('/docs', app, document);
     const logger = app.get<Logger>(Logger);

@@ -38,7 +38,7 @@ export class AppModule implements NestModule {
             .apply(
                 AccessLoggerMiddleware,
                 ...OpenApiValidator.middleware({
-                    apiSpec: join(__dirname, '/openapi/openapi.yaml'),
+                    apiSpec: join(__dirname, '../openapi/openapi.yaml'),
                     validateRequests: {
                         allowUnknownQueryParameters: true,
                         coerceTypes: false,
