@@ -12,6 +12,7 @@ import {
     UpdateDateColumn,
 } from 'typeorm';
 import { BoothTemplate } from './booth-template.entity';
+import { SpaceTemplate } from './space-template.entity';
 import { Booth } from './booth.entity';
 import { Category } from './category.entity';
 import { Space } from './space.entity';
@@ -23,9 +24,6 @@ export class Exhibition {
 
     @Column()
     name: string;
-
-    @Column({ type: 'text' })
-    description: string;
 
     @Column({ name: 'booth_number' })
     boothNumber: number;
@@ -70,6 +68,10 @@ export class Exhibition {
     booths: Booth[];
 
     @OneToOne(() => Space, (space) => space.exhibition)
+    @JoinColumn({
+        name: 'space_id',
+        foreignKeyConstraintName: 'fk-space-informations',
+    })
     space: Space;
 
     @ManyToMany(() => BoothTemplate)
@@ -87,4 +89,17 @@ export class Exhibition {
         },
     })
     boothTemplates: BoothTemplate[];
+
+    @ManyToOne(
+        () => SpaceTemplate,
+        (spaceTemplate) => spaceTemplate.exhibitions,
+        {
+            nullable: false,
+        },
+    )
+    @JoinColumn({
+        name: 'space_template_id',
+        foreignKeyConstraintName: 'fk-space_templates-exhibitions',
+    })
+    spaceTemplate: SpaceTemplate;
 }

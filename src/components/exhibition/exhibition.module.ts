@@ -33,6 +33,7 @@ import { SpaceTemplateService } from './services/space-template.service';
 import { SpaceTemplateConverter } from './converters/space-template.converter';
 import { PositionSpaceConverter } from './converters/position-space.converter';
 import { PositionBoothConverter } from './converters/position-booth.converter';
+import { SpaceTemplateListConverter } from './converters/space-template-list.converter';
 
 @Module({
     controllers: [
@@ -59,6 +60,7 @@ import { PositionBoothConverter } from './converters/position-booth.converter';
         SpaceTemplateConverter,
         PositionSpaceConverter,
         PositionBoothConverter,
+        SpaceTemplateListConverter,
     ],
     imports: [
         TypeOrmModule.forFeature(

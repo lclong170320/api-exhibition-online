@@ -51,9 +51,5 @@ export class Space {
     @OneToOne(() => Exhibition, (exhibition) => exhibition.space, {
         nullable: false,
     })
-    @JoinColumn({
-        name: 'exhibition_id',
-        foreignKeyConstraintName: 'fk_exhibition_space',
-    })
     exhibition: Exhibition;
 }

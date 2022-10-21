@@ -6,6 +6,11 @@ import { PaginateQuery, Paginate } from '@/decorators/paginate.decorator';
 export class SpaceTemplateController {
     constructor(private readonly spaceTemplateService: SpaceTemplateService) {}
 
+    @Get()
+    getSpaceTemplates(@Paginate() query: PaginateQuery) {
+        return this.spaceTemplateService.getSpaceTemplates(query);
+    }
+
     @Get(':id')
     getSpaceTemplateById(
         @Param('id') id: string,

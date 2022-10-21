@@ -1386,11 +1386,15 @@ components:
         - category_id
         - booth_number
         - exhibition_code
-        - description
         - date_exhibition_start
         - date_exhibition_end
         - date_input_data_start
         - date_input_data_end
+        - booth_template_ids
+        - space_template_id
+        - space_id
+        - organization_booth_template_id
+        - organization_booth_id
       properties:
         id:
           type: integer
@@ -1413,9 +1417,6 @@ components:
         booth_number:
           type: integer
           example: 100
-        description:
-          type: string
-          example: '<p>Triển lãm xúc tiến đầu tư thương mại</p>'
         date_exhibition_start:
           type: string
           minLength: 1
@@ -1443,21 +1444,19 @@ components:
           example:
             - 1
             - 2
-        booth_ids:
-          type: array
-          items:
-            type: integer
-          readOnly: true
-          example:
-           - 1
-           - 2
         space_id:
           type: integer
           readOnly: true
           example: 1
+        space_template_id:
+          type: integer
+          example: 1
         organization_booth_id:
           type: integer
           readOnly: true
+          example: 1
+        organization_booth_template_id:
+          type: integer
           example: 1
     BoothRequestBody:
       type: object

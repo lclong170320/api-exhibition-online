@@ -50,7 +50,13 @@ export class ExhibitionService {
             where: {
                 id: exhibitionId,
             },
-            relations: ['category', 'booths', 'space', 'boothTemplates'],
+            relations: [
+                'category',
+                'booths',
+                'space',
+                'boothTemplates',
+                'spaceTemplate',
+            ],
         });
 
         if (!exhibitionEntity) {
@@ -89,57 +95,48 @@ export class ExhibitionService {
         return boothTemplate;
     }
 
-    private async createBooths(
-        exhibition: Exhibition,
-        boothRepository: Repository<Booth>,
-    ): Promise<Booth[]> {
-        const boothEntities: Booth[] = [];
-
-        const boothEntity = new Booth();
-        boothEntity.name = `Gian hàng ban tổ chức`;
-        boothEntity.userId = 1; // TODO: handle getUserId from access token
-        boothEntity.boothTemplate = exhibition.boothTemplates[0];
-        boothEntity.exhibition = exhibition;
-        boothEntity.isOrganization = true;
-        boothEntities.push(boothEntity);
-
-        let start = 1;
-        while (start <= exhibition.boothNumber) {
-            const boothEntity = new Booth();
-            boothEntity.name = `Gian hàng ${start}`;
-            boothEntity.userId = 1; // TODO: handle getUserId from access token
-            boothEntity.boothTemplate = exhibition.boothTemplates[0];
-            boothEntity.exhibition = exhibition;
-            boothEntities.push(boothEntity);
-            start++;
+    private async findSpaceTemplateById(
+        id: number,
+        spaceTemplateRepository: Repository<SpaceTemplate>,
+    ): Promise<SpaceTemplate> {
+        const spaceTemplate = await spaceTemplateRepository.findOneBy({
+            id: id,
+        });
+        if (!spaceTemplate) {
+            throw new BadRequestException(
+                `The space template id '${id}' is not found`,
+            );
         }
-        const createdBooths = await boothRepository.save(boothEntities);
-
-        return createdBooths;
+        return spaceTemplate;
     }
 
-    private async createSpace(
-        exhibition: Exhibition,
+    private async createSpaces(
+        spaceTemplate: SpaceTemplate,
         spaceRepository: Repository<Space>,
-        spaceTemplateRepository: Repository<SpaceTemplate>,
     ): Promise<Space> {
-        const spaceTemplateId = 1;
         const spaceEntity = new Space();
         spaceEntity.name = 'Khong gian trien lam mac dinh';
         spaceEntity.userId = 1; // TODO: handle getUserId from access token
-        spaceEntity.exhibition = exhibition;
-        const firstSpaceTemplate = await spaceTemplateRepository.findOneBy({
-            id: spaceTemplateId,
-        });
-        if (!firstSpaceTemplate) {
-            throw new BadRequestException(
-                `The space template id '${spaceTemplateId}' is not found`,
-            );
-        }
-        spaceEntity.spaceTemplate = firstSpaceTemplate;
-        const createdSpace = await spaceRepository.save(spaceEntity);
+        spaceEntity.spaceTemplate = spaceTemplate;
 
-        return createdSpace;
+        const createdSpaces = await spaceRepository.save(spaceEntity);
+
+        return createdSpaces;
+    }
+
+    private async createBooth(
+        boothTemplate: BoothTemplate,
+        exhibition: Exhibition,
+        boothRepository: Repository<Booth>,
+    ): Promise<Booth> {
+        const boothEntity = new Booth();
+        boothEntity.name = `Gian hàng ban tổ chức`;
+        // TODO: handle getUserId from access token
+        boothEntity.userId = 1;
+        boothEntity.boothTemplate = boothTemplate;
+        boothEntity.exhibition = exhibition;
+        boothEntity.isOrganization = true;
+        return await boothRepository.save(boothEntity);
     }
 
     async createExhibition(
@@ -178,29 +175,42 @@ export class ExhibitionService {
                     ),
                 );
 
+                const spaceTemplate = await this.findSpaceTemplateById(
+                    exhibitionDto.space_template_id,
+                    spaceTemplateRepository,
+                );
+
                 const exhibitionEntity =
                     this.exhibitionConverter.toEntity(exhibitionDto);
 
+                const space = await this.createSpaces(
+                    spaceTemplate,
+                    spaceRepository,
+                );
+
                 exhibitionEntity.category = firstCategory;
                 exhibitionEntity.boothTemplates = boothTemplates;
+                exhibitionEntity.spaceTemplate = spaceTemplate;
+
+                exhibitionEntity.space = space;
 
                 const createdExhibition = await exhibitionRepository.save(
                     exhibitionEntity,
                 );
 
-                const booths = await this.createBooths(
+                // creating a organization's booth
+                const organizationBoothTemplate =
+                    await this.findBoothTemplateById(
+                        exhibitionDto.organization_booth_template_id,
+                        boothTemplateRepository,
+                    );
+                const booth = await this.createBooth(
+                    organizationBoothTemplate,
                     createdExhibition,
                     boothRepository,
                 );
-
-                const space = await this.createSpace(
-                    createdExhibition,
-                    spaceRepository,
-                    spaceTemplateRepository,
-                );
-
-                createdExhibition.booths = booths;
-                createdExhibition.space = space;
+                createdExhibition.booths = [];
+                createdExhibition.booths.push(booth);
 
                 return createdExhibition;
             },
