@@ -1,10 +1,10 @@
 import {
-    Entity,
-    PrimaryGeneratedColumn,
-    CreateDateColumn,
-    UpdateDateColumn,
     Column,
+    CreateDateColumn,
+    Entity,
     OneToMany,
+    PrimaryGeneratedColumn,
+    UpdateDateColumn,
 } from 'typeorm';
 import { Exhibition } from './exhibition.entity';
 import { PositionSpace } from './position-space.entity';

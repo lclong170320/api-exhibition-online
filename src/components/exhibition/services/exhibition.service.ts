@@ -52,7 +52,7 @@ export class ExhibitionService {
             },
             relations: [
                 'category',
-                'booths',
+                'booths.boothTemplate',
                 'space',
                 'boothTemplates',
                 'spaceTemplate',

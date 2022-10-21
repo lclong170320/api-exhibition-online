@@ -21,5 +21,5 @@ export interface SpaceTemplateList {
      */
     limit: number;
     total: number;
-    spaceTemplates: Array<SpaceTemplate>;
+    space_templates: Array<SpaceTemplate>;
 }

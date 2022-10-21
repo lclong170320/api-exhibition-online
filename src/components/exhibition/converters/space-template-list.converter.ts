@@ -1,6 +1,6 @@
+import { SpaceTemplateList } from '@/components/exhibition/dto/space-template-list.dto';
+import { SpaceTemplate } from '@/components/exhibition/entities/space-template.entity';
 import { Injectable } from '@nestjs/common';
-import { SpaceTemplateList } from '../dto/space-template-list.dto';
-import { SpaceTemplate } from '../entities/space-template.entity';
 import { SpaceTemplateConverter } from './space-template.converter';
 
 @Injectable()
@@ -11,7 +11,7 @@ export class SpaceTemplateListConverter {
             page: page,
             limit: limit,
             total: total,
-            spaceTemplates: entity.map((data) =>
+            space_templates: entity.map((data) =>
                 this.spaceTemplateConverter.toDto(data),
             ),
         } as SpaceTemplateList;

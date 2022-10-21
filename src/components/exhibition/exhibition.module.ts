@@ -59,6 +59,7 @@ import { SpaceTemplateListConverter } from './converters/space-template-list.con
         SpaceDataConverter,
         SpaceTemplateConverter,
         PositionSpaceConverter,
+        SpaceTemplateListConverter,
         PositionBoothConverter,
         SpaceTemplateListConverter,
     ],

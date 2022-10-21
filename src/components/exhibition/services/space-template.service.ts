@@ -1,12 +1,12 @@
-import { DbConnection } from '@/database/config/db';
-import { NotFoundException, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { SpaceTemplate } from '@/components/exhibition/entities/space-template.entity';
 import { SpaceTemplateConverter } from '@/components/exhibition/converters/space-template.converter';
+import { SpaceTemplate } from '@/components/exhibition/entities/space-template.entity';
+import { DbConnection } from '@/database/config/db';
 import { PaginateQuery } from '@/decorators/paginate.decorator';
-import { paginate, FilterOperator } from 'nestjs-paginate';
-import { SpaceTemplateListConverter } from '@/components/exhibition/converters/space-template-list.converter';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { FilterOperator, paginate } from 'nestjs-paginate';
+import { Repository } from 'typeorm';
+import { SpaceTemplateListConverter } from '../converters/space-template-list.converter';
 
 @Injectable()
 export class SpaceTemplateService {
@@ -34,18 +34,20 @@ export class SpaceTemplateService {
     }
 
     async getSpaceTemplates(query: PaginateQuery) {
+        const relations = this.parseRelations(query.populate);
         const spaceTemplate = await paginate(
             query,
             this.spaceTemplateRepository,
             {
                 maxLimit: query.limit,
                 defaultLimit: this.limitDefault,
-                sortableColumns: ['id', 'createdAt'],
+                sortableColumns: ['id', 'name'],
                 defaultSortBy: [['createdAt', 'DESC']],
-                searchableColumns: ['id', 'name', 'createdAt'],
+                searchableColumns: ['id', 'name'],
                 filterableColumns: {
                     name: [FilterOperator.EQ, FilterOperator.IN],
                 },
+                relations: relations,
             },
         );
 
@@ -55,5 +57,22 @@ export class SpaceTemplateService {
             spaceTemplate.meta.totalItems,
             spaceTemplate.data,
         );
+    }
+
+    private parseRelations(relations: string[]) {
+        const results: ('spaces' | 'positionSpaces' | 'exhibitions')[] = [];
+        for (const relation of relations) {
+            if (relation === 'spaces') {
+                results.push('spaces');
+            }
+            if (relation === 'positionSpaces') {
+                results.push('positionSpaces');
+            }
+            if (relation === 'exhibitions') {
+                results.push('exhibitions');
+            }
+        }
+
+        return results;
     }
 }
