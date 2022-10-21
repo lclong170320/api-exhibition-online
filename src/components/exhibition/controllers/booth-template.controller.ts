@@ -1,6 +1,7 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { BoothTemplateService } from '@/components/exhibition/services/booth-template.service';
 import { BoothTemplate as BoothTemplateDto } from '@/components/exhibition/dto/booth-template.dto';
+import { Paginate, PaginateQuery } from '@/decorators/paginate.decorator';
 
 @Controller('booth-templates')
 export class BoothTemplateController {
@@ -12,11 +13,8 @@ export class BoothTemplateController {
     }
 
     @Get()
-    getBoothTemplates(
-        @Query('offset') offset: string,
-        @Query('limit') limit: string,
-    ) {
-        return this.boothTemplateService.findBoothTemplates(offset, limit);
+    getBoothTemplates(@Paginate() query: PaginateQuery) {
+        return this.boothTemplateService.findBoothTemplates(query);
     }
 
     @Post()

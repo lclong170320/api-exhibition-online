@@ -6,7 +6,6 @@ import { Injectable } from '@nestjs/common';
 export class PositionBoothConverter {
     toEntity(dto: PositionBoothDto) {
         const entity = new PositionBooth();
-        entity.locationName = dto.location_name;
         entity.object3dId = dto.object_3d_id;
         entity.type = dto.type;
         return entity;
@@ -14,7 +13,6 @@ export class PositionBoothConverter {
 
     toDto(entity: PositionBooth) {
         const dto = {
-            location_name: entity.locationName,
             object_3d_id: entity.object3dId,
             type: entity.type,
         } as PositionBoothDto;

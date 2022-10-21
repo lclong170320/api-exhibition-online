@@ -232,20 +232,46 @@ paths:
         - Booth
   '/booth-templates':
     get:
-      summary: Get list of booth templates
-      description: Return list of booth templates
+      summary: Show list booth templates
+      description: Show list booth-templates
       operationId: getBoothTemplates
       parameters:
-        - in: query
-          name: offset
-          schema:
-            type: integer
-          description: The number of items to skip before starting to collect the result set
-        - in: query
-          name: limit
-          schema:
-            type: integer
-          description: The numbers of items to return
+      - in: query
+        name: page
+        schema:
+          type: string
+          pattern: '^[0-9]+'
+          example: '1'
+        description: The number of items to skip before starting to collect the result set
+      - in: query
+        name: limit
+        schema:
+          type: string
+          pattern: '^[0-9]+'
+          example: '10'
+        description: The numbers of items to return
+      - in: query
+        name: search
+        schema:
+          type: string
+          example: 'triễn lảm'
+        description:
+         " Searching on allow columns:['id', 'name', 'type', 'created_at']\n
+          example: http://localhost:3000/api/v1/name?search=triễn lảm"
+      - in: query
+        name: sort_by
+        allowReserved: true
+        schema:
+          type: string
+          example: 'id:DESC'
+        description: "Sort on allow columns:[['id', 'type','name', 'created_at'],[DESC,ASC]]\n default column:['created_at', 'DESC']"
+      - in: query
+        name: filter.type
+        allowReserved: true
+        schema:
+          type: string
+          example: $eq:product
+        description: Filter on the `type` field.
       responses:
         '200':
           description: OK
@@ -1606,15 +1632,20 @@ components:
           type: string
     BoothTemplateList:
       type: object
+      required:
+        - page
+        - limit
+        - total
+        - booth_templates
       properties:
-        offset:
+        page:
           type: integer
-          format: int64
-          example: 1
+          example: 0
+          description: The number of items to skip before starting to collect the result set.
         limit:
           type: integer
-          format: int64
           example: 10
+          description: The number of items to return.
         total:
           type: integer
           format: int64
@@ -1630,6 +1661,7 @@ components:
         - model_data
         - thumbnail_data
         - name
+        - type
         - created_by
         - created_date
         - model_id
@@ -1657,6 +1689,10 @@ components:
           type: string
           minLength: 1
           maxLength: 255
+        type:
+          type: string  
+          enum: ['project', 'product', 'organize']
+          example: 'project'
         model_id:
           type: integer
           readOnly: true
@@ -1977,15 +2013,11 @@ components:
             - id
             - type
             - object_3d_id
-            - location_name
           properties:
             id:
               type: number
               readOnly: true
               example: 1
-            location_name:
-              type: string
-              example: 'LOGO'
             type:
               type: string
               example: 'img'

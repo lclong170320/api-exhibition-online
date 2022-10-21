@@ -17,6 +17,8 @@ import { DataSource } from 'typeorm';
 import { PositionBooth } from '../entities/position-booth.entity';
 import { PositionBoothConverter } from '../converters/position-booth.converter';
 import { PositionBooth as PositionBoothDto } from '@/components/exhibition/dto/position-booth.dto';
+import { PaginateQuery } from '@/decorators/paginate.decorator';
+import { paginate, FilterOperator } from 'nestjs-paginate';
 
 @Injectable()
 export class BoothTemplateService {
@@ -48,28 +50,27 @@ export class BoothTemplateService {
         return this.boothTemplateConverter.toDto(firstBoothTemplate);
     }
 
-    async findBoothTemplates(offset: string, limit: string) {
-        const offsetQuery = parseInt(offset)
-            ? parseInt(offset)
-            : this.offsetDefault;
-        const limitQuery = parseInt(limit)
-            ? parseInt(limit)
-            : this.limitDefault;
-
-        const [boothTemplateEntity, count] =
-            await this.boothTemplateRepository.findAndCount({
-                order: {
-                    createdAt: 'DESC',
+    async findBoothTemplates(query: PaginateQuery) {
+        const boothTemplates = await paginate(
+            query,
+            this.boothTemplateRepository,
+            {
+                maxLimit: query.limit,
+                defaultLimit: this.limitDefault,
+                sortableColumns: ['id', 'name', 'type', 'createdAt'],
+                defaultSortBy: [['createdAt', 'DESC']],
+                searchableColumns: ['id', 'name', 'type', 'createdAt'],
+                filterableColumns: {
+                    type: [FilterOperator.EQ, FilterOperator.IN],
                 },
-                skip: offsetQuery,
-                take: limitQuery,
-            });
+            },
+        );
 
         return this.boothTemplateListConverter.toDto(
-            boothTemplateEntity,
-            limitQuery,
-            offsetQuery,
-            count,
+            boothTemplates.meta.currentPage,
+            boothTemplates.meta.itemsPerPage,
+            boothTemplates.meta.totalItems,
+            boothTemplates.data,
         );
     }
 

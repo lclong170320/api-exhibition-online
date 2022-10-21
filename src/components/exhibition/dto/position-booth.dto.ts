@@ -12,7 +12,6 @@
 
 export interface PositionBooth {
     readonly id: number;
-    location_name: string;
     type: string;
     object_3d_id: string;
 }

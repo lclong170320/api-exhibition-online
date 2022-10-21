@@ -12,8 +12,14 @@
 import { BoothTemplate } from './booth-template.dto';
 
 export interface BoothTemplateList {
-    offset?: number;
-    limit?: number;
-    total?: number;
+    /**
+     * The number of items to skip before starting to collect the result set.
+     */
+    page: number;
+    /**
+     * The number of items to return.
+     */
+    limit: number;
+    total: number;
     booth_templates?: Array<BoothTemplate>;
 }

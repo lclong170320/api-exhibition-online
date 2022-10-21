@@ -10,6 +10,7 @@ export class BoothTemplateConverter {
     toEntity(dto: BoothTemplateDto) {
         const entity = new BoothTemplate();
         entity.name = dto.name;
+        entity.type = dto.type;
         return entity;
     }
 
@@ -18,6 +19,7 @@ export class BoothTemplateConverter {
             id: entity.id,
             created_by: entity.createdBy,
             name: entity.name,
+            type: entity.type,
             created_date: entity.createdDate.toISOString(),
             model_id: entity.modelId,
             thumbnail_id: entity.thumbnailId,

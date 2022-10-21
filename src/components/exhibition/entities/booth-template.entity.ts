@@ -10,6 +10,7 @@ import {
 import { Booth } from './booth.entity';
 import { Exhibition } from './exhibition.entity';
 import { PositionBooth } from './position-booth.entity';
+import { BoothTemplate as BoothTemplateDto } from '../dto/booth-template.dto';
 
 @Entity({ name: 'booth_templates' })
 export class BoothTemplate {
@@ -21,6 +22,9 @@ export class BoothTemplate {
 
     @Column({ name: 'name' })
     name: string;
+
+    @Column({ name: 'type' })
+    type: BoothTemplateDto.TypeEnum;
 
     @Column({ type: 'datetime', name: 'created_date' })
     createdDate: Date;
