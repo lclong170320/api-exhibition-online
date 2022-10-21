@@ -106,7 +106,7 @@ export const Paginate = createParamDecorator(
             search: query.search ? query.search.toString() : undefined,
             searchBy: searchBy.length ? searchBy : undefined,
             filter: Object.keys(filter).length ? filter : undefined,
-            populate: populate.length ? populate : undefined,
+            populate: populate.length ? populate : [],
             path,
         };
     },
