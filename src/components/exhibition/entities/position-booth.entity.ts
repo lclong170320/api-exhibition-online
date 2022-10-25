@@ -8,13 +8,16 @@ import {
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from 'typeorm';
-import { BoothData } from './booth-data.entity';
+import { BoothOrganizationData } from './booth-organization-data.entity';
 import { BoothTemplate } from './booth-template.entity';
 
 @Entity({ name: 'position_booths' })
 export class PositionBooth {
     @PrimaryGeneratedColumn()
     id: number;
+
+    @Column({ length: 255 })
+    label: string;
 
     @Column({ name: 'object_3d_id', length: 255 })
     object3dId: string;
@@ -43,6 +46,9 @@ export class PositionBooth {
     })
     boothTemplate: BoothTemplate;
 
-    @OneToMany(() => BoothData, (data) => data.positionBooth)
-    boothDatas: BoothData[];
+    @OneToMany(
+        () => BoothOrganizationData,
+        (boothOrganizationData) => boothOrganizationData.positionBooth,
+    )
+    boothOrganizationData: BoothOrganizationData[];
 }

@@ -337,19 +337,28 @@ paths:
                   value:
                     message: Internal server error
                     details: []
-  '/booths/{id}':
+  '/booth-organizations/{id}':
      get:
-      summary: Get booth by ID
-      description: Return a single booth
-      operationId: getBoothById
+      summary: Get booth organization by ID
+      description: Return a single booth organization
+      operationId: getBoothOrganizationById
       parameters:
       - name: id
-        description: ID to update booth
+        description: ID to update booth organization
         in: path
         required: true
         schema:
           type: string
           pattern: '^[0-9]+$'
+      - in: query
+        name: populate
+        schema:
+          type: array
+          items:
+            type: string
+            example: 'position_spaces'
+        description:
+         " Searching on allow columns:['booth_organization_data, booth_template, booth_organization_data.position_booth']"
       tags:
         - Booth
       responses:
@@ -358,7 +367,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BoothResponeBody'
+                $ref: '#/components/schemas/BoothOrganization'
         '400':
           description: Bad request
           content:
@@ -415,7 +424,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/BoothRequestBody'
+              $ref: '#/components/schemas/BoothOrganization'
         required: true
       responses:
         '200':
@@ -423,7 +432,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BoothResponeBody'
+                $ref: '#/components/schemas/BoothOrganization'
         '400':
           description: Validation error
           content:
@@ -1434,45 +1443,6 @@ paths:
                   value:
                     message: Internal server error
                     details: []
-  '/booths/{id}/templates':
-    post:
-      summary: ''
-      operationId: post-templates
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  id:
-                    type: integer
-              examples:
-                example-1:
-                  value:
-                    id: 1
-      description: Create a new template for a booth
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-            examples:
-              example-1:
-                value:
-                  slot1: 'https://domain.dev/image1.jpg'
-                  slot2: 'https://domain.dev/video1.mp4'
-                  slot3: 'https://domain.dev/video1.mp4'
-      tags:
-        - Booth
-    parameters:
-      - schema:
-          type: string
-        name: id
-        in: path
-        required: true
-        description: The booth's ID will be add new template
 components:
   schemas:
     Exhibition:
@@ -1554,15 +1524,15 @@ components:
           type: string
           minLength: 1
           maxLength: 1000
-          example: '07h45 – 08h20: Đón tiếp đại biểu, 08h20 – 08h40: Ca nhạc chào mừng'
-    BoothRequestBody:
+          example: '07h45 - 08h20: Đón tiếp đại biểu, 08h20 - 08h40: Ca nhạc chào mừng'
+    BoothOrganization:
       type: object
       required:
         - id
         - booth_template_id
         - user_id
         - name
-        - boothDatas
+        - booth_organization_data
       properties:
         id:
           type: integer
@@ -1580,72 +1550,11 @@ components:
           minLength: 1
           maxLength: 255
           example: Gian hàng ban tổ chức
-        boothDatas:
+        booth_organization_data:
           type: array
           items:
-            $ref: '#/components/schemas/BoothData'
-          example:
-           - position_booth_id: 1
-             selected_media_id: 1
-             media_data:
-             title:
-             description:
-           - position_booth_id: 2
-             selected_media_id:
-             media_data: 'base64 string'
-             title:
-             description:
-           - position_booth_id: 3
-             selected_media_id:
-             media_data:
-             title: Dự án Compaon
-             description: Đây là hệ thống quản trị doanh nghiệp phục vụ nhu cầu điều hành, quản lý, giám sát, kiểm tra, giao việc, kết nối và lưu trữ dữ liệu hoạt động của doanh nghiệp.
-    BoothResponeBody:
-      type: object
-      required:
-        - id
-        - booth_template_id
-        - user_id
-        - name
-        - boothDatas
-      properties:
-        id:
-          type: integer
-          readOnly: true
-          example: 1
-        booth_template_id:
-          type: integer
-          example: 1
-        user_id:
-          type: integer
-          readOnly: true
-          example: 1
-        name:
-          type: string
-          minLength: 1
-          maxLength: 255
-          example: Gian hàng ban tổ chức
-        boothDatas:
-          type: array
-          items:
-            $ref: '#/components/schemas/BoothData'
-          example:
-           - id: 1
-             position_booth_id: 1
-             media_id: 1
-             title:
-             description:
-           - id: 2
-             position_booth_id: 2
-             media_id: 1
-             title:
-             description:
-           - id: 3
-             position_booth_id: 3
-             media_id:
-             title: Dự án Compaon
-             description: Đây là hệ thống quản trị doanh nghiệp phục vụ nhu cầu điều hành, quản lý, giám sát, kiểm tra, giao việc, kết nối và lưu trữ dữ liệu hoạt động của doanh nghiệp.
-    BoothData:
+            $ref: '#/components/schemas/BoothOrganizationData'
+    BoothOrganizationData:
       type: object
       required:
         - id
@@ -1657,6 +1566,9 @@ components:
           example:
         position_booth_id:
           type: integer
+          writeOnly: true
+        position_booth:
+           $ref: '#/components/schemas/PositionBooth'
         selected_media_id:
           type: integer
           writeOnly: true
@@ -1786,7 +1698,7 @@ components:
           minLength: 1
           maxLength: 255
         type:
-          type: string  
+          type: string
           enum: ['project', 'product', 'organize']
           example: 'project'
         model_id:
@@ -2129,9 +2041,11 @@ components:
             $ref: '#/components/schemas/EnterpriseDocument'
     PositionBooth:
       type: object
+      readOnly: true
       required:
         - id
         - type
+        - label
         - object_3d_id
       properties:
         id:
@@ -2141,6 +2055,9 @@ components:
         type:
           type: string
           example: 'img'
+        label:
+          type: string
+          example: 'STANDEE'
         object_3d_id:
           type: string
           pattern: '^[a-zA-Z\d\-_.,\s]+$'

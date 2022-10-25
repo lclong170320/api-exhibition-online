@@ -5,15 +5,16 @@ import {
     JoinColumn,
     ManyToOne,
     OneToMany,
+    OneToOne,
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from 'typeorm';
-import { BoothData } from './booth-data.entity';
+import { BoothOrganizationData } from './booth-organization-data.entity';
 import { BoothTemplate } from './booth-template.entity';
 import { Exhibition } from './exhibition.entity';
 
-@Entity({ name: 'booths' })
-export class Booth {
+@Entity({ name: 'booth_organizations' })
+export class BoothOrganization {
     @PrimaryGeneratedColumn()
     id: number;
 
@@ -22,9 +23,6 @@ export class Booth {
 
     @Column({ name: 'user_id' })
     userId: number;
-
-    @Column({ name: 'is_organization', default: false })
-    isOrganization: boolean;
 
     @CreateDateColumn({
         type: 'timestamp',
@@ -38,24 +36,25 @@ export class Booth {
     })
     updatedAt: Date;
 
-    @OneToMany(() => BoothData, (boothData) => boothData.booth)
-    boothDatas: BoothData[];
+    @OneToMany(
+        () => BoothOrganizationData,
+        (boothOrganizationData) => boothOrganizationData.boothOrganization,
+    )
+    boothOrganizationData: BoothOrganizationData[];
 
-    @ManyToOne(() => BoothTemplate, (boothTemplate) => boothTemplate.booths, {
-        nullable: false,
-    })
+    @ManyToOne(
+        () => BoothTemplate,
+        (boothTemplate) => boothTemplate.boothOrganizations,
+        {
+            nullable: false,
+        },
+    )
     @JoinColumn({
         name: 'booth_template_id',
-        foreignKeyConstraintName: 'fk-booths-booth_templates',
+        foreignKeyConstraintName: 'fk-booth_organizations-booth_templates',
     })
     boothTemplate: BoothTemplate;
 
-    @ManyToOne(() => Exhibition, (exhibition) => exhibition.booths, {
-        nullable: false,
-    })
-    @JoinColumn({
-        name: 'exhibition_id',
-        foreignKeyConstraintName: 'fk-booths-exhibitions',
-    })
+    @OneToOne(() => Exhibition, (exhibition) => exhibition.boothOrganization)
     exhibition: Exhibition;
 }

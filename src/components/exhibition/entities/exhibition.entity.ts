@@ -6,14 +6,13 @@ import {
     JoinTable,
     ManyToMany,
     ManyToOne,
-    OneToMany,
     OneToOne,
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from 'typeorm';
 import { BoothTemplate } from './booth-template.entity';
 import { SpaceTemplate } from './space-template.entity';
-import { Booth } from './booth.entity';
+import { BoothOrganization } from './booth-organization.entity';
 import { Category } from './category.entity';
 import { Space } from './space.entity';
 
@@ -64,10 +63,22 @@ export class Exhibition {
     })
     category: Category;
 
-    @OneToMany(() => Booth, (booth) => booth.exhibition)
-    booths: Booth[];
+    @OneToOne(
+        () => BoothOrganization,
+        (boothOrganization) => boothOrganization.exhibition,
+        {
+            nullable: false,
+        },
+    )
+    @JoinColumn({
+        name: 'booth_organization_id',
+        foreignKeyConstraintName: 'fk-exhibition-booth_organization',
+    })
+    boothOrganization: BoothOrganization;
 
-    @OneToOne(() => Space, (space) => space.exhibition)
+    @OneToOne(() => Space, (space) => space.exhibition, {
+        nullable: false,
+    })
     @JoinColumn({
         name: 'space_id',
         foreignKeyConstraintName: 'fk-space-informations',

@@ -37,7 +37,7 @@ export class SpaceService {
         ];
 
         populate &&
-            populate.map((value) => {
+            populate.forEach((value) => {
                 if (!allowPopulate.includes(value)) {
                     throw new BadRequestException('Query value is not allowed');
                 }

@@ -7,11 +7,11 @@ import {
     ManyToOne,
     JoinColumn,
 } from 'typeorm';
-import { Booth } from './booth.entity';
+import { BoothOrganization } from './booth-organization.entity';
 import { PositionBooth } from './position-booth.entity';
 
-@Entity({ name: 'booth_datas' })
-export class BoothData {
+@Entity({ name: 'booth_organization_data' })
+export class BoothOrganizationData {
     @PrimaryGeneratedColumn()
     id: number;
 
@@ -36,19 +36,28 @@ export class BoothData {
     })
     updatedAt: Date;
 
-    @ManyToOne(() => Booth, (both) => both.boothDatas, { nullable: false })
+    @ManyToOne(
+        () => BoothOrganization,
+        (boothOrganization) => boothOrganization.boothOrganizationData,
+        { nullable: false },
+    )
     @JoinColumn({
-        name: 'booth_id',
-        foreignKeyConstraintName: 'fk-booth_datas-booths',
+        name: 'booth_organization_id',
+        foreignKeyConstraintName:
+            'fk-booth_organization_datas-booth_organizations',
     })
-    booth: Booth;
+    boothOrganization: BoothOrganization;
 
-    @ManyToOne(() => PositionBooth, (position) => position.boothDatas, {
-        nullable: false,
-    })
+    @ManyToOne(
+        () => PositionBooth,
+        (positionBooth) => positionBooth.boothOrganizationData,
+        {
+            nullable: false,
+        },
+    )
     @JoinColumn({
         name: 'position_booth_id',
-        foreignKeyConstraintName: 'fk-booth_datas-position_booths',
+        foreignKeyConstraintName: 'fk-booth_organization_datas-position_booths',
     })
     positionBooth: PositionBooth;
 }

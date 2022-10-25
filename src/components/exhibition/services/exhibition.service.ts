@@ -6,7 +6,7 @@ import {
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 
-import { Booth } from '@/components/exhibition/entities/booth.entity';
+import { BoothOrganization } from '@/components/exhibition/entities/booth-organization.entity';
 import { Category } from '@/components/exhibition/entities/category.entity';
 import { Exhibition } from '@/components/exhibition/entities/exhibition.entity';
 import { Space } from '@/components/exhibition/entities/space.entity';
@@ -104,7 +104,7 @@ export class ExhibitionService {
         return spaceTemplate;
     }
 
-    private async createSpaces(
+    private async createSpace(
         spaceTemplate: SpaceTemplate,
         spaceRepository: Repository<Space>,
     ): Promise<Space> {
@@ -118,19 +118,16 @@ export class ExhibitionService {
         return createdSpaces;
     }
 
-    private async createBooth(
+    private async createBoothOrganization(
         boothTemplate: BoothTemplate,
-        exhibition: Exhibition,
-        boothRepository: Repository<Booth>,
-    ): Promise<Booth> {
-        const boothEntity = new Booth();
-        boothEntity.name = `Gian hàng ban tổ chức`;
+        boothOrganizationRepository: Repository<BoothOrganization>,
+    ): Promise<BoothOrganization> {
+        const boothOrganizationEntity = new BoothOrganization();
+        boothOrganizationEntity.name = `Gian hàng ban tổ chức`;
         // TODO: handle getUserId from access token
-        boothEntity.userId = 1;
-        boothEntity.boothTemplate = boothTemplate;
-        boothEntity.exhibition = exhibition;
-        boothEntity.isOrganization = true;
-        return await boothRepository.save(boothEntity);
+        boothOrganizationEntity.userId = 1;
+        boothOrganizationEntity.boothTemplate = boothTemplate;
+        return await boothOrganizationRepository.save(boothOrganizationEntity);
     }
 
     async createExhibition(
@@ -144,7 +141,8 @@ export class ExhibitionService {
             async (manager) => {
                 const exhibitionRepository = manager.getRepository(Exhibition);
                 const categoryRepository = manager.getRepository(Category);
-                const boothRepository = manager.getRepository(Booth);
+                const boothOrganizationRepository =
+                    manager.getRepository(BoothOrganization);
                 const spaceRepository = manager.getRepository(Space);
                 const spaceTemplateRepository =
                     manager.getRepository(SpaceTemplate);
@@ -174,37 +172,36 @@ export class ExhibitionService {
                     spaceTemplateRepository,
                 );
 
-                const exhibitionEntity =
-                    this.exhibitionConverter.toEntity(exhibitionDto);
+                const boothOrganizationTemplate =
+                    await this.findBoothTemplateById(
+                        exhibitionDto.organization_booth_template_id,
+                        boothTemplateRepository,
+                    );
 
-                const space = await this.createSpaces(
+                const space = await this.createSpace(
                     spaceTemplate,
                     spaceRepository,
                 );
 
+                const boothOrganization = await this.createBoothOrganization(
+                    boothOrganizationTemplate,
+                    boothOrganizationRepository,
+                );
+
+                const exhibitionEntity =
+                    this.exhibitionConverter.toEntity(exhibitionDto);
+
                 exhibitionEntity.category = firstCategory;
                 exhibitionEntity.boothTemplates = boothTemplates;
                 exhibitionEntity.spaceTemplate = spaceTemplate;
-
                 exhibitionEntity.space = space;
+                exhibitionEntity.boothOrganization = boothOrganization;
 
                 const createdExhibition = await exhibitionRepository.save(
                     exhibitionEntity,
                 );
 
-                // creating a organization's booth
-                const organizationBoothTemplate =
-                    await this.findBoothTemplateById(
-                        exhibitionDto.organization_booth_template_id,
-                        boothTemplateRepository,
-                    );
-                const booth = await this.createBooth(
-                    organizationBoothTemplate,
-                    createdExhibition,
-                    boothRepository,
-                );
-                createdExhibition.booths = [];
-                createdExhibition.booths.push(booth);
+                createdExhibition.boothOrganization = boothOrganization;
 
                 return createdExhibition;
             },

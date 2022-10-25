@@ -7,7 +7,7 @@ import {
     OneToMany,
     ManyToMany,
 } from 'typeorm';
-import { Booth } from './booth.entity';
+import { BoothOrganization } from './booth-organization.entity';
 import { Exhibition } from './exhibition.entity';
 import { PositionBooth } from './position-booth.entity';
 import { BoothTemplate as BoothTemplateDto } from '../dto/booth-template.dto';
@@ -47,8 +47,11 @@ export class BoothTemplate {
     })
     updatedAt: Date;
 
-    @OneToMany(() => Booth, (booth) => booth.boothTemplate)
-    booths: Booth[];
+    @OneToMany(
+        () => BoothOrganization,
+        (boothOrganization) => boothOrganization.boothTemplate,
+    )
+    boothOrganizations: BoothOrganization[];
 
     @OneToMany(() => PositionBooth, (position) => position.boothTemplate)
     positionBooth: PositionBooth[];

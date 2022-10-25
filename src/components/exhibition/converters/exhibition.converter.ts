@@ -14,9 +14,6 @@ export class ExhibitionConverter {
         return entity;
     }
     toDto(entity: Exhibition) {
-        const organizationBooth = entity.booths.filter(
-            (data) => data.isOrganization,
-        )[0];
         const dto = {
             id: entity.id,
             name: entity.name,
@@ -27,11 +24,12 @@ export class ExhibitionConverter {
             date_exhibition_end: entity.dateExhibitionEnd.toISOString(),
             booth_template_ids: entity.boothTemplates.map((data) => data.id),
             space_template_id: entity.spaceTemplate.id,
-            space_id: entity.space.id,
-            organization_booth_id: organizationBooth.id,
-            organization_booth_template_id: organizationBooth.boothTemplate.id,
             introduction: entity.introduction,
             agenda: entity.agenda,
+            space_id: entity.space.id,
+            organization_booth_id: entity.boothOrganization.id,
+            organization_booth_template_id:
+                entity.boothOrganization.boothTemplate.id,
         } as ExhibitionDto;
 
         return dto;

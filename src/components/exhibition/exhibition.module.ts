@@ -1,15 +1,15 @@
 import { DbConnection } from '@/database/config/db';
 import { ExhibitionService } from './services/exhibition.service';
 import { ExhibitionController } from './controllers/exhibition.controller';
-import { BoothController } from './controllers/booth.controller';
+import { BoothOrganizationController } from './controllers/booth-organization.controller';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Exhibition } from './entities/exhibition.entity';
-import { BoothConverter } from './converters/booth.converter';
+import { BoothOrganizationConverter } from './converters/booth-organization.converter';
 import { HttpModule } from '@nestjs/axios';
-import { BoothDataConverter } from './converters/booth-data.converter';
-import { Booth } from './entities/booth.entity';
-import { BoothData } from './entities/booth-data.entity';
+import { BoothOrganizationDataConverter } from './converters/booth-organization-data.converter';
+import { BoothOrganization } from './entities/booth-organization.entity';
+import { BoothOrganizationData } from './entities/booth-organization-data.entity';
 import { PositionBooth } from './entities/position-booth.entity';
 import CategoryConverter from './converters/category.converter';
 import { ExhibitionConverter } from './converters/exhibition.converter';
@@ -20,7 +20,7 @@ import { SpaceData } from './entities/space-data.entity';
 import { SpaceTemplate } from './entities/space-template.entity';
 import { Space } from './entities/space.entity';
 import { BoothTemplateService } from './services/booth-template.service';
-import { BoothService } from './services/booth.service';
+import { BoothOrganizationService } from './services/booth-organization.service';
 import { BoothTemplateListConverter } from './converters/booth-template-list.converter';
 import { BoothTemplateConverter } from './converters/booth-template.converter';
 import { BoothTemplateController } from './controllers/booth-template.controller';
@@ -39,20 +39,20 @@ import { SpaceTemplateListConverter } from './converters/space-template-list.con
     controllers: [
         ExhibitionController,
         BoothTemplateController,
-        BoothController,
+        BoothOrganizationController,
         SpaceController,
         SpaceTemplateController,
     ],
     providers: [
         ExhibitionService,
-        BoothService,
+        BoothOrganizationService,
         SpaceService,
         BoothTemplateService,
         SpaceTemplateService,
         CategoryConverter,
         ExhibitionConverter,
-        BoothConverter,
-        BoothDataConverter,
+        BoothOrganizationConverter,
+        BoothOrganizationDataConverter,
         BoothTemplateConverter,
         BoothTemplateListConverter,
         SpaceConverter,
@@ -68,9 +68,9 @@ import { SpaceTemplateListConverter } from './converters/space-template-list.con
             [
                 Category,
                 Exhibition,
-                Booth,
+                BoothOrganization,
                 Space,
-                BoothData,
+                BoothOrganizationData,
                 SpaceData,
                 BoothTemplate,
                 SpaceTemplate,
