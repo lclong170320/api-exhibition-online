@@ -31,13 +31,7 @@ export class ExhibitionService {
     private checkDateExhibition(exhibitionDto: ExhibitionDto) {
         if (
             exhibitionDto.date_exhibition_start >
-                exhibitionDto.date_exhibition_end ||
-            exhibitionDto.date_input_data_start >
-                exhibitionDto.date_input_data_end ||
-            exhibitionDto.date_input_data_end >
-                exhibitionDto.date_exhibition_end ||
-            exhibitionDto.date_input_data_start >
-                exhibitionDto.date_exhibition_end
+            exhibitionDto.date_exhibition_end
         ) {
             return false;
         }

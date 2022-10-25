@@ -9,8 +9,8 @@ export class ExhibitionConverter {
         entity.exhibitionCode = dto.exhibition_code.toUpperCase();
         entity.dateExhibitionStart = new Date(dto.date_exhibition_start);
         entity.dateExhibitionEnd = new Date(dto.date_exhibition_end);
-        entity.dateInputDataStart = new Date(dto.date_input_data_start);
-        entity.dateInputDataEnd = new Date(dto.date_input_data_end);
+        entity.introduction = dto.introduction;
+        entity.agenda = dto.agenda;
         return entity;
     }
     toDto(entity: Exhibition) {
@@ -25,13 +25,13 @@ export class ExhibitionConverter {
             exhibition_code: entity.exhibitionCode,
             date_exhibition_start: entity.dateExhibitionStart.toISOString(),
             date_exhibition_end: entity.dateExhibitionEnd.toISOString(),
-            date_input_data_start: entity.dateInputDataStart.toISOString(),
-            date_input_data_end: entity.dateInputDataEnd.toISOString(),
             booth_template_ids: entity.boothTemplates.map((data) => data.id),
             space_template_id: entity.spaceTemplate.id,
             space_id: entity.space.id,
             organization_booth_id: organizationBooth.id,
             organization_booth_template_id: organizationBooth.boothTemplate.id,
+            introduction: entity.introduction,
+            agenda: entity.agenda,
         } as ExhibitionDto;
 
         return dto;

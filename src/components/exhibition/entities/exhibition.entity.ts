@@ -37,11 +37,11 @@ export class Exhibition {
     @Column({ type: 'datetime', name: 'date_exhibition_end' })
     dateExhibitionEnd: Date;
 
-    @Column({ type: 'datetime', name: 'date_input_data_start' })
-    dateInputDataStart: Date;
+    @Column()
+    introduction: string;
 
-    @Column({ type: 'datetime', name: 'date_input_data_end' })
-    dateInputDataEnd: Date;
+    @Column()
+    agenda: string;
 
     @CreateDateColumn({
         type: 'timestamp',

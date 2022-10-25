@@ -18,11 +18,11 @@ export interface Exhibition {
     booth_number: number;
     date_exhibition_start: string;
     date_exhibition_end: string;
-    date_input_data_start: string;
-    date_input_data_end: string;
     booth_template_ids: Array<number>;
     readonly space_id: number;
     space_template_id: number;
     readonly organization_booth_id: number;
     organization_booth_template_id: number;
+    introduction: string;
+    agenda: string;
 }

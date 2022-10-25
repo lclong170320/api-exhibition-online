@@ -1485,13 +1485,13 @@ components:
         - exhibition_code
         - date_exhibition_start
         - date_exhibition_end
-        - date_input_data_start
-        - date_input_data_end
         - booth_template_ids
         - space_template_id
         - space_id
         - organization_booth_template_id
         - organization_booth_id
+        - introduction
+        - agenda
       properties:
         id:
           type: integer
@@ -1524,16 +1524,6 @@ components:
           minLength: 1
           pattern: '^[1-9]\d{3}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$'
           example: '2022-12-01T00:00:00.000Z'
-        date_input_data_start:
-          type: string
-          minLength: 1
-          pattern: '^[1-9]\d{3}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$'
-          example: '2022-02-01T00:00:00.000Z'
-        date_input_data_end:
-          type: string
-          minLength: 1
-          pattern: '^[1-9]\d{3}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$'
-          example: '2022-08-01T00:00:00.000Z'
         booth_template_ids:
           type: array
           items:
@@ -1555,6 +1545,16 @@ components:
         organization_booth_template_id:
           type: integer
           example: 1
+        introduction:
+          type: string
+          minLength: 1
+          maxLength: 1000
+          example: Giới thiệu công ty Tòa nhà C22-Officetel, số 22 Nguyễn Việt Hồng, phường An Phú, quận Ninh Kiều, TP. Cần Thơ
+        agenda:
+          type: string
+          minLength: 1
+          maxLength: 1000
+          example: '07h45 – 08h20: Đón tiếp đại biểu, 08h20 – 08h40: Ca nhạc chào mừng'
     BoothRequestBody:
       type: object
       required:
