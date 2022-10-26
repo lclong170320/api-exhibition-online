@@ -34,15 +34,18 @@ export class BoothOrganizationService {
         populate: string[],
     ) {
         const allowPopulate = [
-            'boothOrganizationData, boothTemplate, boothOrganizationData.positionBooth',
+            'boothOrganizationData',
+            'boothTemplate',
+            'boothOrganizationData.positionBooth',
         ];
 
-        !populate &&
-            populate.forEach((value) => {
-                if (!allowPopulate.includes(value)) {
-                    throw new BadRequestException('Query value is not allowed');
-                }
-            });
+        populate.forEach((value) => {
+            if (!allowPopulate.includes(value)) {
+                throw new BadRequestException(
+                    'Query value is not allowed ' + value,
+                );
+            }
+        });
 
         const boothOrganizationRepository =
             this.dataSource.getRepository(BoothOrganization);

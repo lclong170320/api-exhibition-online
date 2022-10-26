@@ -8,8 +8,14 @@ export class BoothTemplateController {
     constructor(private readonly boothTemplateService: BoothTemplateService) {}
 
     @Get(':id')
-    getBoothTemplateById(@Param('id') id: string) {
-        return this.boothTemplateService.findBoothTemplateById(id);
+    getBoothTemplateById(
+        @Param('id') id: string,
+        @Paginate() query: PaginateQuery,
+    ) {
+        return this.boothTemplateService.findBoothTemplateById(
+            id,
+            query.populate,
+        );
     }
 
     @Get()

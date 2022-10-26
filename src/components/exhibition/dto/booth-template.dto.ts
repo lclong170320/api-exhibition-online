@@ -10,6 +10,7 @@
  * Do not edit the class manually.
  */
 import { PositionBooth } from './position-booth.dto';
+import { BoothOrganization } from './booth-organization.dto';
 
 export interface BoothTemplate {
     readonly id: number;
@@ -28,6 +29,7 @@ export interface BoothTemplate {
     readonly model_id?: number;
     readonly thumbnail_id?: number;
     position_booths?: Array<PositionBooth>;
+    booth_organizations?: Array<BoothOrganization>;
 }
 // eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace BoothTemplate {

@@ -12,10 +12,10 @@ export class Logger {
     );
 
     error(error: Error) {
-        this.logger.error(error);
+        this.logger.error(error.stack ?? error);
     }
 
     warn(error: Error) {
-        this.logger.warn(error);
+        this.logger.warn(error.stack ?? error);
     }
 }

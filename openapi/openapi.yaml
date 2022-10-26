@@ -184,6 +184,15 @@ paths:
           schema:
             type: string
             pattern: '^[0-9]+$'
+        - in: query
+          name: populate
+          schema:
+            type: array
+            items:
+              type: string
+              example: 'position_booths'
+          description:
+           " Searching on allow columns:['position_booth', 'booth_organizations']"
       responses:
         '200':
           description: OK
@@ -252,6 +261,7 @@ paths:
         description: The numbers of items to return
       - in: query
         name: search
+        allowReserved: true
         schema:
           type: string
           example: 'triễn lảm'
@@ -1711,6 +1721,10 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/PositionBooth'
+        booth_organizations:
+          type: array
+          items:
+            $ref: '#/components/schemas/BoothOrganization'
     SpaceTemplate:
       type: object
       required:

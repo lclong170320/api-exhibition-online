@@ -36,12 +36,22 @@ export class BoothTemplateService {
         private positionBoothConverter: PositionBoothConverter,
     ) {}
 
-    async findBoothTemplateById(id: string) {
-        const firstBoothTemplate = await this.boothTemplateRepository.findOneBy(
-            {
+    async findBoothTemplateById(id: string, populate: string[]) {
+        const allowPopulate = ['positionBooth', 'boothOrganizations'];
+
+        populate.forEach((value) => {
+            if (!allowPopulate.includes(value)) {
+                throw new BadRequestException(
+                    'Query value is not allowed ' + value,
+                );
+            }
+        });
+        const firstBoothTemplate = await this.boothTemplateRepository.findOne({
+            where: {
                 id: parseInt(id),
             },
-        );
+            relations: populate,
+        });
 
         if (!firstBoothTemplate) {
             throw new NotFoundException(`The 'booth_id' ${id} is not found`);
@@ -59,7 +69,7 @@ export class BoothTemplateService {
                 defaultLimit: this.limitDefault,
                 sortableColumns: ['id', 'name', 'type', 'createdAt'],
                 defaultSortBy: [['createdAt', 'DESC']],
-                searchableColumns: ['id', 'name', 'type', 'createdAt'],
+                searchableColumns: ['id', 'name', 'type', 'createdDate'],
                 filterableColumns: {
                     type: [FilterOperator.EQ, FilterOperator.IN],
                 },

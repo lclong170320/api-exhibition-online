@@ -36,12 +36,13 @@ export class SpaceService {
             'spaceTemplate',
         ];
 
-        populate &&
-            populate.forEach((value) => {
-                if (!allowPopulate.includes(value)) {
-                    throw new BadRequestException('Query value is not allowed');
-                }
-            });
+        populate.forEach((value) => {
+            if (!allowPopulate.includes(value)) {
+                throw new BadRequestException(
+                    'Query value is not allowed ' + value,
+                );
+            }
+        });
 
         const spaceRepository = this.dataSource.getRepository(Space);
         const firstSpace = await spaceRepository.findOne({

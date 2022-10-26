@@ -2,7 +2,11 @@ import { SpaceTemplateConverter } from '@/components/exhibition/converters/space
 import { SpaceTemplate } from '@/components/exhibition/entities/space-template.entity';
 import { DbConnection } from '@/database/config/db';
 import { PaginateQuery } from '@/decorators/paginate.decorator';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+    Injectable,
+    NotFoundException,
+    BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FilterOperator, paginate } from 'nestjs-paginate';
 import { Repository } from 'typeorm';
@@ -19,6 +23,15 @@ export class SpaceTemplateService {
     ) {}
 
     async findSpaceTemplateById(id: string, populate: string[]) {
+        const allowPopulate = ['positionSpaces', 'spaces'];
+
+        populate.forEach((value) => {
+            if (!allowPopulate.includes(value)) {
+                throw new BadRequestException(
+                    'Query value is not allowed ' + value,
+                );
+            }
+        });
         const firstSpaceTemplate = await this.spaceTemplateRepository.findOne({
             where: {
                 id: parseInt(id),
