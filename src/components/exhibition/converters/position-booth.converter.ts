@@ -14,7 +14,6 @@ export class PositionBoothConverter {
     toDto(entity: PositionBooth) {
         const dto = {
             id: entity.id,
-            label: entity.label,
             object_3d_id: entity.object3dId,
             type: entity.type,
         } as PositionBoothDto;

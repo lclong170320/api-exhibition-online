@@ -16,9 +16,6 @@ export class PositionBooth {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({ length: 255 })
-    label: string;
-
     @Column({ name: 'object_3d_id', length: 255 })
     object3dId: string;
 
@@ -37,7 +34,7 @@ export class PositionBooth {
     })
     updatedAt: Date;
 
-    @ManyToOne(() => BoothTemplate, (template) => template.positionBooth, {
+    @ManyToOne(() => BoothTemplate, (template) => template.positionBooths, {
         nullable: false,
     })
     @JoinColumn({

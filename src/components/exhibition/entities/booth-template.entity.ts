@@ -54,7 +54,7 @@ export class BoothTemplate {
     boothOrganizations: BoothOrganization[];
 
     @OneToMany(() => PositionBooth, (position) => position.boothTemplate)
-    positionBooth: PositionBooth[];
+    positionBooths: PositionBooth[];
 
     @ManyToMany(() => Exhibition)
     exhibitions: Exhibition[];

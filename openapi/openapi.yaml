@@ -192,7 +192,7 @@ paths:
               type: string
               example: 'position_booths'
           description:
-           " Searching on allow columns:['position_booth', 'booth_organizations']"
+           " Searching on allow columns:['position_booths', 'booth_organizations']"
       responses:
         '200':
           description: OK
@@ -1578,7 +1578,7 @@ components:
           type: integer
           writeOnly: true
         position_booth:
-           $ref: '#/components/schemas/PositionBooth'
+          $ref: '#/components/schemas/PositionBooth'
         selected_media_id:
           type: integer
           writeOnly: true
@@ -1719,13 +1719,10 @@ components:
           type: integer
           readOnly: true
         position_booths:
+          writeOnly: true
           type: array
           items:
             $ref: '#/components/schemas/PositionBooth'
-        booth_organizations:
-          type: array
-          items:
-            $ref: '#/components/schemas/BoothOrganization'
     SpaceTemplate:
       type: object
       required:
@@ -1769,10 +1766,6 @@ components:
         id:
           type: integer
           readOnly: true
-        name:
-          type: string
-          minLength: 1
-          maxLength: 255
         object_3d_id:
           type: string
           pattern: '^[a-zA-Z\d\-_.,\s]+$'
@@ -2056,11 +2049,9 @@ components:
             $ref: '#/components/schemas/EnterpriseDocument'
     PositionBooth:
       type: object
-      readOnly: true
       required:
         - id
         - type
-        - label
         - object_3d_id
       properties:
         id:
@@ -2070,9 +2061,6 @@ components:
         type:
           type: string
           example: 'img'
-        label:
-          type: string
-          example: 'STANDEE'
         object_3d_id:
           type: string
           pattern: '^[a-zA-Z\d\-_.,\s]+$'
