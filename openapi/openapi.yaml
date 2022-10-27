@@ -1528,12 +1528,12 @@ components:
         introduction:
           type: string
           minLength: 1
-          maxLength: 1000
+          maxLength: 20000
           example: Giới thiệu công ty Tòa nhà C22-Officetel, số 22 Nguyễn Việt Hồng, phường An Phú, quận Ninh Kiều, TP. Cần Thơ
         agenda:
           type: string
           minLength: 1
-          maxLength: 1000
+          maxLength: 20000
           example: '07h45 - 08h20: Đón tiếp đại biểu, 08h20 - 08h40: Ca nhạc chào mừng'
     BoothOrganization:
       type: object

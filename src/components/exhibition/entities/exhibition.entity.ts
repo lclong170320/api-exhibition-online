@@ -36,10 +36,10 @@ export class Exhibition {
     @Column({ type: 'datetime', name: 'date_exhibition_end' })
     dateExhibitionEnd: Date;
 
-    @Column()
+    @Column('longtext')
     introduction: string;
 
-    @Column()
+    @Column('longtext')
     agenda: string;
 
     @CreateDateColumn({
