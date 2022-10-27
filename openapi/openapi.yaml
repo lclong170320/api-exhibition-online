@@ -27,46 +27,63 @@ servers:
 paths:
   '/exhibitions':
     get:
-      summary: Get exhibitions
-      description: Return multiple exhibitions
+      summary: Show list exhibitions
+      description: Show list exhibitions
       operationId: getExhibitions
       parameters:
-        - in: query
-          name: offset
-          schema:
-            type: integer
-            default: 0
-          description: The number of items to skip before starting to collect the result set
-        - in: query
-          name: limit
-          schema:
-            type: integer
-            default: 10
-          description: The numbers of items to return
+      - in: query
+        name: page
+        schema:
+          type: string
+          pattern: '^[0-9]+'
+          example: '1'
+        description: The number of items to skip before starting to collect the result set
+      - in: query
+        name: limit
+        schema:
+          type: string
+          pattern: '^[0-9]+'
+          example: '10'
+        description: The numbers of items to return
+      - in: query
+        name: search
+        allowReserved: true
+        schema:
+          type: string
+          example: 'Triển lãm xúc tiến đầu'
+        description:
+         " Searching on allow columns:['name']\n
+          example: http://localhost:3000/api/v1/exhibitions?search=Triển lãm xúc tiến đầu"
+      - in: query
+        name: sort_by
+        allowReserved: true
+        schema:
+          type: string
+          example: 'id:DESC'
+        description: "Sort on allow columns:[['id', 'created_at'],[DESC,ASC]]\n default column:['created_at', 'DESC']"
+      - in: query
+        name: filter.status
+        allowReserved: true
+        schema:
+          type: string
+          example: $eq:new
+        description: Filter on the `status` field.
+      - in: query
+        name: populate
+        schema:
+          type: array
+          items:
+            type: string
+            example: 'booth_organization'
+        description:
+         " Searching on allow columns:['category, space, space.space_datas,booth_organization, booth_templates, booth_templates.position_booth, space_template, space_template.position_spaces,booth_organization.booth_template, booth_organization.booth_organization_data, booth_organization.booth_organization_data.position_booth']"
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  offset:
-                    type: integer
-                    format: int64
-                    example: 0
-                  limit:
-                    type: integer
-                    format: int64
-                    example: 10
-                  total:
-                    type: integer
-                    format: int64
-                    example: 1
-                  exhibitions:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/Exhibition'
+                $ref: '#/components/schemas/ExhibitionList'
         '400':
           description: Bad request
           content:
@@ -1490,6 +1507,7 @@ components:
           example: TL0001
         category_id:
           type: integer
+          writeOnly: true
           example: 1
         booth_number:
           type: integer
@@ -1505,6 +1523,7 @@ components:
           pattern: '^[1-9]\d{3}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$'
           example: '2022-12-01T00:00:00.000Z'
         booth_template_ids:
+          writeOnly: true
           type: array
           items:
             type: integer
@@ -1517,6 +1536,7 @@ components:
           example: 1
         space_template_id:
           type: integer
+          writeOnly: true
           example: 1
         organization_booth_id:
           type: integer
@@ -1524,6 +1544,7 @@ components:
           example: 1
         organization_booth_template_id:
           type: integer
+          readOnly: true
           example: 1
         introduction:
           type: string
@@ -1535,6 +1556,13 @@ components:
           minLength: 1
           maxLength: 20000
           example: '07h45 - 08h20: Đón tiếp đại biểu, 08h20 - 08h40: Ca nhạc chào mừng'
+        status:
+          type: string
+          enum: ['new', 'listing', 'finished']
+          example: 'new'
+        number_booth:
+          type: number
+          example: 1
     BoothOrganization:
       type: object
       required:
@@ -2065,3 +2093,41 @@ components:
           type: string
           pattern: '^[a-zA-Z\d\-_.,\s]+$'
           maxLength: 255
+    ExhibitionList:
+      type: object
+      required:
+        - page
+        - limit
+        - total
+        - exhibitions
+      properties:
+        page:
+          type: integer
+          example: 0
+          description: The number of items to skip before starting to collect the result set.
+        limit:
+          type: integer
+          example: 10
+          description: The number of items to return.
+        total:
+          type: integer
+          format: int64
+          example: 1
+        exhibitions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Exhibition'
+    Category:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: integer
+          example: 0
+          description: The number id category.
+        name:
+          type: string
+          example: 'loai triễn lảm'
+          description: The name category.

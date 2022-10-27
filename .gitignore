@@ -1,28 +1,9 @@
-# OS
-.DS_Store
-
-# IDEs and editors
-/.idea
-.project
-.classpath
-.c9/
-*.launch
-.settings/
-*.sublime-workspace
-
-# IDE - VSCode
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-
 # compiled output
 /dist
 /node_modules
 
 # Logs
-logs/*
+logs
 *.log
 npm-debug.log*
 pnpm-debug.log*
@@ -53,10 +34,7 @@ lerna-debug.log*
 !.vscode/launch.json
 !.vscode/extensions.json
 
-.env
-
-# resources media
-resources/*
-!resources/.gitkeep
-
 db_data/
+resources/*
+
+.env

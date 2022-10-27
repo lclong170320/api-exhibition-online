@@ -6,6 +6,7 @@ import {
     JoinTable,
     ManyToMany,
     ManyToOne,
+    OneToMany,
     OneToOne,
     PrimaryGeneratedColumn,
     UpdateDateColumn,
@@ -15,6 +16,8 @@ import { SpaceTemplate } from './space-template.entity';
 import { BoothOrganization } from './booth-organization.entity';
 import { Category } from './category.entity';
 import { Space } from './space.entity';
+import { Booth } from './booth.entity';
+import { Exhibition as exhibitionDto } from '../dto/exhibition.dto';
 
 @Entity({ name: 'exhibitions' })
 export class Exhibition {
@@ -41,6 +44,9 @@ export class Exhibition {
 
     @Column('longtext')
     agenda: string;
+
+    @Column()
+    status: exhibitionDto.StatusEnum;
 
     @CreateDateColumn({
         type: 'timestamp',
@@ -113,4 +119,7 @@ export class Exhibition {
         foreignKeyConstraintName: 'fk-space_templates-exhibitions',
     })
     spaceTemplate: SpaceTemplate;
+
+    @OneToMany(() => Booth, (booth) => booth.exhibition)
+    booths: Booth[];
 }

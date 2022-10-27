@@ -9,20 +9,42 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { Space } from './space.dto';
+import { BoothTemplate } from './booth-template.dto';
+import { Category } from './category.dto';
+import { SpaceTemplate } from './space-template.dto';
+import { BoothOrganization } from './booth-organization.dto';
 
 export interface Exhibition {
     readonly id: number;
     name: string;
     exhibition_code: string;
     category_id: number;
+    category?: Category;
     booth_number: number;
     date_exhibition_start: string;
     date_exhibition_end: string;
     booth_template_ids: Array<number>;
+    readonly booth_templates?: Array<BoothTemplate>;
     readonly space_id: number;
+    space?: Space;
     space_template_id: number;
+    readonly space_template?: SpaceTemplate;
     readonly organization_booth_id: number;
-    organization_booth_template_id: number;
+    organization_booth?: BoothOrganization;
+    readonly organization_booth_template_id: number;
     introduction: string;
     agenda: string;
+    status?: Exhibition.StatusEnum;
+    number_booth?: number;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-namespace
+export namespace Exhibition {
+    export type StatusEnum = 'new' | 'listing' | 'finished';
+    export const StatusEnum = {
+        New: 'new' as StatusEnum,
+        Listing: 'listing' as StatusEnum,
+        Finished: 'finished' as StatusEnum,
+    };
 }

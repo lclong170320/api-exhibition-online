@@ -14,18 +14,26 @@ import { DbConnection } from '@/database/config/db';
 
 import { ExhibitionConverter } from '@/components/exhibition/converters/exhibition.converter';
 import { Exhibition as ExhibitionDto } from '@/components/exhibition/dto/exhibition.dto';
+import { ExhibitionListConverter } from '../converters/exhibition-list.converter';
 
 import { BoothTemplate } from '@/components/exhibition/entities/booth-template.entity';
 import { SpaceTemplate } from '@/components/exhibition/entities/space-template.entity';
+import { PaginateQuery } from '@/decorators/paginate.decorator';
+import { Booth } from '../entities/booth.entity';
+import { QueryHelper } from 'helpers/query.helper';
 
 @Injectable()
 export class ExhibitionService {
     constructor(
         @InjectRepository(Exhibition, DbConnection.exhibitionCon)
         private readonly exhibitionRepository: Repository<Exhibition>,
+        @InjectRepository(Booth, DbConnection.exhibitionCon)
+        private readonly boothRepository: Repository<Booth>,
         private readonly exhibitionConverter: ExhibitionConverter,
+        private readonly exhibitionListConverter: ExhibitionListConverter,
         @InjectDataSource(DbConnection.exhibitionCon)
         private readonly dataSource: DataSource,
+        private readonly queryHelper: QueryHelper,
     ) {}
 
     private checkDateExhibition(exhibitionDto: ExhibitionDto) {
@@ -38,6 +46,74 @@ export class ExhibitionService {
         return true;
     }
 
+    private async findBoothExhibition(exhibitionDto: ExhibitionDto) {
+        const boothNumber = await this.boothRepository.count({
+            where: {
+                exhibition: {
+                    id: exhibitionDto.id,
+                },
+            },
+        });
+        boothNumber
+            ? (exhibitionDto.number_booth = boothNumber)
+            : (exhibitionDto.number_booth = 0);
+
+        return exhibitionDto;
+    }
+
+    async findExhibitions(query: PaginateQuery) {
+        const sortableColumns = ['id', 'createdAt'];
+        const searchableColumns = ['name'];
+        const populatableColumns = [
+            'category',
+            'space',
+            'space.spaceDatas',
+            'boothOrganization',
+            'boothTemplates',
+            'boothTemplates.positionBooth',
+            'spaceTemplate',
+            'spaceTemplate.positionSpaces',
+            'boothOrganization.boothTemplate',
+            'boothOrganization.boothOrganizationData',
+            'boothOrganization.boothOrganizationData.positionBooth',
+        ];
+        const [exhibitions, total] =
+            await this.exhibitionRepository.findAndCount({
+                take: query.limit,
+                skip: (query.page - 1) * query.limit,
+                order: this.queryHelper.parseSortBy(
+                    query.sortBy,
+                    sortableColumns,
+                ),
+                where: {
+                    ...this.queryHelper.parseSearch(
+                        query.search,
+                        searchableColumns,
+                    ),
+                    ...this.queryHelper.parseFilter(query.filter),
+                },
+                relations: this.queryHelper.parsePopulate(
+                    query.populate,
+                    populatableColumns,
+                ),
+            });
+
+        const exhibitionDto = this.exhibitionListConverter.toDto(
+            query.page,
+            query.limit,
+            total,
+            exhibitions,
+        );
+
+        await Promise.all(
+            exhibitionDto.exhibitions.map(async (data) => {
+                const numberBooth = this.findBoothExhibition(data);
+                return numberBooth;
+            }),
+        );
+        return exhibitionDto;
+    }
+
     async findById(id: string): Promise<ExhibitionDto> {
         const exhibitionId = parseInt(id);
         const exhibitionEntity = await this.exhibitionRepository.findOne({
@@ -46,10 +122,11 @@ export class ExhibitionService {
             },
             relations: [
                 'category',
-                'booths.boothTemplate',
                 'space',
                 'boothTemplates',
                 'spaceTemplate',
+                'boothOrganization',
+                'boothOrganization.boothTemplate',
             ],
         });
 
@@ -58,7 +135,10 @@ export class ExhibitionService {
                 `The 'exhibition_id' ${exhibitionId} not found`,
             );
         }
-        return this.exhibitionConverter.toDto(exhibitionEntity);
+        const exhibitionDto = this.exhibitionConverter.toDto(exhibitionEntity);
+        const exhibition = this.findBoothExhibition(exhibitionDto);
+
+        return exhibition;
     }
 
     private async findCategoryById(
@@ -196,7 +276,7 @@ export class ExhibitionService {
                 exhibitionEntity.spaceTemplate = spaceTemplate;
                 exhibitionEntity.space = space;
                 exhibitionEntity.boothOrganization = boothOrganization;
-
+                exhibitionEntity.status = 'new';
                 const createdExhibition = await exhibitionRepository.save(
                     exhibitionEntity,
                 );

@@ -11,6 +11,7 @@ import { BoothOrganization } from './booth-organization.entity';
 import { Exhibition } from './exhibition.entity';
 import { PositionBooth } from './position-booth.entity';
 import { BoothTemplate as BoothTemplateDto } from '../dto/booth-template.dto';
+import { Booth } from './booth.entity';
 
 @Entity({ name: 'booth_templates' })
 export class BoothTemplate {
@@ -52,6 +53,9 @@ export class BoothTemplate {
         (boothOrganization) => boothOrganization.boothTemplate,
     )
     boothOrganizations: BoothOrganization[];
+
+    @OneToMany(() => Booth, (booth) => booth.boothTemplate)
+    booths: Booth[];
 
     @OneToMany(() => PositionBooth, (position) => position.boothTemplate)
     positionBooths: PositionBooth[];

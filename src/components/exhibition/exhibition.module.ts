@@ -34,6 +34,11 @@ import { SpaceTemplateConverter } from './converters/space-template.converter';
 import { PositionSpaceConverter } from './converters/position-space.converter';
 import { PositionBoothConverter } from './converters/position-booth.converter';
 import { SpaceTemplateListConverter } from './converters/space-template-list.converter';
+import { ExhibitionListConverter } from './converters/exhibition-list.converter';
+import { Booth } from './entities/booth.entity';
+import { BoothLocation } from './entities/booth-location.entity';
+import { LocationStatus } from './entities/location-status.entity';
+import { QueryHelper } from 'helpers/query.helper';
 
 @Module({
     controllers: [
@@ -61,7 +66,8 @@ import { SpaceTemplateListConverter } from './converters/space-template-list.con
         PositionSpaceConverter,
         SpaceTemplateListConverter,
         PositionBoothConverter,
-        SpaceTemplateListConverter,
+        ExhibitionListConverter,
+        QueryHelper,
     ],
     imports: [
         TypeOrmModule.forFeature(
@@ -76,6 +82,9 @@ import { SpaceTemplateListConverter } from './converters/space-template-list.con
                 SpaceTemplate,
                 PositionSpace,
                 PositionBooth,
+                Booth,
+                BoothLocation,
+                LocationStatus,
             ],
             DbConnection.exhibitionCon,
         ),
