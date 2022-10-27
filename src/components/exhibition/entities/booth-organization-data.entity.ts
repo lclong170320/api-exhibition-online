@@ -21,7 +21,7 @@ export class BoothOrganizationData {
     @Column({ length: 255, nullable: true })
     title: string;
 
-    @Column({ nullable: true })
+    @Column({ type: 'longtext', nullable: true })
     description: string;
 
     @CreateDateColumn({

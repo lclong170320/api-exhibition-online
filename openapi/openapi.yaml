@@ -1592,6 +1592,7 @@ components:
           type: string
         description:
           type: string
+          maxLength: 20000
     Space:
       type: object
       required:
