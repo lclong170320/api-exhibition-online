@@ -36,7 +36,6 @@ export interface Exhibition {
     introduction: string;
     agenda: string;
     status?: Exhibition.StatusEnum;
-    number_booth?: number;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-namespace

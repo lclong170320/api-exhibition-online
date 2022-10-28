@@ -51,16 +51,21 @@ paths:
         schema:
           type: string
           example: 'Triển lãm xúc tiến đầu'
-        description:
-         " Searching on allow columns:['name']\n
-          example: http://localhost:3000/api/v1/exhibitions?search=Triển lãm xúc tiến đầu"
+        description: |
+          Searching on allow columns:['name']:
+          ```
+          http://localhost:3000/api/v1/exhibitions?search=Triển lãm xúc tiến đầu
+          ```
       - in: query
         name: sort_by
         allowReserved: true
         schema:
           type: string
           example: 'id:DESC'
-        description: "Sort on allow columns:[['id', 'created_at'],[DESC,ASC]]\n default column:['created_at', 'DESC']"
+        description: |
+          Sort on allow columns:
+           - ['id', 'DESC']
+           - ['id', 'ASC']
       - in: query
         name: filter.status
         allowReserved: true
@@ -75,8 +80,15 @@ paths:
           items:
             type: string
             example: 'booth_organization'
-        description:
-         " Searching on allow columns:['category, space, space.space_datas,booth_organization, booth_templates, booth_templates.position_booth, space_template, space_template.position_spaces,booth_organization.booth_template, booth_organization.booth_organization_data, booth_organization.booth_organization_data.position_booth']"
+        description: |
+          List of populatable columns
+          | Populates          |
+          |--------------------|
+          | category           |
+          | space              |
+          | booth_organization |
+          | booth_template     |
+          | space_template     |
       responses:
         '200':
           description: OK
@@ -1485,7 +1497,6 @@ components:
         - booth_template_ids
         - space_template_id
         - space_id
-        - organization_booth_template_id
         - organization_booth_id
         - introduction
         - agenda
@@ -1539,10 +1550,6 @@ components:
           writeOnly: true
           example: 1
         organization_booth_id:
-          type: integer
-          readOnly: true
-          example: 1
-        organization_booth_template_id:
           type: integer
           readOnly: true
           example: 1

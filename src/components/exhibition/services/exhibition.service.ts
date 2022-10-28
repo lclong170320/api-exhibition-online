@@ -46,36 +46,15 @@ export class ExhibitionService {
         return true;
     }
 
-    private async findBoothExhibition(exhibitionDto: ExhibitionDto) {
-        const boothNumber = await this.boothRepository.count({
-            where: {
-                exhibition: {
-                    id: exhibitionDto.id,
-                },
-            },
-        });
-        boothNumber
-            ? (exhibitionDto.number_booth = boothNumber)
-            : (exhibitionDto.number_booth = 0);
-
-        return exhibitionDto;
-    }
-
     async findExhibitions(query: PaginateQuery) {
         const sortableColumns = ['id', 'createdAt'];
         const searchableColumns = ['name'];
         const populatableColumns = [
             'category',
             'space',
-            'space.spaceDatas',
             'boothOrganization',
             'boothTemplates',
-            'boothTemplates.positionBooth',
             'spaceTemplate',
-            'spaceTemplate.positionSpaces',
-            'boothOrganization.boothTemplate',
-            'boothOrganization.boothOrganizationData',
-            'boothOrganization.boothOrganizationData.positionBooth',
         ];
         const [exhibitions, total] =
             await this.exhibitionRepository.findAndCount({
@@ -98,20 +77,12 @@ export class ExhibitionService {
                 ),
             });
 
-        const exhibitionDto = this.exhibitionListConverter.toDto(
+        return this.exhibitionListConverter.toDto(
             query.page,
             query.limit,
             total,
             exhibitions,
         );
-
-        await Promise.all(
-            exhibitionDto.exhibitions.map(async (data) => {
-                const numberBooth = this.findBoothExhibition(data);
-                return numberBooth;
-            }),
-        );
-        return exhibitionDto;
     }
 
     async findById(id: string): Promise<ExhibitionDto> {
@@ -135,10 +106,8 @@ export class ExhibitionService {
                 `The 'exhibition_id' ${exhibitionId} not found`,
             );
         }
-        const exhibitionDto = this.exhibitionConverter.toDto(exhibitionEntity);
-        const exhibition = this.findBoothExhibition(exhibitionDto);
 
-        return exhibition;
+        return this.exhibitionConverter.toDto(exhibitionEntity);
     }
 
     private async findCategoryById(

@@ -32,30 +32,30 @@ export class ExhibitionConverter {
         const dto = {
             id: entity.id,
             name: entity.name,
+            exhibition_code: entity.exhibitionCode,
             booth_number: entity.boothNumber,
+            date_exhibition_start: entity.dateExhibitionStart.toISOString(),
+            date_exhibition_end: entity.dateExhibitionEnd.toISOString(),
+            introduction: entity.introduction,
+            agenda: entity.agenda,
+            status: entity.status,
             category: entity.category
                 ? this.categoryConverter.toDto(entity.category)
                 : undefined,
-            exhibition_code: entity.exhibitionCode,
-            date_exhibition_start: entity.dateExhibitionStart.toISOString(),
-            date_exhibition_end: entity.dateExhibitionEnd.toISOString(),
-            booth_templates: entity.boothTemplates
-                ? entity.boothTemplates.map((data) =>
-                      this.boothTemplateConverter.toDto(data),
-                  )
+            space: entity.space
+                ? this.spaceConverter.toDto(entity.space)
                 : undefined,
             space_template: entity.spaceTemplate
                 ? this.spaceTemplateConverter.toDto(entity.spaceTemplate)
                 : undefined,
-            introduction: entity.introduction,
-            agenda: entity.agenda,
-            space: entity.space
-                ? this.spaceConverter.toDto(entity.space)
-                : undefined,
-            status: entity.status,
             organization_booth: entity.boothOrganization
                 ? this.boothOrganizationConverter.toDto(
                       entity.boothOrganization,
+                  )
+                : undefined,
+            booth_templates: entity.boothTemplates
+                ? entity.boothTemplates.map((data) =>
+                      this.boothTemplateConverter.toDto(data),
                   )
                 : undefined,
             organization_booth_template_id: entity.boothOrganization
