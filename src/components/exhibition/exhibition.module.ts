@@ -38,7 +38,6 @@ import { ExhibitionListConverter } from './converters/exhibition-list.converter'
 import { Booth } from './entities/booth.entity';
 import { BoothLocation } from './entities/booth-location.entity';
 import { LocationStatus } from './entities/location-status.entity';
-import { QueryHelper } from 'helpers/query.helper';
 
 @Module({
     controllers: [
@@ -67,7 +66,6 @@ import { QueryHelper } from 'helpers/query.helper';
         SpaceTemplateListConverter,
         PositionBoothConverter,
         ExhibitionListConverter,
-        QueryHelper,
     ],
     imports: [
         TypeOrmModule.forFeature(

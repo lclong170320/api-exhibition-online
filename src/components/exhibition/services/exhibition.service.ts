@@ -14,13 +14,13 @@ import { DbConnection } from '@/database/config/db';
 
 import { ExhibitionConverter } from '@/components/exhibition/converters/exhibition.converter';
 import { Exhibition as ExhibitionDto } from '@/components/exhibition/dto/exhibition.dto';
-import { ExhibitionListConverter } from '../converters/exhibition-list.converter';
+import { ExhibitionListConverter } from '@/components/exhibition/converters/exhibition-list.converter';
+import { Booth } from '@/components/exhibition/entities/booth.entity';
 
 import { BoothTemplate } from '@/components/exhibition/entities/booth-template.entity';
 import { SpaceTemplate } from '@/components/exhibition/entities/space-template.entity';
 import { PaginateQuery } from '@/decorators/paginate.decorator';
-import { Booth } from '../entities/booth.entity';
-import { QueryHelper } from 'helpers/query.helper';
+import { paginate } from '@/utils/pagination';
 
 @Injectable()
 export class ExhibitionService {
@@ -33,7 +33,6 @@ export class ExhibitionService {
         private readonly exhibitionListConverter: ExhibitionListConverter,
         @InjectDataSource(DbConnection.exhibitionCon)
         private readonly dataSource: DataSource,
-        private readonly queryHelper: QueryHelper,
     ) {}
 
     private checkDateExhibition(exhibitionDto: ExhibitionDto) {
@@ -47,8 +46,10 @@ export class ExhibitionService {
     }
 
     async findExhibitions(query: PaginateQuery) {
-        const sortableColumns = ['id', 'createdAt'];
+        const sortableColumns = ['id', 'name', 'createdAt'];
         const searchableColumns = ['name'];
+        const filterableColumns = ['status'];
+        const defaultSortBy = [['createdAt', 'DESC']];
         const populatableColumns = [
             'category',
             'space',
@@ -56,26 +57,17 @@ export class ExhibitionService {
             'boothTemplates',
             'spaceTemplate',
         ];
-        const [exhibitions, total] =
-            await this.exhibitionRepository.findAndCount({
-                take: query.limit,
-                skip: (query.page - 1) * query.limit,
-                order: this.queryHelper.parseSortBy(
-                    query.sortBy,
-                    sortableColumns,
-                ),
-                where: {
-                    ...this.queryHelper.parseSearch(
-                        query.search,
-                        searchableColumns,
-                    ),
-                    ...this.queryHelper.parseFilter(query.filter),
-                },
-                relations: this.queryHelper.parsePopulate(
-                    query.populate,
-                    populatableColumns,
-                ),
-            });
+        const [exhibitions, total] = await paginate(
+            query,
+            this.exhibitionRepository,
+            {
+                searchableColumns,
+                sortableColumns,
+                populatableColumns,
+                filterableColumns,
+                defaultSortBy,
+            },
+        );
 
         return this.exhibitionListConverter.toDto(
             query.page,
