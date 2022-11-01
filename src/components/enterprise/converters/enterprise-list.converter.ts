@@ -6,7 +6,7 @@ import { EnterpriseConverter } from './enterprise.converter';
 @Injectable()
 export class EnterpriseListConverter {
     constructor(private enterpriseConverter: EnterpriseConverter) {}
-    toDto(entity: Enterprise[], limit: number, page: number, total: number) {
+    toDto(page: number, limit: number, total: number, entity: Enterprise[]) {
         const dto = {
             limit: limit,
             page: page,

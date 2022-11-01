@@ -1,8 +1,6 @@
-import { Exhibition } from '@/components/exhibition/entities/exhibition.entity';
 import { PaginateQuery } from '@/decorators/paginate.decorator';
 import { isString } from 'lodash';
 import {
-    Entity,
     Equal,
     FindOptionsOrder,
     FindOptionsWhere,
@@ -24,17 +22,17 @@ export interface Option {
 
 export async function paginate<T>(
     query: PaginateQuery,
-    exhibitionRepository: Repository<T>,
+    repository: Repository<T>,
     option: Option,
 ) {
-    const [data, total] = await exhibitionRepository.findAndCount({
+    const [data, total] = await repository.findAndCount({
         take: query.limit,
         skip: (query.page - 1) * query.limit,
         order: parseDefaultSortBy(option.defaultSortBy),
-        where: {
-            ...parseSearch(query.search, option.searchableColumns),
-            ...parseFilter(query.filter, option.filterableColumns),
-        },
+        where: parseWhereClause(
+            parseSearch(query.search, option.searchableColumns),
+            parseFilter(query.filter, option.filterableColumns),
+        ),
         relations: parsePopulate(query.populate, option.populatableColumns),
     });
 
@@ -55,7 +53,7 @@ export async function paginate<T>(
         });
     });
 
-    return [sortedData, total] as [Exhibition[], number];
+    return [sortedData, total] as [T[], number];
 }
 
 function parseSortBy(
@@ -77,29 +75,30 @@ function parseSortBy(
     return result;
 }
 
-function parseDefaultSortBy(defaultSortBy: string[][]) {
-    const result: FindOptionsOrder<typeof Entity> = {};
+function parseDefaultSortBy<T>(defaultSortBy: string[][]) {
+    const result: FindOptionsOrder<T> = {};
     if (defaultSortBy && defaultSortBy.length) {
         defaultSortBy.forEach((value) => {
-            result[value[0]] = value[1];
+            Object.assign(result, {
+                [value[0]]: value[1],
+            });
         });
     }
     return result;
 }
 
-function parseFilter(
+function parseFilter<T>(
     filter: { [column: string]: string | string[] },
     filterableColumns: string[],
 ) {
     const allowedOperator = ['$eq', '$lt', '$lte', '$gt', '$gte'];
-    const result: FindOptionsWhere<typeof Entity> = {};
+    const result: FindOptionsWhere<T> = {};
     if (filter && filterableColumns) {
         for (const column in filter) {
             if (isString(filter[column])) {
                 const valueFilter = filter[column] as string;
                 if (valueFilter.includes(':')) {
                     const [operator, value] = valueFilter.split(':');
-                    console.log(filterableColumns.includes(column));
                     if (
                         filterableColumns.includes(column) &&
                         allowedOperator.includes(operator)
@@ -148,8 +147,8 @@ function parseFilter(
     return result;
 }
 
-function parseSearch(searchText: string, searchableColumns: string[]) {
-    const result: FindOptionsWhere<typeof Entity> = {};
+function parseSearch<T>(searchText: string, searchableColumns: string[]) {
+    const result: FindOptionsWhere<T> = {};
     if (searchText && searchableColumns) {
         searchableColumns.forEach((column) => {
             Object.assign(result, {
@@ -170,5 +169,17 @@ function parsePopulate(populate: string[], populatableColumns: string[]) {
             }
         });
     }
+    return result;
+}
+
+function parseWhereClause<T>(
+    searchClauses: FindOptionsWhere<T>,
+    filterClauses: FindOptionsWhere<T>,
+) {
+    const result: FindOptionsWhere<T>[] = [];
+    for (const [searchKey, searchValue] of Object.entries(searchClauses)) {
+        result.push({ [searchKey]: searchValue, ...filterClauses });
+    }
+
     return result;
 }

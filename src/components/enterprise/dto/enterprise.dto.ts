@@ -10,6 +10,8 @@
  * Do not edit the class manually.
  */
 
+import { EnterpriseDocument } from './enterprise-document.dto';
+
 export interface Enterprise {
     readonly id: number;
     international_name: string;
@@ -25,6 +27,7 @@ export interface Enterprise {
     type_of_business: string;
     manager_by: string;
     view_company_online?: string;
+    documents?: EnterpriseDocument[];
 }
 // eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace Enterprise {

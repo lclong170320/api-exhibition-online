@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { Enterprise } from '@/components/enterprise/entities/enterprise.entity';
 import { Enterprise as EnterpriseDto } from '@/components/enterprise/dto/enterprise.dto';
+import { DocumentConverter } from './enterprise-document.converter';
 
 @Injectable()
 export class EnterpriseConverter {
+    constructor(private readonly documentConverter: DocumentConverter) {}
     toEntity(dto: EnterpriseDto) {
         const entity = new Enterprise();
         entity.internationalName = dto.international_name;
@@ -36,6 +38,11 @@ export class EnterpriseConverter {
             view_company_online: entity.viewCompanyOnline,
             manager_by: entity.managerBy,
             active_date: entity.activeDate.toISOString(),
+            documents: entity.documents
+                ? entity.documents.map((data) =>
+                      this.documentConverter.toDto(data),
+                  )
+                : undefined,
         } as EnterpriseDto;
 
         return dto;

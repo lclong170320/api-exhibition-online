@@ -900,10 +900,15 @@ paths:
           description: The numbers of items to return
         - in: query
           name: search
+          allowReserved: true
           schema:
             type: string
-            example: 'davavina'
-          description: Searching keyword
+            example: 'dalavina'
+          description: |
+            Searching on allow columns:['abbreviation', createdBy]:
+            ```
+            http://localhost:3000/api/v1/exhibitions?search=dalavina
+            ```
         - in: query
           name: sort_by
           allowReserved: true
@@ -913,6 +918,18 @@ paths:
               type: string
           example: 'abbreviation:desc'
           description: column name for ordering and value [desc,asc]
+        - in: query
+          name: populate
+          schema:
+            type: array
+            items:
+              type: string
+              example: 'documents'
+          description: |
+            List of populatable columns
+            | Populates          |
+            |--------------------|
+            | documents          |
       responses:
         '200':
           description: OK

@@ -3,7 +3,7 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
-import { paginate } from 'nestjs-paginate';
+import { paginate } from '@/utils/pagination';
 import { PaginateQuery } from '@/decorators/paginate.decorator';
 import { toDataURL } from 'qrcode';
 import { lastValueFrom, map } from 'rxjs';
@@ -36,24 +36,30 @@ export class EnterpriseService {
     ) {}
 
     async getEnterprises(query: PaginateQuery) {
-        const enterprises = await paginate(query, this.enterpriseRepository, {
-            maxLimit: query.limit,
-            defaultLimit: this.limitDefault,
-            sortableColumns: [
-                'abbreviation',
-                'createdBy',
-                'createdAt',
-                'internationalName',
-            ],
-            defaultSortBy: [['createdAt', 'DESC']],
-            searchableColumns: ['abbreviation', 'createdBy'],
-        });
-
+        const sortableColumns = [
+            'abbreviation',
+            'createdBy',
+            'createdAt',
+            'internationalName',
+        ];
+        const searchableColumns = ['abbreviation', 'createdBy'];
+        const defaultSortBy = [['createdAt', 'DESC']];
+        const populatableColumns = ['documents'];
+        const [enterprises, total] = await paginate(
+            query,
+            this.enterpriseRepository,
+            {
+                searchableColumns,
+                sortableColumns,
+                populatableColumns,
+                defaultSortBy,
+            },
+        );
         return this.enterpriseListConverter.toDto(
-            enterprises.data,
-            enterprises.meta.itemsPerPage,
-            enterprises.meta.currentPage,
-            enterprises.meta.totalItems,
+            query.page,
+            query.limit,
+            total,
+            enterprises,
         );
     }
 
