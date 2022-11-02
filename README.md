@@ -13,7 +13,7 @@
 ## For dev
 - Create DTO from openapi definition
   ```
-  openapi-generator-cli generate -g typescript-nestjs -i path/to/openapi.yaml -o ./output --additional-properties=fileNaming=kebab-case,modelFileSuffix=.dto
+  openapi-generator-cli generate -g typescript-nestjs -i ./openapi/openapi.yaml -o ./output --additional-properties=fileNaming=kebab-case,modelFileSuffix=.dto
   ```
 - Check DTO in the `output/model` dir
 

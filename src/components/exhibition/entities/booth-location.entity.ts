@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 import { SpaceTemplate } from './space-template.entity';
 
-@Entity({ name: 'booth-locations' })
+@Entity({ name: 'booth_locations' })
 export class BoothLocation {
     @PrimaryGeneratedColumn()
     id: number;

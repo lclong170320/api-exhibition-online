@@ -24,7 +24,7 @@ export class BoothTemplate {
     @Column({ name: 'name' })
     name: string;
 
-    @Column({ name: 'type' })
+    @Column({ name: 'type', type: 'enum', enum: BoothTemplateDto.TypeEnum })
     type: BoothTemplateDto.TypeEnum;
 
     @Column({ type: 'datetime', name: 'created_date' })

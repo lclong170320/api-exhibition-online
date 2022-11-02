@@ -4,13 +4,18 @@ import {
     Entity,
     JoinColumn,
     ManyToOne,
+    OneToMany,
     OneToOne,
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from 'typeorm';
+import { BoothData } from './booth-data.entity';
 import { BoothTemplate } from './booth-template.entity';
 import { Exhibition } from './exhibition.entity';
+import { LiveStream } from './livestream.entity';
 import { LocationStatus } from './location-status.entity';
+import { Product } from './product.entity';
+import { Project } from './project.entity';
 
 @Entity({ name: 'booths' })
 export class Booth {
@@ -23,8 +28,8 @@ export class Booth {
     @Column({ name: 'enterprise_id' })
     enterpriseId: number;
 
-    @Column({ name: 'user_id' })
-    userId: number;
+    @Column({ name: 'created_by' })
+    createdBy: number;
 
     @CreateDateColumn({
         type: 'timestamp',
@@ -60,8 +65,20 @@ export class Booth {
         nullable: false,
     })
     @JoinColumn({
-        name: 'booth_id',
+        name: 'booth_template_id',
         foreignKeyConstraintName: 'fk-booths-booth_template',
     })
     boothTemplate: BoothTemplate;
+
+    @OneToMany(() => LiveStream, (liveStream) => liveStream.booth)
+    liveStreams: LiveStream[];
+
+    @OneToMany(() => BoothData, (boothData) => boothData.booth)
+    boothData: BoothData[];
+
+    @OneToMany(() => Project, (project) => project.booth)
+    projects: Project[];
+
+    @OneToMany(() => Product, (product) => product.booth)
+    products: Product[];
 }

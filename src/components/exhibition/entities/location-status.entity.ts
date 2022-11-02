@@ -11,7 +11,7 @@ import {
 import { Booth } from './booth.entity';
 import { Space } from './space.entity';
 
-@Entity({ name: 'location-status' })
+@Entity({ name: 'location_status' })
 export class LocationStatus {
     @PrimaryGeneratedColumn()
     id: number;

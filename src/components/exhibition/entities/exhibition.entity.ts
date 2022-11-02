@@ -45,7 +45,7 @@ export class Exhibition {
     @Column('longtext')
     agenda: string;
 
-    @Column()
+    @Column({ type: 'enum', enum: exhibitionDto.StatusEnum })
     status: exhibitionDto.StatusEnum;
 
     @CreateDateColumn({

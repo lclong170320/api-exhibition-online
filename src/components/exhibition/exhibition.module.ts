@@ -38,6 +38,17 @@ import { ExhibitionListConverter } from './converters/exhibition-list.converter'
 import { Booth } from './entities/booth.entity';
 import { BoothLocation } from './entities/booth-location.entity';
 import { LocationStatus } from './entities/location-status.entity';
+import { BoothController } from './controllers/booth.controller';
+import { BoothService } from './services/booth.service';
+import { BoothConverter } from './converters/booth.converter';
+import { BoothDataConverter } from './converters/booth-data.converter';
+import { LiveStreamConverter } from './converters/live-stream.converter';
+import { ProductConverter } from './converters/product.converter';
+import { ProjectConverter } from './converters/project.converter';
+import { LiveStream } from './entities/livestream.entity';
+import { Product } from './entities/product.entity';
+import { BoothData } from './entities/booth-data.entity';
+import { Project } from './entities/project.entity';
 
 @Module({
     controllers: [
@@ -46,6 +57,7 @@ import { LocationStatus } from './entities/location-status.entity';
         BoothOrganizationController,
         SpaceController,
         SpaceTemplateController,
+        BoothController,
     ],
     providers: [
         ExhibitionService,
@@ -66,6 +78,12 @@ import { LocationStatus } from './entities/location-status.entity';
         SpaceTemplateListConverter,
         PositionBoothConverter,
         ExhibitionListConverter,
+        BoothService,
+        BoothConverter,
+        BoothDataConverter,
+        ProductConverter,
+        LiveStreamConverter,
+        ProjectConverter,
     ],
     imports: [
         TypeOrmModule.forFeature(
@@ -83,6 +101,10 @@ import { LocationStatus } from './entities/location-status.entity';
                 Booth,
                 BoothLocation,
                 LocationStatus,
+                LiveStream,
+                Product,
+                Project,
+                BoothData,
             ],
             DbConnection.exhibitionCon,
         ),

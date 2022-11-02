@@ -22,8 +22,8 @@ tags:
   - name: Space
     description: API to interact with the Space
 servers:
-  - url: 'http://localhost:3000/api/v1'
   - url: 'http://52.74.156.150:3000/api/v1'
+  - url: 'http://localhost:3000/api/v1'
 paths:
   '/exhibitions':
     get:
@@ -335,11 +335,11 @@ paths:
     post:
       tags:
         - Booth
-      summary: Add a booth
-      description: Add a booth
-      operationId: addBooth
+      summary: Add a new booth template
+      description: Add a booth template
+      operationId: addBoothTemplate
       requestBody:
-        description: Create a booth
+        description: Create a booth template
         content:
           application/json:
             schema:
@@ -352,6 +352,51 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/BoothTemplate'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Bad Request
+                    details:
+                      - field: .params.id
+                        message: 'should match pattern "^[0-9]+$"'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Internal server error
+                    details: []
+  '/booths':
+    post:
+      tags:
+        - Booth
+      summary: Add a booth
+      description: Add a booth
+      operationId: addBooth
+      requestBody:
+        description: Create a booth
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Booth'
+        required: true
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Booth'
         '400':
           description: Validation error
           content:
@@ -2155,3 +2200,166 @@ components:
           type: string
           example: 'loai triễn lảm'
           description: The name category.
+    Booth:
+      type: object
+      required:
+        - id
+        - name
+        - enterprise_id
+        - exhibition_id
+        - created_by
+        - location_status_id
+        - booth_template_id
+        - booth_data
+        - live_streams
+      properties:
+        id:
+          type: integer
+          example: 1
+          description: The number id booth.
+          readOnly: true
+        name:
+          type: string
+          example: 'triễn lảm'
+          description: The name category.
+        enterprise_id:
+          type: integer
+          example: 1
+        created_by:
+          type: integer
+          readOnly: true
+          example: 1
+        booth_template_id:
+          type: integer
+          example: 1
+        location_status_id:
+          type: integer
+          example: 1
+        exhibition_id:
+          type: integer
+          example: 1
+        live_streams:
+          type: array
+          items:
+            $ref: '#/components/schemas/LiveStream'
+        booth_data:
+          type: array
+          items:
+            $ref: '#/components/schemas/BoothData'
+        projects:
+          type: array
+          items:
+            $ref: '#/components/schemas/Project'
+        products:
+          type: array
+          items:
+            $ref: '#/components/schemas/Product'
+          example: null
+    BoothData:
+      type: object
+      required:
+        - id
+        - position_booth_id
+        - media_id
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        position_booth_id:
+          type: integer
+          writeOnly: true
+        selected_media_id:
+          type: integer
+          writeOnly: true
+        media_id:
+          type: integer
+          readOnly: true
+        media_data:
+          type: string
+          writeOnly: true
+    Project:
+      type: object
+      required:
+        - id
+        - position_booth_id
+        - media_id
+        - title
+        - description
+      properties:
+        id:
+          type: integer
+          readOnly: true
+          example: 1
+        position_booth_id:
+          type: integer
+          writeOnly: true
+        selected_media_id:
+          type: integer
+          writeOnly: true
+        media_id:
+          type: integer
+          readOnly: true
+        media_data:
+          type: string
+          writeOnly: true
+        title:
+          type: string
+        description:
+          type: string
+          maxLength: 20000
+    Product:
+      type: object
+      required:
+        - id
+        - name
+        - price
+        - purchase_link
+        - position_booth_id
+        - description
+        - media_id
+      properties:
+        id:
+          type: integer
+          readOnly: true
+          example: 1
+        position_booth_id:
+          type: integer
+          writeOnly: true
+        selected_media_id:
+          type: integer
+          writeOnly: true
+        media_id:
+          type: integer
+          readOnly: true
+        media_data:
+          type: string
+          writeOnly: true
+        name:
+          type: string
+        price:
+          type: integer
+        purchase_link:
+          type: string
+        description:
+          type: string
+          maxLength: 20000
+    LiveStream:
+      type: object
+      required:
+        - id
+        - link
+        - date
+      properties:
+        id:
+          type: integer
+          readOnly: true
+          example: 1
+        link:
+          type: string
+          minLength: 1
+          example: 'www.goole.com'
+        date:
+          type: string
+          minLength: 1
+          pattern: '^[1-9]\d{3}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$'
+          example: '2022-12-01T00:00:00.000Z'
