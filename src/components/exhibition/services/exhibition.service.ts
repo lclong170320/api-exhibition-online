@@ -21,6 +21,7 @@ import { BoothTemplate } from '@/components/exhibition/entities/booth-template.e
 import { SpaceTemplate } from '@/components/exhibition/entities/space-template.entity';
 import { PaginateQuery } from '@/decorators/paginate.decorator';
 import { paginate } from '@/utils/pagination';
+import { BoothConverter } from '../converters/booth.converter';
 
 @Injectable()
 export class ExhibitionService {
@@ -28,11 +29,11 @@ export class ExhibitionService {
         @InjectRepository(Exhibition, DbConnection.exhibitionCon)
         private readonly exhibitionRepository: Repository<Exhibition>,
         @InjectRepository(Booth, DbConnection.exhibitionCon)
-        private readonly boothRepository: Repository<Booth>,
         private readonly exhibitionConverter: ExhibitionConverter,
         private readonly exhibitionListConverter: ExhibitionListConverter,
         @InjectDataSource(DbConnection.exhibitionCon)
         private readonly dataSource: DataSource,
+        private readonly boothConverter: BoothConverter,
     ) {}
 
     private checkDateExhibition(exhibitionDto: ExhibitionDto) {
@@ -249,5 +250,58 @@ export class ExhibitionService {
         );
 
         return this.exhibitionConverter.toDto(createdExhibition);
+    }
+
+    async getBoothById(
+        exhibitionId: string,
+        boothId: string,
+        populate: string[],
+    ) {
+        const exhibitionEntity = await this.exhibitionRepository.findOne({
+            where: {
+                id: parseInt(exhibitionId),
+            },
+        });
+
+        if (!exhibitionEntity) {
+            throw new NotFoundException(
+                `The 'exhibition_id' ${exhibitionId} not found`,
+            );
+        }
+        const allowPopulate = [
+            'boothData.positionBooth',
+            'products.positionBooth',
+            'projects.positionBooth',
+            'boothTemplate',
+            'locationStatus',
+        ];
+        populate.forEach((value) => {
+            if (!allowPopulate.includes(value)) {
+                throw new BadRequestException(
+                    'Query value is not allowed ' + value,
+                );
+            }
+        });
+        const boothRepository = this.dataSource.getRepository(Booth);
+        const firstBooth = await boothRepository.findOne({
+            where: {
+                id: parseInt(boothId),
+                exhibition: exhibitionEntity.booths,
+            },
+            relations: [
+                'liveStreams',
+                'boothData',
+                'products',
+                'projects',
+                ...populate,
+            ],
+        });
+
+        if (!firstBooth) {
+            throw new NotFoundException(
+                `The booth is not found: exhibition_id: ${exhibitionId} and booth_id: ${boothId}`,
+            );
+        }
+        return this.boothConverter.toDto(firstBooth);
     }
 }

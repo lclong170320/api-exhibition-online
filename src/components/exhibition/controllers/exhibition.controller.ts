@@ -21,4 +21,17 @@ export class ExhibitionController {
     createExhibition(@Body() exhibition: ExhibitionDto) {
         return this.exhibitionService.createExhibition(exhibition);
     }
+
+    @Get(':exhibitionId/booths/:boothId')
+    getBoothById(
+        @Param('exhibitionId') exhibitionId: string,
+        @Param('boothId') boothId: string,
+        @Paginate() query: PaginateQuery,
+    ) {
+        return this.exhibitionService.getBoothById(
+            exhibitionId,
+            boothId,
+            query.populate,
+        );
+    }
 }

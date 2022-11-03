@@ -200,6 +200,88 @@ paths:
                     details: []
       tags:
         - Exhibition
+  '/exhibitions/{exhibitionId}/booths/{boothId}':
+    get:
+      summary: Get booth by ID
+      description: Return a single booth
+      operationId: getBoothById
+      parameters:
+        - name: exhibitionId
+          description: ID to get exhibition
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^[0-9]+$'
+        - name: boothId
+          description: ID to get booth
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^[0-9]+$'
+        - in: query
+          name: populate
+          schema:
+            type: array
+            items:
+              type: string
+              example: 'booth_data.position_booth'
+          description: |
+              List of populateTable columns
+                |      Populates     |
+                |--------------------|
+                | booth_data.position_booth |
+                | products.position_booth |
+                | projects.position_booth |
+                | booth_template |
+                | location_status |
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Booth'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Bad Request
+                    details:
+                      - field: .params.id
+                        message: 'should match pattern "^[0-9]+$"'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Not Found
+                    details:
+                      - field: .params.id
+                        message: 'The id not exist: "^[0-9]+$"'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Internal server error
+                    details: []
+      tags:
+        - Exhibition
   '/booth-templates/{id}':
     get:
       summary: Get booth template by ID
@@ -335,11 +417,11 @@ paths:
     post:
       tags:
         - Booth
-      summary: Add a new booth template
-      description: Add a booth template
-      operationId: addBoothTemplate
+      summary: Add a booth
+      description: Add a booth
+      operationId: addBooth
       requestBody:
-        description: Create a booth template
+        description: Create a booth
         content:
           application/json:
             schema:
@@ -352,51 +434,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/BoothTemplate'
-        '400':
-          description: Validation error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponseBody'
-              examples:
-                example-1:
-                  value:
-                    message: Bad Request
-                    details:
-                      - field: .params.id
-                        message: 'should match pattern "^[0-9]+$"'
-        '500':
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponseBody'
-              examples:
-                example-1:
-                  value:
-                    message: Internal server error
-                    details: []
-  '/booths':
-    post:
-      tags:
-        - Booth
-      summary: Add a booth
-      description: Add a booth
-      operationId: addBooth
-      requestBody:
-        description: Create a booth
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Booth'
-        required: true
-      responses:
-        '201':
-          description: Created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Booth'
         '400':
           description: Validation error
           content:
@@ -494,7 +531,7 @@ paths:
         - Booth
       summary: Update an existing booth
       description: Update an existing booth by Id
-      operationId: updateBooth
+      operationId: updateBoothOrganization
       parameters:
         - name: id
           description: ID to update booth
@@ -1676,6 +1713,7 @@ components:
           writeOnly: true
         position_booth:
           $ref: '#/components/schemas/PositionBooth'
+          readOnly: true
         selected_media_id:
           type: integer
           writeOnly: true
@@ -2206,12 +2244,11 @@ components:
         - id
         - name
         - enterprise_id
-        - exhibition_id
         - created_by
-        - location_status_id
-        - booth_template_id
         - booth_data
         - live_streams
+        - projects
+        - products
       properties:
         id:
           type: integer
@@ -2229,15 +2266,6 @@ components:
           type: integer
           readOnly: true
           example: 1
-        booth_template_id:
-          type: integer
-          example: 1
-        location_status_id:
-          type: integer
-          example: 1
-        exhibition_id:
-          type: integer
-          example: 1
         live_streams:
           type: array
           items:
@@ -2254,7 +2282,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Product'
-          example: null
     BoothData:
       type: object
       required:

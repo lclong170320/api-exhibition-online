@@ -31,11 +31,9 @@ export class BoothConverter {
             name: entity.name,
             created_by: entity.createdBy,
             enterprise_id: entity.enterpriseId,
-            booth_template_id: entity.boothTemplate?.id,
             booth_template: entity.boothTemplate
                 ? this.boothTemplateConverter.toDto(entity.boothTemplate)
                 : undefined,
-            location_status_id: entity.locationStatus?.id,
             location: entity.locationStatus
                 ? this.locationStatusConverter.toDto(entity.locationStatus)
                 : undefined,
@@ -49,12 +47,12 @@ export class BoothConverter {
                       this.liveStreamConverter.toDto(data),
                   )
                 : undefined,
-            products: entity.products?.length
+            products: entity.products
                 ? entity.products.map((data) =>
                       this.productConverter.toDto(data),
                   )
                 : undefined,
-            projects: entity.projects?.length
+            projects: entity.projects
                 ? entity.projects.map((data) =>
                       this.projectConverter.toDto(data),
                   )

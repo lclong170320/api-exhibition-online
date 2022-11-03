@@ -14,7 +14,7 @@ export class ProjectConverter {
     toDto(entity: Project) {
         const dto = {
             id: entity.id,
-            position_booth_id: entity.positionBooth.id,
+            position_booth_id: entity.positionBooth?.id,
             media_id: entity.mediaId ?? undefined,
             title: entity.title ?? undefined,
             description: entity.description ?? undefined,
