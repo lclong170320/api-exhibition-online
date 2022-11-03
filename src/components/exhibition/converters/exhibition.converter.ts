@@ -3,6 +3,7 @@ import { Exhibition } from '@/components/exhibition/entities/exhibition.entity';
 import { Injectable } from '@nestjs/common';
 import { BoothOrganizationConverter } from './booth-organization.converter';
 import { BoothTemplateConverter } from './booth-template.converter';
+import { BoothConverter } from './booth.converter';
 import CategoryConverter from './category.converter';
 import { SpaceTemplateConverter } from './space-template.converter';
 import { SpaceConverter } from './space.converter';
@@ -15,6 +16,7 @@ export class ExhibitionConverter {
         private spaceTemplateConverter: SpaceTemplateConverter,
         private spaceConverter: SpaceConverter,
         private boothOrganizationConverter: BoothOrganizationConverter,
+        private boothConverter: BoothConverter,
     ) {}
     toEntity(dto: ExhibitionDto) {
         const entity = new Exhibition();
@@ -39,6 +41,9 @@ export class ExhibitionConverter {
             introduction: entity.introduction,
             agenda: entity.agenda,
             status: entity.status,
+            booths: entity.booths
+                ? entity.booths.map((booth) => this.boothConverter.toDto(booth))
+                : undefined,
             category: entity.category
                 ? this.categoryConverter.toDto(entity.category)
                 : undefined,

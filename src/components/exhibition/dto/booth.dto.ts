@@ -13,6 +13,8 @@ import { Project } from './project.dto';
 import { LiveStream } from './live-stream.dto';
 import { BoothData } from './booth-data.dto';
 import { Product } from './product.dto';
+import { Location } from './location.dto';
+import { BoothTemplate } from './booth-template.dto';
 
 export interface Booth {
     /**
@@ -28,8 +30,10 @@ export interface Booth {
     booth_template_id: number;
     location_status_id: number;
     exhibition_id: number;
-    live_streams: Array<LiveStream>;
-    booth_data: Array<BoothData>;
+    live_streams?: Array<LiveStream>;
+    booth_data?: Array<BoothData>;
     projects?: Array<Project>;
     products?: Array<Product>;
+    location?: Location;
+    booth_template?: BoothTemplate;
 }

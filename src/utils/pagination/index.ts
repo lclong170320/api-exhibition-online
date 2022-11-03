@@ -1,7 +1,8 @@
 import { PaginateQuery } from '@/decorators/paginate.decorator';
-import { isString } from 'lodash';
+import { isEmpty, isNumber, isString } from 'lodash';
 import {
     Equal,
+    FindManyOptions,
     FindOptionsOrder,
     FindOptionsWhere,
     LessThan,
@@ -25,16 +26,25 @@ export async function paginate<T>(
     repository: Repository<T>,
     option: Option,
 ) {
-    const [data, total] = await repository.findAndCount({
-        take: query.limit,
-        skip: (query.page - 1) * query.limit,
-        order: parseDefaultSortBy(option.defaultSortBy),
-        where: parseWhereClause(
-            parseSearch(query.search, option.searchableColumns),
-            parseFilter(query.filter, option.filterableColumns),
-        ),
-        relations: parsePopulate(query.populate, option.populatableColumns),
-    });
+    const findOptions: FindManyOptions<T> = {};
+    findOptions.take = isNumber(query.limit) ? query.limit : 10;
+    findOptions.skip =
+        isNumber(query.page) && isNumber(query.limit)
+            ? (query.page - 1) * query.limit
+            : 1;
+    findOptions.order = parseDefaultSortBy(option.defaultSortBy);
+    findOptions.relations = parsePopulate(
+        query.populate,
+        option.populatableColumns,
+    );
+    const whereClause = parseWhereClause(
+        parseSearch(query.search, option.searchableColumns),
+        parseFilter(query.filter, option.filterableColumns),
+    );
+    if (!isEmpty(whereClause)) {
+        findOptions.where = whereClause;
+    }
+    const [data, total] = await repository.findAndCount(findOptions);
 
     let sortedData = data;
     const sortBy = parseSortBy(query.sortBy, option.sortableColumns);
@@ -101,7 +111,8 @@ function parseFilter<T>(
                     const [operator, value] = valueFilter.split(':');
                     if (
                         filterableColumns.includes(column) &&
-                        allowedOperator.includes(operator)
+                        allowedOperator.includes(operator) &&
+                        value
                     ) {
                         switch (operator) {
                             case '$eq':
@@ -134,7 +145,7 @@ function parseFilter<T>(
                         }
                     }
                 } else {
-                    if (filterableColumns.includes(column)) {
+                    if (filterableColumns.includes(column) && valueFilter) {
                         Object.assign(result, {
                             [column]: valueFilter,
                         });
@@ -177,8 +188,18 @@ function parseWhereClause<T>(
     filterClauses: FindOptionsWhere<T>,
 ) {
     const result: FindOptionsWhere<T>[] = [];
+    if (isEmpty(searchClauses) && isEmpty(filterClauses)) {
+        return [];
+    }
+
+    if (isEmpty(searchClauses)) {
+        return [filterClauses];
+    }
+
     for (const [searchKey, searchValue] of Object.entries(searchClauses)) {
-        result.push({ [searchKey]: searchValue, ...filterClauses });
+        if (searchKey && searchValue) {
+            result.push({ [searchKey]: searchValue, ...filterClauses });
+        }
     }
 
     return result;

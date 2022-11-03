@@ -13,6 +13,8 @@ import { Logger } from '@/loggers/default.logger';
 import { MediaModule } from '@/components/media/media.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { UserModule } from '@/components/user/user.module';
+import { RouterModule } from '@nestjs/core';
+import { PublicModule } from './components/public/public.module';
 
 @Module({
     imports: [
@@ -28,6 +30,29 @@ import { UserModule } from '@/components/user/user.module';
         EnterpriseModule,
         MediaModule,
         UserModule,
+        PublicModule,
+        RouterModule.register([
+            {
+                path: '/api/v1',
+                module: ExhibitionModule,
+            },
+            {
+                path: '/api/v1',
+                module: EnterpriseModule,
+            },
+            {
+                path: '/api/v1',
+                module: MediaModule,
+            },
+            {
+                path: '/api/v1',
+                module: UserModule,
+            },
+            {
+                path: '/public/api/v1',
+                module: PublicModule,
+            },
+        ]),
     ],
     controllers: [AppController],
     providers: [AppService, HttpLogger, Logger],
@@ -44,6 +69,14 @@ export class AppModule implements NestModule {
                         coerceTypes: false,
                     },
                     // validateResponses: true,
+                    validateFormats: 'full',
+                }),
+                ...OpenApiValidator.middleware({
+                    apiSpec: join(__dirname, '../openapi/public-api.yaml'),
+                    validateRequests: {
+                        allowUnknownQueryParameters: true,
+                        coerceTypes: false,
+                    },
                     validateFormats: 'full',
                 }),
             )

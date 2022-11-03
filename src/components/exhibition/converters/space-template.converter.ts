@@ -1,6 +1,6 @@
 import { SpaceTemplate as SpaceTemplateDto } from '@/components/exhibition/dto/space-template.dto';
 import { SpaceTemplate } from '@/components/exhibition/entities/space-template.entity';
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { PositionSpaceConverter } from './position-space.converter';
 import { SpaceConverter } from './space.converter';
 
@@ -8,6 +8,7 @@ import { SpaceConverter } from './space.converter';
 export class SpaceTemplateConverter {
     constructor(
         private positionSpaceConverter: PositionSpaceConverter,
+        @Inject(forwardRef(() => SpaceConverter))
         private spaceConverter: SpaceConverter,
     ) {}
     toDto(entity: SpaceTemplate) {

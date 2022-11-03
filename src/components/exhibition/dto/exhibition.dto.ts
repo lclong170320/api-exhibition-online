@@ -14,6 +14,7 @@ import { BoothTemplate } from './booth-template.dto';
 import { Category } from './category.dto';
 import { SpaceTemplate } from './space-template.dto';
 import { BoothOrganization } from './booth-organization.dto';
+import { Booth } from './booth.dto';
 
 export interface Exhibition {
     readonly id: number;
@@ -32,6 +33,7 @@ export interface Exhibition {
     readonly space_template?: SpaceTemplate;
     readonly organization_booth_id: number;
     organization_booth?: BoothOrganization;
+    booths: Array<Booth>;
     readonly organization_booth_template_id: number;
     introduction: string;
     agenda: string;

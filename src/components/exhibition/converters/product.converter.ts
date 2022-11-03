@@ -1,13 +1,9 @@
 import { Product as ProductDto } from '@/components/exhibition/dto/product.dto';
 import { Product } from '@/components/exhibition/entities/product.entity';
 import { Injectable } from '@nestjs/common';
-import { PositionBoothConverter } from './position-booth.converter';
 
 @Injectable()
 export class ProductConverter {
-    constructor(
-        private readonly positionBoothConverter: PositionBoothConverter,
-    ) {}
     toEntity(dto: ProductDto) {
         const entity = new Product();
         entity.name = dto.name;

@@ -1,6 +1,6 @@
 import { BoothTemplate as BoothTemplateDto } from '@/components/exhibition/dto/booth-template.dto';
 import { BoothTemplate } from '@/components/exhibition/entities/booth-template.entity';
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { BoothOrganizationConverter } from './booth-organization.converter';
 import { PositionBoothConverter } from './position-booth.converter';
 
@@ -8,6 +8,7 @@ import { PositionBoothConverter } from './position-booth.converter';
 export class BoothTemplateConverter {
     constructor(
         private readonly positionBoothConverter: PositionBoothConverter,
+        @Inject(forwardRef(() => BoothOrganizationConverter))
         private readonly boothOrganizationConverter: BoothOrganizationConverter,
     ) {}
 

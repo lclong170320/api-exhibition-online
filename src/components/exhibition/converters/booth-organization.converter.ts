@@ -1,12 +1,15 @@
 import { BoothOrganization as BoothOrganizationDto } from '@/components/exhibition/dto/booth-organization.dto';
 import { BoothOrganization } from '@/components/exhibition/entities/booth-organization.entity';
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { BoothOrganizationDataConverter } from './booth-organization-data.converter';
+import { BoothTemplateConverter } from './booth-template.converter';
 
 @Injectable()
 export class BoothOrganizationConverter {
     constructor(
         private readonly boothOrganizationDataConverter: BoothOrganizationDataConverter,
+        @Inject(forwardRef(() => BoothTemplateConverter))
+        private readonly boothTemplateConverter: BoothTemplateConverter,
     ) {}
 
     toEntity(dto: BoothOrganizationDto) {
@@ -23,6 +26,9 @@ export class BoothOrganizationConverter {
             id: entity.id,
             name: entity.name,
             booth_template_id: entity.boothTemplate?.id,
+            booth_template: entity.boothTemplate
+                ? this.boothTemplateConverter.toDto(entity.boothTemplate)
+                : undefined,
             booth_organization_data: entity.boothOrganizationData
                 ? entity.boothOrganizationData.map((data) =>
                       this.boothOrganizationDataConverter.toDto(data),
