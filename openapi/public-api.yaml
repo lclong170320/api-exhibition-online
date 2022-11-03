@@ -53,6 +53,7 @@ paths:
             - category
             - space
             - space.space_template
+            - space.space_datas
             - space.space_template.position_spaces
       responses:
         '200':
@@ -239,9 +240,8 @@ components:
           type: integer
           readOnly: true
           example: 1
-        space_template_id:
-          type: integer
-          example: 1
+        space_template:
+          $ref: '#/components/schemas/SpaceTemplate'
         name:
           type: string
           minLength: 1
