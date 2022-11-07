@@ -29,7 +29,7 @@ import { ProductConverter } from '../converters/product.converter';
 import { LiveStreamConverter } from '../converters/live-stream.converter';
 import { ProjectConverter } from '../converters/project.converter';
 import { Booth as BoothDto } from '@/components/exhibition/dto/booth.dto';
-import { LiveStream } from '../entities/livestream.entity';
+import { LiveStream } from '../entities/live-stream.entity';
 import { BoothData } from '../entities/booth-data.entity';
 import { Project } from '../entities/project.entity';
 import { Product } from '../entities/product.entity';
