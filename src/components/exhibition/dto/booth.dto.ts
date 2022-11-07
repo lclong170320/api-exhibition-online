@@ -25,6 +25,8 @@ export interface Booth {
     name: string;
     enterprise_id: number;
     readonly created_by: number;
+    readonly booth_template_id: number;
+    readonly location_status_id: number;
     live_streams: Array<LiveStream>;
     booth_data: Array<BoothData>;
     projects: Array<Project>;

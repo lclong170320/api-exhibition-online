@@ -24,9 +24,11 @@ import { BoothTemplateListConverter } from './converters/booth-template-list.con
 import { BoothTemplateConverter } from './converters/booth-template.converter';
 import { BoothTemplateController } from './controllers/booth-template.controller';
 import { SpaceController } from './controllers/space.controller';
+import { SpaceService } from './services/space.service';
 import { SpaceConverter } from './converters/space.converter';
 import { SpaceDataConverter } from './converters/space-data.converter';
 import { SpaceTemplateController } from './controllers/space-template.controller';
+import { SpaceTemplateService } from './services/space-template.service';
 import { SpaceTemplateConverter } from './converters/space-template.converter';
 import { PositionSpaceConverter } from './converters/position-space.converter';
 import { PositionBoothConverter } from './converters/position-booth.converter';
@@ -44,10 +46,8 @@ import { LiveStream } from './entities/livestream.entity';
 import { Product } from './entities/product.entity';
 import { BoothData } from './entities/booth-data.entity';
 import { Project } from './entities/project.entity';
-import { BoothTemplateService } from './services/booth-template.service';
 import { ExhibitionService } from './services/exhibition.service';
-import { SpaceTemplateService } from './services/space-template.service';
-import { SpaceService } from './services/space.service';
+import { BoothTemplateService } from './services/booth-template.service';
 
 @Module({
     controllers: [

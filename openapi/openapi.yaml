@@ -200,7 +200,130 @@ paths:
                     details: []
       tags:
         - Exhibition
+  '/exhibitions/{exhibitionId}/booths':
+    post:
+      tags:
+        - Exhibition
+      summary: Add a booth
+      description: Add a booth
+      operationId: addBooth
+      parameters:
+        - name: exhibitionId
+          description: ID to get exhibition
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^[0-9]+$'
+      requestBody:
+        description: Create a booth
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Booth'
+        required: true
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Booth'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Bad Request
+                    details:
+                      - field: .params.id
+                        message: 'should match pattern "^[0-9]+$"'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Internal server error
+                    details: []
   '/exhibitions/{exhibitionId}/booths/{boothId}':
+    put:
+      tags:
+        - Exhibition
+      summary: Update an existing booth
+      description: Update an existing booth by Id
+      operationId: updateBooth
+      parameters:
+        - name: exhibitionId
+          description: ID to get exhibition
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^[0-9]+$'
+        - name: boothId
+          description: ID to get booth
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^[0-9]+$'
+      requestBody:
+        description: Update an existing booth
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Booth'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Booth'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Bad Request
+                    details:
+                      - field: .params.id
+                        message: 'should match pattern "^[0-9]+$"'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Not found
+                    details: []
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Internal server error
+                    details: []
     get:
       summary: Get booth by ID
       description: Return a single booth
@@ -257,7 +380,7 @@ paths:
                       - field: .params.id
                         message: 'should match pattern "^[0-9]+$"'
         '404':
-          description: Not Found
+          description: Not found
           content:
             application/json:
               schema:
@@ -417,9 +540,9 @@ paths:
     post:
       tags:
         - Booth
-      summary: Add a booth
-      description: Add a booth
-      operationId: addBooth
+      summary: Add a boothTemplate
+      description: Add a boothTemplate
+      operationId: addBoothTemplate
       requestBody:
         description: Create a booth
         content:
@@ -2238,50 +2361,6 @@ components:
           type: string
           example: 'loai triễn lảm'
           description: The name category.
-    Booth:
-      type: object
-      required:
-        - id
-        - name
-        - enterprise_id
-        - created_by
-        - booth_data
-        - live_streams
-        - projects
-        - products
-      properties:
-        id:
-          type: integer
-          example: 1
-          description: The number id booth.
-          readOnly: true
-        name:
-          type: string
-          example: 'triễn lảm'
-          description: The name category.
-        enterprise_id:
-          type: integer
-          example: 1
-        created_by:
-          type: integer
-          readOnly: true
-          example: 1
-        live_streams:
-          type: array
-          items:
-            $ref: '#/components/schemas/LiveStream'
-        booth_data:
-          type: array
-          items:
-            $ref: '#/components/schemas/BoothData'
-        projects:
-          type: array
-          items:
-            $ref: '#/components/schemas/Project'
-        products:
-          type: array
-          items:
-            $ref: '#/components/schemas/Product'
     BoothData:
       type: object
       required:
@@ -2390,3 +2469,55 @@ components:
           minLength: 1
           pattern: '^[1-9]\d{3}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$'
           example: '2022-12-01T00:00:00.000Z'
+    Booth:
+      type: object
+      required:
+        - id
+        - name
+        - enterprise_id
+        - created_by
+        - location_status_id
+        - booth_template_id
+        - booth_data
+        - live_streams
+      properties:
+        id:
+          type: integer
+          example: 1
+          description: The number id booth.
+          readOnly: true
+        name:
+          type: string
+          example: 'triễn lảm'
+          description: The name category.
+        enterprise_id:
+          type: integer
+          example: 1
+        created_by:
+          type: integer
+          readOnly: true
+          example: 1
+        location_status_id:
+          type: integer
+          writeOnly: true
+          example: 1
+        booth_template_id:
+          type: integer
+          writeOnly: true
+          example: 1
+        live_streams:
+          type: array
+          items:
+            $ref: '#/components/schemas/LiveStream'
+        booth_data:
+          type: array
+          items:
+            $ref: '#/components/schemas/BoothData'
+        projects:
+          type: array
+          items:
+            $ref: '#/components/schemas/Project'
+        products:
+          type: array
+          items:
+            $ref: '#/components/schemas/Product'

@@ -425,3 +425,163 @@ components:
           type: string
         message:
           type: string
+    BoothData:
+      type: object
+      required:
+        - id
+        - position_booth_id
+        - media_id
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        position_booth_id:
+          type: integer
+          writeOnly: true
+        selected_media_id:
+          type: integer
+          writeOnly: true
+        media_id:
+          type: integer
+          readOnly: true
+        media_data:
+          type: string
+          writeOnly: true
+    Project:
+      type: object
+      required:
+        - id
+        - position_booth_id
+        - media_id
+        - title
+        - description
+      properties:
+        id:
+          type: integer
+          readOnly: true
+          example: 1
+        position_booth_id:
+          type: integer
+          writeOnly: true
+        selected_media_id:
+          type: integer
+          writeOnly: true
+        media_id:
+          type: integer
+          readOnly: true
+        media_data:
+          type: string
+          writeOnly: true
+        title:
+          type: string
+        description:
+          type: string
+          maxLength: 20000
+    Product:
+      type: object
+      required:
+        - id
+        - name
+        - price
+        - purchase_link
+        - position_booth_id
+        - description
+        - media_id
+      properties:
+        id:
+          type: integer
+          readOnly: true
+          example: 1
+        position_booth_id:
+          type: integer
+          writeOnly: true
+        selected_media_id:
+          type: integer
+          writeOnly: true
+        media_id:
+          type: integer
+          readOnly: true
+        media_data:
+          type: string
+          writeOnly: true
+        name:
+          type: string
+        price:
+          type: integer
+        purchase_link:
+          type: string
+        description:
+          type: string
+          maxLength: 20000
+    LiveStream:
+      type: object
+      required:
+        - id
+        - link
+        - date
+      properties:
+        id:
+          type: integer
+          readOnly: true
+          example: 1
+        link:
+          type: string
+          minLength: 1
+          example: 'www.goole.com'
+        date:
+          type: string
+          minLength: 1
+          pattern: '^[1-9]\d{3}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$'
+          example: '2022-12-01T00:00:00.000Z'
+    Booth:
+      type: object
+      required:
+        - id
+        - name
+        - enterprise_id
+        - created_by
+        - location_status_id
+        - booth_template_id
+        - booth_data
+        - live_streams
+      properties:
+        id:
+          type: integer
+          example: 1
+          description: The number id booth.
+          readOnly: true
+        name:
+          type: string
+          example: 'triễn lảm'
+          description: The name category.
+        enterprise_id:
+          type: integer
+          example: 1
+        created_by:
+          type: integer
+          readOnly: true
+          example: 1
+        location_status_id:
+          type: integer
+          writeOnly: true
+          example: 1
+        booth_template_id:
+          type: integer
+          writeOnly: true
+          example: 1
+        live_streams:
+          type: array
+          items:
+            $ref: '#/components/schemas/LiveStream'
+        booth_data:
+          type: array
+          items:
+            $ref: '#/components/schemas/BoothData'
+        projects:
+          type: array
+          items:
+            $ref: '#/components/schemas/Project'
+        products:
+          type: array
+          items:
+            $ref: '#/components/schemas/Product'
