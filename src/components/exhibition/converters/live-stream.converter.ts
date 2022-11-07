@@ -1,5 +1,5 @@
 import { LiveStream as LiveStreamDto } from '@/components/exhibition/dto/live-stream.dto';
-import { LiveStream } from '@/components/exhibition/entities/liveStream.entity';
+import { LiveStream } from '@/components/exhibition/entities/live-stream.entity';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()

@@ -42,7 +42,7 @@ import { BoothDataConverter } from './converters/booth-data.converter';
 import { LiveStreamConverter } from './converters/live-stream.converter';
 import { ProductConverter } from './converters/product.converter';
 import { ProjectConverter } from './converters/project.converter';
-import { LiveStream } from './entities/livestream.entity';
+import { LiveStream } from './entities/live-stream.entity';
 import { Product } from './entities/product.entity';
 import { BoothData } from './entities/booth-data.entity';
 import { Project } from './entities/project.entity';
