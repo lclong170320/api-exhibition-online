@@ -21,6 +21,10 @@ tags:
     description: API to interact with the Enterprise
   - name: Space
     description: API to interact with the Space
+  - name: User
+    description: API to interact with the User
+  - name: Auth
+    description: API to interact with the Authorization
 servers:
   - url: 'http://52.74.156.150:3000/api/v1'
   - url: 'http://localhost:3000/api/v1'
@@ -1704,6 +1708,131 @@ paths:
                   value:
                     message: Internal server error
                     details: []
+  '/users':
+    post:
+      security: 
+      - bearerAuth: []
+      tags:
+        - User
+      summary: Add a new user
+      description: Add a new user
+      operationId: addUser
+      requestBody:
+        description: Create a new user
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Bad Request
+                    details:
+                      - field: .params.id
+                        message: 'should match pattern "^[0-9]+$"'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Internal server error
+                    details: []
+  '/auth/login':
+    post:
+      tags:
+        - Auth
+      summary: Login to system
+      description: Login to system
+      operationId: login
+      requestBody:
+        description: Login to system
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Login'
+      responses:
+        '200':
+          description: Login to system
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Login'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Bad Request
+                    details:
+                      - field: .params.id
+                        message: 'should match pattern "^[0-9]+$"'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Internal server error
+                    details: []
+  '/auth/logout':
+      get:
+        tags:
+          - Auth
+        summary: Logout from system
+        description: Logout from system
+        operationId: logout
+        responses:
+          '204':
+            description: Logout to system
+          '400':
+            description: Validation error
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ErrorResponseBody'
+                examples:
+                  example-1:
+                    value:
+                      message: Bad Request
+                      details:
+                        - field: .params.id
+                          message: 'should match pattern "^[0-9]+$"'
+          '500':
+            description: Internal server error
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/ErrorResponseBody'
+                examples:
+                  example-1:
+                    value:
+                      message: Internal server error
+                      details: []
 components:
   schemas:
     Exhibition:
@@ -2360,6 +2489,66 @@ components:
           type: string
           example: 'loai triễn lảm'
           description: The name category.
+    User:
+        type: object
+        required:
+          - id
+          - phone
+          - email
+          - password
+          - role_id
+          - status
+        properties:
+          id:
+            type: integer
+            readOnly: true
+          phone:
+            type: string
+            pattern: '^(((\+|)84)|0)([0-9]{9})$'
+            example: 0707060142
+          email:
+              type: string
+              format: email
+          password:
+            type: string
+            format: password
+            writeOnly: true
+            minLength: 6
+            maxLength: 255
+          role_id:
+            type: number
+            writeOnly: true
+          role:
+            $ref: '#/components/schemas/Role'
+          status:
+            type: string
+            enum: [active, inactive]
+    Role:
+      readOnly: true
+      required:
+        - id
+      properties:
+        id: 
+          type: integer
+        name:
+          type: string
+          readOnly: true
+    Login:
+      required: 
+          - email
+          - password
+          - access_token
+      properties:
+        email:
+          type: string
+          format: email
+          writeOnly: true
+        password:
+          type: string
+          writeOnly: true
+        access_token:
+          readOnly: true
+          type: string
     BoothData:
       type: object
       required:
@@ -2520,3 +2709,8 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Product'
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

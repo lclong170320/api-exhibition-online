@@ -3,19 +3,19 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 const sqlUp = fs.readFileSync(
-    path.join(__dirname, '../sql/create-roles-permissions-up.sql'),
+    path.join(__dirname, '../sql/create-init-up.sql'),
     {
         encoding: 'utf-8',
     },
 );
 const sqlDown = fs.readFileSync(
-    path.join(__dirname, '../sql/create-roles-permissions-down.sql'),
+    path.join(__dirname, '../sql/create-init-down.sql'),
     {
         encoding: 'utf-8',
     },
 );
 
-export class createRolesPermissions1663684551539 implements MigrationInterface {
+export class createUsers1663320324645 implements MigrationInterface {
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`${sqlUp}`);
     }

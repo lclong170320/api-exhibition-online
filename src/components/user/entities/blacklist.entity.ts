@@ -2,19 +2,17 @@ import {
     Column,
     CreateDateColumn,
     Entity,
-    OneToMany,
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from 'typeorm';
-import { User } from './user.entity';
 
-@Entity({ name: 'role' })
-export class Role {
+@Entity({ name: 'blacklist' })
+export class Blacklist {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({ length: 255 })
-    name: string;
+    @Column()
+    token: string;
 
     @CreateDateColumn({
         type: 'timestamp',
@@ -27,7 +25,4 @@ export class Role {
         name: 'updated_at',
     })
     updatedAt: Date;
-
-    @OneToMany(() => User, (user) => user.role)
-    users: User[];
 }

@@ -9,9 +9,10 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { User } from './user.dto';
 
-export interface Permission {
-    readonly id: number;
-    slug: string;
-    description: string;
+export interface LoginPayload {
+    user: User;
+    iat: number;
+    exp: number;
 }

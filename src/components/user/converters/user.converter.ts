@@ -1,16 +1,20 @@
 import { User as UserDto } from '@/components/user/dto/user.dto';
-import { User } from '@/components/user/entities/user.entity';
+import { Status, User } from '@/components/user/entities/user.entity';
 import { Injectable } from '@nestjs/common';
-import { InformationConverter } from './information.converter';
+import { RoleConverter } from './role.converter';
 
 @Injectable()
 export class UserConverter {
-    constructor(private informationConverter: InformationConverter) {}
+    constructor(private readonly roleConverter: RoleConverter) {}
     toEntity(dto: UserDto) {
         const entity = new User();
         entity.phone = dto.phone;
+        entity.email = dto.email;
         entity.password = dto.password;
-        entity.status = dto.status;
+        entity.status =
+            dto.status === UserDto.StatusEnum.Active
+                ? Status.ACTIVE
+                : Status.INACTIVE;
         return entity;
     }
 
@@ -18,10 +22,11 @@ export class UserConverter {
         const dto = {
             id: entity.id,
             phone: entity.phone,
-            password: entity.password,
-            role_id: entity.role.id,
+            email: entity.email,
+            role: entity.role
+                ? this.roleConverter.toDto(entity.role)
+                : undefined,
             status: entity.status,
-            information: this.informationConverter.toDto(entity.information),
         } as UserDto;
 
         return dto;

@@ -11,7 +11,6 @@
  */
 
 export interface Role {
-    readonly id: number;
-    slug: string;
-    description: string;
+    id: number;
+    name: string;
 }

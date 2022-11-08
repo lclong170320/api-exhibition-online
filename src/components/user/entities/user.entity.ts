@@ -1,18 +1,18 @@
-import { User as UserDto } from '@/components/user/dto/user.dto';
 import {
     Column,
     CreateDateColumn,
     Entity,
     JoinColumn,
     ManyToOne,
-    OneToOne,
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from 'typeorm';
-import { Information } from './information.entity';
 import { Role } from './role.entity';
-
-@Entity({ name: 'users' })
+export enum Status {
+    ACTIVE = 'active',
+    INACTIVE = 'inactive',
+}
+@Entity({ name: 'user' })
 export class User {
     @PrimaryGeneratedColumn()
     id: number;
@@ -20,16 +20,14 @@ export class User {
     @Column({ length: 255, unique: true })
     phone: string;
 
+    @Column({ length: 255, unique: true })
+    email: string;
+
     @Column({ length: 255 })
     password: string;
 
-    @Column({
-        name: 'department_id',
-    })
-    departmentId: number;
-
-    @Column()
-    status: UserDto.StatusEnum;
+    @Column({ type: 'enum', enum: Status, default: Status.ACTIVE })
+    status: Status;
 
     @CreateDateColumn({
         type: 'timestamp',
@@ -42,9 +40,6 @@ export class User {
         name: 'updated_at',
     })
     updatedAt: Date;
-
-    @OneToOne(() => Information, (information) => information.user)
-    information: Information;
 
     @ManyToOne(() => Role, (role) => role.users)
     @JoinColumn({

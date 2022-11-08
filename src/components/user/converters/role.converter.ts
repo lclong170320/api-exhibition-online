@@ -6,14 +6,14 @@ import { Role } from '../entities/role.entity';
 export class RoleConverter {
     toEntity(dto: RoleDto) {
         const entity = new Role();
-        entity.slug = dto.slug;
+        entity.name = dto.name;
         return entity;
     }
 
     toDto(entity: Role) {
         const dto = {
             id: entity.id,
-            slug: entity.slug,
+            name: entity.name,
         } as RoleDto;
 
         return dto;

@@ -9,24 +9,22 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-
-import { Information } from './information.dto';
+import { Role } from './role.dto';
 
 export interface User {
     readonly id: number;
     phone: string;
+    email: string;
     password: string;
-    department_id?: number;
     role_id: number;
+    role?: Role;
     status: User.StatusEnum;
-    information: Information;
 }
 // eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace User {
-    export type StatusEnum = 'active' | 'deactivate' | 'deleted';
+    export type StatusEnum = 'active' | 'inactive';
     export const StatusEnum = {
         Active: 'active' as StatusEnum,
-        Deactivate: 'deactivate' as StatusEnum,
-        Deleted: 'deleted' as StatusEnum,
+        Inactive: 'inactive' as StatusEnum,
     };
 }

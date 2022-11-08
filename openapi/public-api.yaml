@@ -471,6 +471,14 @@ components:
           type: string
         message:
           type: string
+    Role:
+      required:
+        - id
+      properties:
+        id: 
+          type: integer
+        name:
+          type: string
     BoothData:
       type: object
       required:

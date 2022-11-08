@@ -10,8 +10,8 @@
  * Do not edit the class manually.
  */
 
-export interface RolePermission {
-    readonly id: number;
-    role_id: number;
-    permission_id: number;
+export interface Login {
+    email: string;
+    password: string;
+    readonly access_token: string;
 }
