@@ -1836,7 +1836,6 @@ components:
           writeOnly: true
         position_booth:
           $ref: '#/components/schemas/PositionBooth'
-          readOnly: true
         selected_media_id:
           type: integer
           writeOnly: true

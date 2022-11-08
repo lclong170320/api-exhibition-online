@@ -13,4 +13,9 @@ export class PublicController {
     ) {
         return this.publicService.getExhibitionById(id, query);
     }
+
+    @Get('/medias/:id')
+    getMediaById(@Param('id') id: string) {
+        return this.publicService.getMediaById(id);
+    }
 }

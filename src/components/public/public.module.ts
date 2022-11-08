@@ -30,6 +30,8 @@ import { PositionSpace } from '../exhibition/entities/position-space.entity';
 import { SpaceData } from '../exhibition/entities/space-data.entity';
 import { SpaceTemplate } from '../exhibition/entities/space-template.entity';
 import { Space } from '../exhibition/entities/space.entity';
+import { MediaConverter } from '../media/converters/media.converter';
+import { Media } from '../media/entities/media.entity';
 import { PublicController } from './public.controller';
 import { PublicService } from './public.service';
 
@@ -54,6 +56,7 @@ import { PublicService } from './public.service';
         ProjectConverter,
         LiveStreamConverter,
         LocationStatusConverter,
+        MediaConverter,
     ],
     imports: [
         TypeOrmModule.forFeature(
@@ -74,6 +77,7 @@ import { PublicService } from './public.service';
             ],
             DbConnection.exhibitionCon,
         ),
+        TypeOrmModule.forFeature([Media], DbConnection.mediaCon),
     ],
     exports: [TypeOrmModule],
 })

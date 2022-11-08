@@ -88,6 +88,52 @@ paths:
                     details: []
       tags:
         - Exhibition
+  '/medias/{id}':
+    parameters:
+      - name: id
+        description: ID to get media
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: '^[0-9]+$'
+    get:
+      summary: Get media by ID
+      description: Return a single media
+      operationId: getMediaById
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Media'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Bad Request
+                    details:
+                      - field: .params.id
+                        message: 'should match pattern "^[0-9]+$"'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Internal server error
+                    details: []
+      tags:
+        - Media
 components:
   schemas:
     Exhibition:
@@ -585,3 +631,23 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Product'
+    Media:
+      type: object
+      required:
+        - id
+        - mime
+        - url
+        - user_id
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        mime:
+          type: string
+          readOnly: true
+        url:
+          type: string
+          readOnly: true
+        user_id:
+          type: integer
+          readOnly: true
