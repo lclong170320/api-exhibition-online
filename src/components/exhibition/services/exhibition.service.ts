@@ -46,7 +46,6 @@ export class ExhibitionService {
     constructor(
         @InjectRepository(Exhibition, DbConnection.exhibitionCon)
         private readonly exhibitionRepository: Repository<Exhibition>,
-        @InjectRepository(Booth, DbConnection.exhibitionCon)
         private readonly exhibitionConverter: ExhibitionConverter,
         private readonly exhibitionListConverter: ExhibitionListConverter,
         @InjectDataSource(DbConnection.exhibitionCon)
