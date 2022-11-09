@@ -11,6 +11,12 @@ import { AppModule } from './app.module';
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
+    app.enableCors({
+        origin: '*',
+        methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+        preflightContinue: false,
+        optionsSuccessStatus: 204,
+    });
     const configService = app.get(ConfigService);
     app.use(bodyParser.json({ limit: configService.get('MAX_MEDIA_SIZE') }));
     app.use(
