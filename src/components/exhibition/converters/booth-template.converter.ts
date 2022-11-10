@@ -28,16 +28,6 @@ export class BoothTemplateConverter {
             created_date: entity.createdDate.toISOString(),
             model_id: entity.modelId,
             thumbnail_id: entity.thumbnailId,
-            position_booths: entity.positionBooths
-                ? entity.positionBooths.map((data) =>
-                      this.positionBoothConverter.toDto(data),
-                  )
-                : undefined,
-            booth_organizations: entity.boothOrganizations
-                ? entity.boothOrganizations.map((data) =>
-                      this.boothOrganizationConverter.toDto(data),
-                  )
-                : undefined,
         } as BoothTemplateDto;
 
         return dto;

@@ -7,7 +7,6 @@ import {
     ManyToOne,
     JoinColumn,
 } from 'typeorm';
-import { Booth } from './booth.entity';
 import { PositionBooth } from './position-booth.entity';
 
 @Entity({ name: 'booth_data' })
@@ -29,15 +28,6 @@ export class BoothData {
         name: 'updated_at',
     })
     updatedAt: Date;
-
-    @ManyToOne(() => Booth, (booth) => booth.boothData, {
-        nullable: false,
-    })
-    @JoinColumn({
-        name: 'booth_id',
-        foreignKeyConstraintName: 'fk-booth_data-booth',
-    })
-    booth: Booth;
 
     @ManyToOne(
         () => PositionBooth,

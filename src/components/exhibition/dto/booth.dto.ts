@@ -9,26 +9,22 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { Project } from './project.dto';
+import { BoothProject } from './booth-project.dto';
+import { BoothVideo } from './booth-video.dto';
+import { BoothImage } from './booth-image.dto';
 import { LiveStream } from './live-stream.dto';
-import { BoothData } from './booth-data.dto';
-import { Product } from './product.dto';
+import { BoothProduct } from './booth-product.dto';
 
 export interface Booth {
-    /**
-     * The number id booth.
-     */
     readonly id: number;
-    /**
-     * The name category.
-     */
+    readonly created_by: number;
     name: string;
     enterprise_id: number;
-    readonly created_by: number;
-    readonly booth_template_id: number;
-    readonly location_status_id: number;
-    live_streams: Array<LiveStream>;
-    booth_data: Array<BoothData>;
-    projects: Array<Project>;
-    products: Array<Product>;
+    location_id?: number;
+    booth_template_id?: number;
+    live_streams?: Array<LiveStream>;
+    booth_images?: Array<BoothImage>;
+    booth_videos?: Array<BoothVideo>;
+    booth_projects?: Array<BoothProject>;
+    booth_products?: Array<BoothProduct>;
 }

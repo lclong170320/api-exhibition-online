@@ -1,27 +1,26 @@
 import {
-    Entity,
-    PrimaryGeneratedColumn,
-    CreateDateColumn,
-    UpdateDateColumn,
     Column,
-    ManyToOne,
-    JoinColumn,
+    CreateDateColumn,
+    DeleteDateColumn,
+    Entity,
+    OneToMany,
+    PrimaryGeneratedColumn,
+    UpdateDateColumn,
 } from 'typeorm';
-import { Booth } from './booth.entity';
-import { PositionBooth } from './position-booth.entity';
+import { BoothProject } from './booth-project.entity';
 
-@Entity({ name: 'projects' })
+@Entity({ name: 'project' })
 export class Project {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({ name: 'media_id', nullable: true })
-    mediaId: number;
+    @Column({ name: 'image_id' })
+    imageId: number;
 
-    @Column({ length: 255, nullable: true })
+    @Column({ length: 255 })
     title: string;
 
-    @Column({ type: 'longtext', nullable: true })
+    @Column({ type: 'longtext' })
     description: string;
 
     @CreateDateColumn({
@@ -36,21 +35,14 @@ export class Project {
     })
     updatedAt: Date;
 
-    @ManyToOne(() => Booth, (booth) => booth.projects, {
-        nullable: false,
+    @DeleteDateColumn({
+        type: 'timestamp',
+        name: 'deleted_at',
+        nullable: true,
     })
-    @JoinColumn({
-        name: 'booth_id',
-        foreignKeyConstraintName: 'fk-project-booth',
-    })
-    booth: Booth;
+    deletedAt: Date;
 
-    @ManyToOne(() => PositionBooth, (positionBooth) => positionBooth.projects, {
-        nullable: false,
-    })
-    @JoinColumn({
-        name: 'position_booth_id',
-        foreignKeyConstraintName: 'fk-projects-position_booths',
-    })
-    positionBooth: PositionBooth;
+    // relation columns
+    @OneToMany(() => BoothProject, (boothProject) => boothProject.project)
+    boothProjects: BoothProject[];
 }

@@ -10,13 +10,10 @@
  * Do not edit the class manually.
  */
 
+import { SpaceTemplateLocation } from './space-template-location.dto';
+
 export interface Location {
     readonly id: number;
-    name: string;
-    position_x: string;
-    position_y: string;
-    position_z: string;
-    rotation_x: string;
-    rotation_y: string;
-    rotation_z: string;
+    status: string;
+    space_template_location: SpaceTemplateLocation;
 }

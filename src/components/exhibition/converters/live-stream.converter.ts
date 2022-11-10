@@ -6,7 +6,7 @@ import { Injectable } from '@nestjs/common';
 export class LiveStreamConverter {
     toEntity(dto: LiveStreamDto) {
         const entity = new LiveStream();
-        entity.date = new Date(dto.date);
+        entity.time = new Date(dto.time);
         entity.link = dto.link;
         return entity;
     }
@@ -15,7 +15,7 @@ export class LiveStreamConverter {
         const dto = {
             id: entity.id,
             link: entity.link,
-            date: entity.date.toISOString(),
+            time: entity.time.toISOString(),
         } as LiveStreamDto;
 
         return dto;

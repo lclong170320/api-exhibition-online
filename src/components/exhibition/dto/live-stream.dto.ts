@@ -13,5 +13,5 @@
 export interface LiveStream {
     readonly id: number;
     link: string;
-    date: string;
+    time: string;
 }

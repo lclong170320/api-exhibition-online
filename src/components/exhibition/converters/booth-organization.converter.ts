@@ -25,15 +25,6 @@ export class BoothOrganizationConverter {
         const dto = {
             id: entity.id,
             name: entity.name,
-            booth_template_id: entity.boothTemplate?.id,
-            booth_template: entity.boothTemplate
-                ? this.boothTemplateConverter.toDto(entity.boothTemplate)
-                : undefined,
-            booth_organization_data: entity.boothOrganizationData
-                ? entity.boothOrganizationData.map((data) =>
-                      this.boothOrganizationDataConverter.toDto(data),
-                  )
-                : undefined,
             exhibition_id: entity.exhibition?.id,
             user_id: entity.userId,
         } as BoothOrganizationDto;

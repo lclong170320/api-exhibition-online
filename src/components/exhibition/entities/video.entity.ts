@@ -7,28 +7,15 @@ import {
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from 'typeorm';
-import { BoothProduct } from './booth-product.entity';
+import { BoothVideo } from './booth-video.entity';
 
-@Entity({ name: 'product' })
-export class Product {
-    // table columns
+@Entity({ name: 'video' })
+export class Video {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({ length: 255 })
-    name: string;
-
-    @Column({ name: 'image_id', nullable: true })
-    imageId: number;
-
-    @Column({ type: 'float' })
-    price: number;
-
-    @Column({ name: 'purchase_link', length: 255 })
-    purchaseLink: string;
-
-    @Column({ length: 500 })
-    description: string;
+    @Column({ name: 'video_id' })
+    videoId: number;
 
     @CreateDateColumn({
         type: 'timestamp',
@@ -50,6 +37,6 @@ export class Product {
     deletedAt: Date;
 
     // relation columns
-    @OneToMany(() => BoothProduct, (boothProduct) => boothProduct.product)
-    boothProducts: BoothProduct[];
+    @OneToMany(() => BoothVideo, (boothVideo) => boothVideo.video)
+    boothVideos: BoothVideo[];
 }

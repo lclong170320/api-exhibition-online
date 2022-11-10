@@ -23,9 +23,16 @@ export class PublicService {
         const exhibitionId = parseInt(id);
         const populatableColumns = [
             'booths',
-            'booths.boothData',
+            'booths.boothProjects',
+            'booths.boothProducts',
+            'booths.boothVideos',
+            'booths.boothImages',
+            'booths.boothProjects.boothTemplatePosition',
+            'booths.boothProducts.boothTemplatePosition',
+            'booths.boothVideos.boothTemplatePosition',
+            'booths.boothImages.boothTemplatePosition',
             'booths.boothTemplate',
-            'booths.locationStatus',
+            'booths.location',
             'boothOrganization',
             'boothOrganization.boothTemplate',
             'boothOrganization.boothTemplate.positionBooths',

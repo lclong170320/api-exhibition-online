@@ -2,15 +2,12 @@ import {
     Column,
     CreateDateColumn,
     Entity,
-    JoinColumn,
-    ManyToOne,
     OneToMany,
     OneToOne,
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from 'typeorm';
 import { BoothOrganizationData } from './booth-organization-data.entity';
-import { BoothTemplate } from './booth-template.entity';
 import { Exhibition } from './exhibition.entity';
 
 @Entity({ name: 'booth_organizations' })
@@ -41,19 +38,6 @@ export class BoothOrganization {
         (boothOrganizationData) => boothOrganizationData.boothOrganization,
     )
     boothOrganizationData: BoothOrganizationData[];
-
-    @ManyToOne(
-        () => BoothTemplate,
-        (boothTemplate) => boothTemplate.boothOrganizations,
-        {
-            nullable: false,
-        },
-    )
-    @JoinColumn({
-        name: 'booth_template_id',
-        foreignKeyConstraintName: 'fk-booth_organizations-booth_templates',
-    })
-    boothTemplate: BoothTemplate;
 
     @OneToOne(() => Exhibition, (exhibition) => exhibition.boothOrganization)
     exhibition: Exhibition;

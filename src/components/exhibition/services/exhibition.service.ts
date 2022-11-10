@@ -25,21 +25,26 @@ import { ConfigService } from '@nestjs/config';
 import { HttpService } from '@nestjs/axios';
 import { BoothConverter } from '../converters/booth.converter';
 import { BoothDataConverter } from '../converters/booth-data.converter';
-import { ProductConverter } from '../converters/product.converter';
 import { LiveStreamConverter } from '../converters/live-stream.converter';
-import { ProjectConverter } from '../converters/project.converter';
 import { Booth as BoothDto } from '@/components/exhibition/dto/booth.dto';
 import { LiveStream } from '../entities/live-stream.entity';
-import { BoothData } from '../entities/booth-data.entity';
+
+import { lastValueFrom, map } from 'rxjs';
+import { Location } from '../entities/location.entity';
+import { LiveStream as LiveStreamDto } from '@/components/exhibition/dto/live-stream.dto';
+import { BoothImage } from '../entities/booth-image.entity';
+import { BoothVideo } from '../entities/booth-video.entity';
+import { BoothProject } from '../entities/booth-project.entity';
+import { BoothProduct } from '../entities/booth-product.entity';
+import { BoothTemplatePosition } from '../entities/booth-template-position.entity';
+import { BoothImage as BoothImageDto } from '../dto/booth-image.dto';
+import { BoothVideo as BoothVideoDto } from '../dto/booth-video.dto';
+import { BoothProject as BoothProjectDto } from '../dto/booth-project.dto';
+import { BoothProduct as BoothProductDto } from '../dto/booth-product.dto';
+import { Image } from '../entities/image.entity';
+import { Video } from '../entities/video.entity';
 import { Project } from '../entities/project.entity';
 import { Product } from '../entities/product.entity';
-import { lastValueFrom, map } from 'rxjs';
-import { LocationStatus } from '../entities/location-status.entity';
-import { PositionBooth } from '../entities/position-booth.entity';
-import { LiveStream as LiveStreamDto } from '@/components/exhibition/dto/live-stream.dto';
-import { BoothData as BoothDataDto } from '@/components/exhibition/dto/booth-data.dto';
-import { Project as ProjectDto } from '@/components/exhibition/dto/project.dto';
-import { Product as ProductDto } from '@/components/exhibition/dto/product.dto';
 
 @Injectable()
 export class ExhibitionService {
@@ -53,9 +58,7 @@ export class ExhibitionService {
         private readonly configService: ConfigService,
         private readonly httpService: HttpService,
         private readonly boothDataConverter: BoothDataConverter,
-        private readonly productConverter: ProductConverter,
         private readonly liveStreamConverter: LiveStreamConverter,
-        private readonly projectConverter: ProjectConverter,
         private readonly boothConverter: BoothConverter,
     ) {}
 
@@ -191,7 +194,7 @@ export class ExhibitionService {
         boothOrganizationEntity.name = `Gian hàng ban tổ chức`;
         // TODO: handle getUserId from access token
         boothOrganizationEntity.userId = 1;
-        boothOrganizationEntity.boothTemplate = boothTemplate;
+        // boothOrganizationEntity.boothTemplate = boothTemplate;
         return await boothOrganizationRepository.save(boothOrganizationEntity);
     }
 
@@ -275,32 +278,6 @@ export class ExhibitionService {
         return this.exhibitionConverter.toDto(createdExhibition);
     }
 
-    private async removeOldBoothDataRelations(
-        booth: Booth,
-        liveStreamRepository: Repository<LiveStream>,
-        boothDataRepository: Repository<BoothData>,
-        projectRepository: Repository<Project>,
-        productRepository: Repository<Product>,
-    ) {
-        if (booth.liveStreams) {
-            await liveStreamRepository.remove(booth.liveStreams);
-            booth.liveStreams = [];
-        }
-        if (booth.boothData) {
-            await boothDataRepository.remove(booth.boothData);
-            booth.boothData = [];
-        }
-        if (booth.projects) {
-            await projectRepository.remove(booth.projects);
-            booth.projects = [];
-        }
-        if (booth.products) {
-            await productRepository.remove(booth.products);
-            booth.products = [];
-        }
-        return booth;
-    }
-
     async getBoothById(
         exhibitionId: string,
         boothId: string,
@@ -318,11 +295,13 @@ export class ExhibitionService {
             );
         }
         const allowPopulate = [
-            'boothData.positionBooth',
-            'products.positionBooth',
-            'projects.positionBooth',
+            'boothImages.boothTemplatePosition',
+            'boothProjects.boothTemplatePosition',
+            'boothProducts.boothTemplatePosition',
+            'boothProducts.boothTemplatePosition',
+            'boothVideos.boothTemplatePosition',
             'boothTemplate',
-            'locationStatus',
+            'location',
         ];
         populate.forEach((value) => {
             if (!allowPopulate.includes(value)) {
@@ -339,9 +318,14 @@ export class ExhibitionService {
             },
             relations: [
                 'liveStreams',
-                'boothData',
-                'products',
-                'projects',
+                'boothProducts',
+                'boothProjects',
+                'boothVideos',
+                'boothImages',
+                'boothProducts.product',
+                'boothImages.image',
+                'boothProjects.project',
+                'boothVideos.video',
                 ...populate,
             ],
         });
@@ -373,19 +357,21 @@ export class ExhibitionService {
         return result.id;
     }
 
-    private async getLocationStatusById(
+    private async getLocationById(
         id: number,
-        locationStatusRepository: Repository<LocationStatus>,
-    ): Promise<LocationStatus> {
-        const firstLocationStatus = await locationStatusRepository.findOneBy({
-            id,
+        locationRepository: Repository<Location>,
+    ): Promise<Location> {
+        const firstLocation = await locationRepository.findOne({
+            where: {
+                id: id,
+            },
+
+            relations: ['spaceTemplateLocation'],
         });
-        if (!firstLocationStatus) {
-            throw new BadRequestException(
-                "The 'location_status_id' is not found",
-            );
+        if (!firstLocation) {
+            throw new BadRequestException(`The 'id' not found: ${id}`);
         }
-        return firstLocationStatus;
+        return firstLocation;
     }
 
     private async getBoothTemplateById(
@@ -433,19 +419,20 @@ export class ExhibitionService {
         return parseValueEnterprise.id;
     }
 
-    private async getPositionBoothById(
+    private async getBoothTemplatePositionById(
         id: number,
-        positionBoothRepository: Repository<PositionBooth>,
-    ): Promise<PositionBooth> {
-        const firstPositionBooth = await positionBoothRepository.findOneBy({
-            id,
-        });
-        if (!firstPositionBooth) {
+        boothTemplatePositionRepository: Repository<BoothTemplatePosition>,
+    ): Promise<BoothTemplatePosition> {
+        const firstBoothTemplatePosition =
+            await boothTemplatePositionRepository.findOneBy({
+                id,
+            });
+        if (!firstBoothTemplatePosition) {
             throw new BadRequestException(
                 "The 'position_booth_id' is not found",
             );
         }
-        return firstPositionBooth;
+        return firstBoothTemplatePosition;
     }
 
     private async createLiveStream(
@@ -471,263 +458,362 @@ export class ExhibitionService {
         return listOfCreatedLiveStream;
     }
 
-    private async createBoothData(
-        listOfBoothDataDto: BoothDataDto[],
+    private async createBoothImages(
+        listOfBoothImageDto: BoothImageDto[],
         booth: Booth,
-        boothDataRepository: Repository<BoothData>,
-        positionBoothRepository: Repository<PositionBooth>,
-    ): Promise<BoothData[]> {
-        const listOfCreatedBoothData = await Promise.all(
-            listOfBoothDataDto.map(async (boothDataDto) => {
-                const boothDataToEntity = new BoothData();
+        boothImageRepository: Repository<BoothImage>,
+        imageRepository: Repository<Image>,
+        boothTemplatePositionRepository: Repository<BoothTemplatePosition>,
+    ): Promise<BoothImage[]> {
+        let listOfCreatedBoothImage = [];
+        if (listOfBoothImageDto) {
+            listOfCreatedBoothImage = await Promise.all(
+                listOfBoothImageDto.map(async (boothImageDto) => {
+                    const { booth_template_position_id, ...imageDto } =
+                        boothImageDto;
 
-                boothDataToEntity.mediaId = boothDataDto.selected_media_id;
+                    const firstBoothTemplatePosition =
+                        await this.getBoothTemplatePositionById(
+                            booth_template_position_id,
+                            boothTemplatePositionRepository,
+                        );
 
-                if (boothDataDto.media_data) {
-                    boothDataToEntity.mediaId = await this.createUrlMedias(
-                        boothDataDto.media_data,
+                    const imageEntity = new Image();
+
+                    imageEntity.imageId = imageDto.selected_media_id;
+
+                    if (imageDto.media_data) {
+                        imageEntity.imageId = await this.createUrlMedias(
+                            imageDto.media_data,
+                        );
+                    }
+
+                    const createdImage = await imageRepository.save(
+                        imageEntity,
                     );
-                }
 
-                const firstPositionBooth = await this.getPositionBoothById(
-                    boothDataDto.position_booth_id,
-                    positionBoothRepository,
-                );
+                    const boothImageEntity = new BoothImage();
 
-                boothDataToEntity.booth = booth;
-                boothDataToEntity.positionBooth = firstPositionBooth;
+                    boothImageEntity.booth = booth;
+                    boothImageEntity.boothTemplatePosition =
+                        firstBoothTemplatePosition;
+                    boothImageEntity.image = createdImage;
+                    const createdImageEntity = await boothImageRepository.save(
+                        boothImageEntity,
+                    );
 
-                const createdBoothData = await boothDataRepository.save(
-                    boothDataToEntity,
-                );
+                    return createdImageEntity;
+                }),
+            );
+        }
 
-                return createdBoothData;
-            }),
-        );
-
-        return listOfCreatedBoothData;
+        return listOfCreatedBoothImage;
     }
 
-    private async createProjects(
-        listOfProjectDto: ProjectDto[],
+    private async createBoothVideos(
+        listOfBoothVideoDto: BoothVideoDto[],
         booth: Booth,
+        boothVideoRepository: Repository<BoothVideo>,
+        videoRepository: Repository<Video>,
+        boothTemplatePositionRepository: Repository<BoothTemplatePosition>,
+    ): Promise<BoothVideo[]> {
+        let listOfCreatedBoothVideo = [];
+        if (listOfBoothVideoDto) {
+            listOfCreatedBoothVideo = await Promise.all(
+                listOfBoothVideoDto.map(async (boothVideoDto) => {
+                    const { booth_template_position_id, ...videoDto } =
+                        boothVideoDto;
+
+                    const firstBoothTemplatePosition =
+                        await this.getBoothTemplatePositionById(
+                            booth_template_position_id,
+                            boothTemplatePositionRepository,
+                        );
+
+                    const videoEntity = new Video();
+
+                    videoEntity.videoId = videoDto.selected_media_id;
+
+                    if (videoDto.media_data) {
+                        videoEntity.videoId = await this.createUrlMedias(
+                            videoDto.media_data,
+                        );
+                    }
+
+                    const createdVideo = await videoRepository.save(
+                        videoEntity,
+                    );
+
+                    const boothVideoEntity = new BoothVideo();
+
+                    boothVideoEntity.booth = booth;
+                    boothVideoEntity.boothTemplatePosition =
+                        firstBoothTemplatePosition;
+                    boothVideoEntity.video = createdVideo;
+                    const createdVideoEntity = await boothVideoRepository.save(
+                        boothVideoEntity,
+                    );
+
+                    return createdVideoEntity;
+                }),
+            );
+        }
+
+        return listOfCreatedBoothVideo;
+    }
+
+    private async createBoothProjects(
+        listOfBoothProjectDto: BoothProjectDto[],
+        booth: Booth,
+        boothProjectRepository: Repository<BoothProject>,
         projectRepository: Repository<Project>,
-        positionBoothRepository: Repository<PositionBooth>,
-    ): Promise<Project[]> {
-        let listOfCreatedProject = [];
-        if (listOfProjectDto) {
-            listOfCreatedProject = await Promise.all(
-                listOfProjectDto.map(async (projectDto) => {
-                    const projectToEntity =
-                        this.projectConverter.toEntity(projectDto);
+        boothTemplatePositionRepository: Repository<BoothTemplatePosition>,
+    ): Promise<BoothProject[]> {
+        let listOfCreatedBoothProject = [];
+        if (listOfBoothProjectDto) {
+            listOfCreatedBoothProject = await Promise.all(
+                listOfBoothProjectDto.map(
+                    async (boothProjectDto: BoothProjectDto) => {
+                        const { booth_template_position_id, ...projectDto } =
+                            boothProjectDto;
 
-                    projectToEntity.mediaId = projectDto.selected_media_id;
+                        const firstBoothTemplatePosition =
+                            await this.getBoothTemplatePositionById(
+                                booth_template_position_id,
+                                boothTemplatePositionRepository,
+                            );
 
-                    if (projectDto.media_data) {
-                        projectToEntity.mediaId = await this.createUrlMedias(
-                            projectDto.media_data,
+                        const projectEntity = new Project();
+
+                        projectEntity.imageId = projectDto.selected_media_id;
+
+                        if (projectDto.media_data) {
+                            projectEntity.imageId = await this.createUrlMedias(
+                                projectDto.media_data,
+                            );
+                        }
+
+                        projectEntity.title = projectDto.title;
+                        projectEntity.description = projectDto.description;
+
+                        const createdProject = await projectRepository.save(
+                            projectEntity,
                         );
-                    }
 
-                    const firstPositionBooth = await this.getPositionBoothById(
-                        projectDto.position_booth_id,
-                        positionBoothRepository,
-                    );
+                        const boothProjectEntity = new BoothProject();
 
-                    projectToEntity.booth = booth;
-                    projectToEntity.positionBooth = firstPositionBooth;
+                        boothProjectEntity.boothTemplatePosition =
+                            firstBoothTemplatePosition;
+                        boothProjectEntity.booth = booth;
+                        boothProjectEntity.project = createdProject;
 
-                    const createdBoothData = await projectRepository.save(
-                        projectToEntity,
-                    );
+                        const createdBoothProject =
+                            await boothProjectRepository.save(
+                                boothProjectEntity,
+                            );
 
-                    return createdBoothData;
-                }),
-            );
-        }
-
-        return listOfCreatedProject;
-    }
-
-    private async createProducts(
-        listOfProductDto: ProductDto[],
-        booth: Booth,
-        productRepository: Repository<Product>,
-        positionBoothRepository: Repository<PositionBooth>,
-    ): Promise<Product[]> {
-        let listOfCreatedProduct = [];
-        if (listOfProductDto) {
-            listOfCreatedProduct = await Promise.all(
-                listOfProductDto.map(async (productDto) => {
-                    const productToEntity =
-                        this.productConverter.toEntity(productDto);
-
-                    productToEntity.mediaId = productDto.selected_media_id;
-
-                    if (productDto.media_data) {
-                        productToEntity.mediaId = await this.createUrlMedias(
-                            productDto.media_data,
-                        );
-                    }
-
-                    const firstPositionBooth = await this.getPositionBoothById(
-                        productDto.position_booth_id,
-                        positionBoothRepository,
-                    );
-
-                    productToEntity.booth = booth;
-                    productToEntity.positionBooth = firstPositionBooth;
-
-                    const createdBoothData = await productRepository.save(
-                        productToEntity,
-                    );
-
-                    return createdBoothData;
-                }),
-            );
-        }
-
-        return listOfCreatedProduct;
-    }
-
-    async updateBooth(
-        exhibitionId: string,
-        boothId: string,
-        boothDto: BoothDto,
-    ) {
-        const updatedBooth = await this.dataSource.transaction(
-            async (manager) => {
-                const boothRepository = manager.getRepository(Booth);
-                const locationStatusRepository =
-                    manager.getRepository(LocationStatus);
-                const exhibitionRepository = manager.getRepository(Exhibition);
-                const boothTemplateRepository =
-                    manager.getRepository(BoothTemplate);
-                const liveStreamRepository = manager.getRepository(LiveStream);
-                const boothDataRepository = manager.getRepository(BoothData);
-                const projectRepository = manager.getRepository(Project);
-                const productRepository = manager.getRepository(Product);
-                const positionBoothRepository =
-                    manager.getRepository(PositionBooth);
-
-                const firstExhibition = await this.getExhibitionById(
-                    parseInt(exhibitionId),
-                    exhibitionRepository,
-                );
-
-                const boothEntity = await boothRepository.findOne({
-                    where: {
-                        id: parseInt(boothId),
-                        exhibition: firstExhibition.booths,
+                        return createdBoothProject;
                     },
-                    relations: [
-                        'liveStreams',
-                        'boothTemplate',
-                        'boothData',
-                        'products',
-                        'projects',
-                        'locationStatus',
-                    ],
-                });
-                if (!boothEntity) {
-                    throw new NotFoundException(
-                        `The 'booth_id' ${boothId} is not found`,
-                    );
-                }
+                ),
+            );
+        }
 
-                const firstLocationStatus = await this.getLocationStatusById(
-                    boothDto.location_status_id,
-                    locationStatusRepository,
-                );
-                const enterpriseId = await this.getEnterpriseById(
-                    boothDto.enterprise_id,
-                );
-                const firstBoothTemplate = await this.getBoothTemplateById(
-                    boothDto.booth_template_id,
-                    boothTemplateRepository,
-                );
-
-                boothEntity.name = boothDto.name;
-                boothEntity.createdBy = 1; // TODO: handle getUserId from access token
-                boothEntity.exhibition = firstExhibition;
-                boothEntity.boothTemplate = firstBoothTemplate;
-                boothEntity.locationStatus = firstLocationStatus;
-                boothEntity.enterpriseId = enterpriseId;
-
-                await this.removeOldBoothDataRelations(
-                    boothEntity,
-                    liveStreamRepository,
-                    boothDataRepository,
-                    projectRepository,
-                    productRepository,
-                );
-
-                const createdBooth = await boothRepository.save(boothEntity);
-
-                const createdLiveStreams = await this.createLiveStream(
-                    boothDto.live_streams,
-                    createdBooth,
-                    liveStreamRepository,
-                );
-
-                const createdBoothData = await this.createBoothData(
-                    boothDto.booth_data,
-                    createdBooth,
-                    boothDataRepository,
-                    positionBoothRepository,
-                );
-
-                createdBooth.liveStreams = createdLiveStreams;
-                createdBooth.boothData = createdBoothData;
-
-                let createdProduct = null;
-                let createdProject = null;
-
-                if (boothDto.products) {
-                    createdProduct = await this.createProducts(
-                        boothDto.products,
-                        createdBooth,
-                        productRepository,
-                        positionBoothRepository,
-                    );
-                    createdBooth.products = createdProduct;
-                }
-
-                if (boothDto.projects) {
-                    createdProject = await this.createProjects(
-                        boothDto.projects,
-                        createdBooth,
-                        projectRepository,
-                        positionBoothRepository,
-                    );
-                    createdBooth.projects = createdProject;
-                }
-                return createdBooth;
-            },
-        );
-
-        return this.boothConverter.toDto(updatedBooth);
+        return listOfCreatedBoothProject;
     }
 
-    async createBooth(exhibitionId, boothDto: BoothDto) {
+    private async createBoothProducts(
+        listOfBoothProductDto: BoothProductDto[],
+        booth: Booth,
+        boothProductRepository: Repository<BoothProduct>,
+        productRepository: Repository<Product>,
+        boothTemplatePositionRepository: Repository<BoothTemplatePosition>,
+    ): Promise<BoothProduct[]> {
+        let listOfCreatedBoothProduct = [];
+        if (listOfBoothProductDto) {
+            listOfCreatedBoothProduct = await Promise.all(
+                listOfBoothProductDto.map(
+                    async (boothProductDto: BoothProductDto) => {
+                        const { booth_template_position_id, ...productDto } =
+                            boothProductDto;
+
+                        const firstBoothTemplatePosition =
+                            await this.getBoothTemplatePositionById(
+                                booth_template_position_id,
+                                boothTemplatePositionRepository,
+                            );
+
+                        const productEntity = new Product();
+
+                        productEntity.imageId = productDto.selected_media_id;
+
+                        if (productDto.media_data) {
+                            productEntity.imageId = await this.createUrlMedias(
+                                productDto.media_data,
+                            );
+                        }
+
+                        productEntity.name = productDto.name;
+                        productEntity.price = productDto.price;
+                        productEntity.description = productDto.description;
+                        productEntity.purchaseLink = productDto.purchase_link;
+
+                        const createdProduct = await productRepository.save(
+                            productEntity,
+                        );
+
+                        const boothProductEntity = new BoothProduct();
+
+                        boothProductEntity.booth = booth;
+                        boothProductEntity.boothTemplatePosition =
+                            firstBoothTemplatePosition;
+                        boothProductEntity.product = createdProduct;
+
+                        const createdBoothProduct =
+                            await boothProductRepository.save(
+                                boothProductEntity,
+                            );
+
+                        return createdBoothProduct;
+                    },
+                ),
+            );
+        }
+
+        return listOfCreatedBoothProduct;
+    }
+
+    private async removeOldBoothRelations(
+        booth: Booth,
+        boothProjectRepository: Repository<BoothProject>,
+        boothProductRepository: Repository<BoothProduct>,
+        boothImageRepository: Repository<BoothImage>,
+        boothVideoRepository: Repository<BoothVideo>,
+        liveStreamRepository: Repository<LiveStream>,
+        projectRepository: Repository<Project>,
+        productRepository: Repository<Product>,
+        imageRepository: Repository<Image>,
+        videoRepository: Repository<Video>,
+    ) {
+        if (booth.liveStreams) {
+            await liveStreamRepository.remove(booth.liveStreams);
+            booth.liveStreams = [];
+        }
+        if (booth.boothImages) {
+            await Promise.all(
+                booth.boothImages.map(async (boothImage) => {
+                    const firstBoothImage = await boothImageRepository.findOne({
+                        where: {
+                            id: boothImage.id,
+                        },
+                        relations: ['image'],
+                    });
+                    await boothImageRepository.remove(boothImage);
+                    if (!firstBoothImage) {
+                        throw new BadRequestException(
+                            `The booth_image_id '${boothImage.id}' is not found`,
+                        );
+                    }
+                    return await imageRepository.remove(firstBoothImage.image);
+                }),
+            );
+            booth.boothImages = [];
+        }
+        if (booth.boothVideos) {
+            await Promise.all(
+                booth.boothVideos.map(async (boothVideo) => {
+                    const firstBoothVideo = await boothVideoRepository.findOne({
+                        where: {
+                            id: boothVideo.id,
+                        },
+                        relations: ['video'],
+                    });
+                    await boothVideoRepository.remove(boothVideo);
+                    if (!firstBoothVideo) {
+                        throw new BadRequestException(
+                            `The booth_video_id '${firstBoothVideo.id}' is not found`,
+                        );
+                    }
+                    return await videoRepository.remove(firstBoothVideo.video);
+                }),
+            );
+            booth.boothVideos = [];
+        }
+        if (booth.boothProducts) {
+            await Promise.all(
+                booth.boothProducts.map(async (boothProduct) => {
+                    const firstBoothProduct =
+                        await boothProductRepository.findOne({
+                            where: {
+                                id: boothProduct.id,
+                            },
+                            relations: ['product'],
+                        });
+                    if (!firstBoothProduct) {
+                        throw new BadRequestException(
+                            `The booth_product_id '${boothProduct.id}' is not found`,
+                        );
+                    }
+                    await boothProductRepository.remove(boothProduct);
+                    return await productRepository.remove(
+                        firstBoothProduct.product,
+                    );
+                }),
+            );
+            booth.boothProducts = [];
+        }
+        if (booth.boothProjects) {
+            await Promise.all(
+                booth.boothProjects.map(async (boothProject) => {
+                    const firstBoothProject =
+                        await boothProjectRepository.findOne({
+                            where: {
+                                id: boothProject.id,
+                            },
+                            relations: ['project'],
+                        });
+                    if (!firstBoothProject) {
+                        throw new BadRequestException(
+                            `The booth_project_id '${firstBoothProject.id}' is not found`,
+                        );
+                    }
+                    await boothProjectRepository.remove(firstBoothProject);
+                    return await projectRepository.remove(
+                        firstBoothProject.project,
+                    );
+                }),
+            );
+
+            booth.boothProjects = [];
+        }
+        return booth;
+    }
+
+    async createBooth(exhibitionId: number, boothDto: BoothDto) {
         const createdBooth = await this.dataSource.transaction(
             async (manager) => {
                 const boothRepository = manager.getRepository(Booth);
-                const locationStatusRepository =
-                    manager.getRepository(LocationStatus);
+                const locationRepository = manager.getRepository(Location);
                 const exhibitionRepository = manager.getRepository(Exhibition);
                 const boothTemplateRepository =
                     manager.getRepository(BoothTemplate);
                 const liveStreamRepository = manager.getRepository(LiveStream);
-                const boothDataRepository = manager.getRepository(BoothData);
+                const boothImageRepository = manager.getRepository(BoothImage);
+                const boothVideoRepository = manager.getRepository(BoothVideo);
+                const boothProjectRepository =
+                    manager.getRepository(BoothProject);
+                const boothProductRepository =
+                    manager.getRepository(BoothProduct);
+                const boothTemplatePositionRepository = manager.getRepository(
+                    BoothTemplatePosition,
+                );
+                const imageRepository = manager.getRepository(Image);
+                const videoRepository = manager.getRepository(Video);
                 const projectRepository = manager.getRepository(Project);
                 const productRepository = manager.getRepository(Product);
-                const positionBoothRepository =
-                    manager.getRepository(PositionBooth);
 
-                const firstLocationStatus = await this.getLocationStatusById(
-                    boothDto.location_status_id,
-                    locationStatusRepository,
+                const firstLocation = await this.getLocationById(
+                    boothDto.location_id,
+                    locationRepository,
                 );
                 const enterpriseId = await this.getEnterpriseById(
                     boothDto.enterprise_id,
@@ -747,45 +833,209 @@ export class ExhibitionService {
                 boothEntity.createdBy = 1; // TODO: handle getUserId from access token
                 boothEntity.exhibition = firstExhibition;
                 boothEntity.boothTemplate = firstBoothTemplate;
-                boothEntity.locationStatus = firstLocationStatus;
+                boothEntity.location = firstLocation;
                 boothEntity.enterpriseId = enterpriseId;
 
                 const createdBooth = await boothRepository.save(boothEntity);
-
-                const createdBoothData = await this.createBoothData(
-                    boothDto.booth_data,
-                    createdBooth,
-                    boothDataRepository,
-                    positionBoothRepository,
-                );
 
                 const createdLiveStreams = await this.createLiveStream(
                     boothDto.live_streams,
                     createdBooth,
                     liveStreamRepository,
                 );
-                const createdProjects = await this.createProjects(
-                    boothDto.projects,
+
+                const createdBoothImages = await this.createBoothImages(
+                    boothDto.booth_images,
                     createdBooth,
-                    projectRepository,
-                    positionBoothRepository,
+                    boothImageRepository,
+                    imageRepository,
+                    boothTemplatePositionRepository,
                 );
-                const createdProducts = await this.createProducts(
-                    boothDto.products,
+
+                const createdBoothVideos = await this.createBoothVideos(
+                    boothDto.booth_videos,
                     createdBooth,
+                    boothVideoRepository,
+                    videoRepository,
+                    boothTemplatePositionRepository,
+                );
+
+                const createdBoothProjects = await this.createBoothProjects(
+                    boothDto.booth_projects,
+                    createdBooth,
+                    boothProjectRepository,
+                    projectRepository,
+                    boothTemplatePositionRepository,
+                );
+                const createdBoothProducts = await this.createBoothProducts(
+                    boothDto.booth_products,
+                    createdBooth,
+                    boothProductRepository,
                     productRepository,
-                    positionBoothRepository,
+                    boothTemplatePositionRepository,
                 );
 
                 createdBooth.liveStreams = createdLiveStreams;
-                createdBooth.boothData = createdBoothData;
-                createdBooth.products = createdProducts;
-                createdBooth.projects = createdProjects;
+                createdBooth.boothImages = createdBoothImages;
+                createdBooth.boothVideos = createdBoothVideos;
+                createdBooth.boothProjects = createdBoothProjects;
+                createdBooth.boothProducts = createdBoothProducts;
 
                 return createdBooth;
             },
         );
 
         return this.boothConverter.toDto(createdBooth);
+    }
+
+    async updateBooth(
+        exhibitionId: string,
+        boothId: string,
+        boothDto: BoothDto,
+    ) {
+        const updatedBooth = await this.dataSource.transaction(
+            async (manager) => {
+                const boothRepository = manager.getRepository(Booth);
+                const locationStatusRepository =
+                    manager.getRepository(Location);
+                const exhibitionRepository = manager.getRepository(Exhibition);
+                const boothTemplateRepository =
+                    manager.getRepository(BoothTemplate);
+                const liveStreamRepository = manager.getRepository(LiveStream);
+                const projectRepository = manager.getRepository(Project);
+                const productRepository = manager.getRepository(Product);
+                const boothTemplatePositionRepository = manager.getRepository(
+                    BoothTemplatePosition,
+                );
+                const boothProjectRepository =
+                    manager.getRepository(BoothProject);
+                const boothProductRepository =
+                    manager.getRepository(BoothProduct);
+                const boothVideoRepository = manager.getRepository(BoothVideo);
+                const boothImageRepository = manager.getRepository(BoothImage);
+                const imageRepository = manager.getRepository(Image);
+                const videoRepository = manager.getRepository(Video);
+
+                const firstExhibition = await this.getExhibitionById(
+                    parseInt(exhibitionId),
+                    exhibitionRepository,
+                );
+
+                const boothEntity = await boothRepository.findOne({
+                    where: {
+                        id: parseInt(boothId),
+                        // exhibition: firstExhibition.booths,
+                    },
+                    relations: [
+                        'liveStreams',
+                        'boothTemplate',
+                        'boothProducts',
+                        'boothProjects',
+                        'boothImages',
+                        'boothVideos',
+                        'location',
+                    ],
+                });
+                if (!boothEntity) {
+                    throw new NotFoundException(
+                        `The 'booth_id' ${boothId} is not found`,
+                    );
+                }
+
+                const firstLocation = await this.getLocationById(
+                    boothDto.location_id,
+                    locationStatusRepository,
+                );
+                const enterpriseId = await this.getEnterpriseById(
+                    boothDto.enterprise_id,
+                );
+                const firstBoothTemplate = await this.getBoothTemplateById(
+                    boothDto.booth_template_id,
+                    boothTemplateRepository,
+                );
+
+                boothEntity.name = boothDto.name;
+                boothEntity.createdBy = 1; // TODO: handle getUserId from access token
+                boothEntity.exhibition = firstExhibition;
+                boothEntity.boothTemplate = firstBoothTemplate;
+                boothEntity.location = firstLocation;
+                boothEntity.enterpriseId = enterpriseId;
+
+                await this.removeOldBoothRelations(
+                    boothEntity,
+                    boothProjectRepository,
+                    boothProductRepository,
+                    boothImageRepository,
+                    boothVideoRepository,
+                    liveStreamRepository,
+                    projectRepository,
+                    productRepository,
+                    imageRepository,
+                    videoRepository,
+                );
+
+                const createdBooth = await boothRepository.save(boothEntity);
+                if (boothDto.live_streams) {
+                    const createdLiveStreams = await this.createLiveStream(
+                        boothDto.live_streams,
+                        createdBooth,
+                        liveStreamRepository,
+                    );
+                    createdBooth.liveStreams = createdLiveStreams;
+                }
+
+                let createdBoothProduct = null;
+                let createdBoothProject = null;
+                let createdBoothImage = null;
+                let createdBoothVideo = null;
+
+                if (boothDto.booth_products) {
+                    createdBoothProduct = await this.createBoothProducts(
+                        boothDto.booth_products,
+                        createdBooth,
+                        boothProductRepository,
+                        productRepository,
+                        boothTemplatePositionRepository,
+                    );
+                    createdBooth.boothProducts = createdBoothProduct;
+                }
+
+                if (boothDto.booth_projects) {
+                    createdBoothProject = await this.createBoothProjects(
+                        boothDto.booth_projects,
+                        createdBooth,
+                        boothProjectRepository,
+                        projectRepository,
+                        boothTemplatePositionRepository,
+                    );
+                    createdBooth.boothProjects = createdBoothProject;
+                }
+
+                if (boothDto.booth_images) {
+                    createdBoothImage = await this.createBoothImages(
+                        boothDto.booth_images,
+                        createdBooth,
+                        boothImageRepository,
+                        imageRepository,
+                        boothTemplatePositionRepository,
+                    );
+                    createdBooth.boothImages = createdBoothImage;
+                }
+
+                if (boothDto.booth_videos) {
+                    createdBoothVideo = await this.createBoothVideos(
+                        boothDto.booth_videos,
+                        createdBooth,
+                        boothVideoRepository,
+                        videoRepository,
+                        boothTemplatePositionRepository,
+                    );
+                    createdBooth.boothVideos = createdBoothVideo;
+                }
+                return createdBooth;
+            },
+        );
+
+        return this.boothConverter.toDto(updatedBooth);
     }
 }

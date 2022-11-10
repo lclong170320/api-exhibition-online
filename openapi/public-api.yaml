@@ -42,8 +42,16 @@ paths:
           description: |
             List of populatable columns:
             - booths
+            - booths.booth_projects
+            - booths.booth_products
+            - booths.booth_videos
+            - booths.booth_images
+            - booths.booth_projects.booth_template_position
+            - booths.booth_products.booth_template_position
+            - booths.booth_videos.booth_template_position
+            - booths.booth_images.booth_template_position
+            - booths.location
             - booths.booth_template
-            - booths.location_status
             - booth_organization
             - booth_organization.booth_organization_data
             - booth_organization.booth_template
@@ -475,7 +483,7 @@ components:
       required:
         - id
       properties:
-        id: 
+        id:
           type: integer
         name:
           type: string
@@ -572,7 +580,7 @@ components:
       required:
         - id
         - link
-        - date
+        - time
       properties:
         id:
           type: integer
@@ -582,11 +590,29 @@ components:
           type: string
           minLength: 1
           example: 'www.goole.com'
-        date:
+        time:
           type: string
           minLength: 1
           pattern: '^[1-9]\d{3}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$'
           example: '2022-12-01T00:00:00.000Z'
+    BoothTemplatePosition:
+      type: object
+      required:
+        - id
+        - type
+        - position
+      properties:
+        id:
+          type: number
+          readOnly: true
+          example: 1
+        type:
+          type: string
+          enum: ['image', 'video', 'project', 'product']
+          example: 'image'
+        position:
+          type: string
+          maxLength: 255
     Booth:
       type: object
       required:
@@ -594,20 +620,16 @@ components:
         - name
         - enterprise_id
         - created_by
-        - location_status_id
+        - location_id
         - booth_template_id
-        - booth_data
-        - live_streams
       properties:
         id:
           type: integer
           example: 1
-          description: The number id booth.
           readOnly: true
         name:
           type: string
-          example: 'triễn lảm'
-          description: The name category.
+          example: 'Tên gian hàng'
         enterprise_id:
           type: integer
           example: 1
@@ -615,7 +637,7 @@ components:
           type: integer
           readOnly: true
           example: 1
-        location_status_id:
+        location_id:
           type: integer
           writeOnly: true
           example: 1
@@ -627,18 +649,22 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/LiveStream'
-        booth_data:
+        booth_images:
           type: array
           items:
-            $ref: '#/components/schemas/BoothData'
-        projects:
+            $ref: '#/components/schemas/BoothImage'
+        booth_videos:
           type: array
           items:
-            $ref: '#/components/schemas/Project'
-        products:
+            $ref: '#/components/schemas/BoothVideo'
+        booth_projects:
           type: array
           items:
-            $ref: '#/components/schemas/Product'
+            $ref: '#/components/schemas/BoothProject'
+        booth_products:
+          type: array
+          items:
+            $ref: '#/components/schemas/BoothProduct'
     Media:
       type: object
       required:
@@ -659,3 +685,142 @@ components:
         user_id:
           type: integer
           readOnly: true
+    BoothImage:
+      type: object
+      required:
+        - id
+        - booth_template_position_id
+        - image_id
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        selected_media_id:
+          type: integer
+          writeOnly: true
+          description: This column exists if image selected from data center
+          example: 1
+        image_id:
+          type: integer
+          readOnly: true
+          example: 1
+        media_data:
+          type: string
+          writeOnly: true
+          description: This column exists if image selected from your local
+          example: 'base64 string'
+        booth_template_position_id:
+          type: integer
+          example: 1
+    BoothVideo:
+      type: object
+      required:
+        - id
+        - booth_template_position_id
+        - video_id
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        selected_media_id:
+          type: integer
+          writeOnly: true
+          description: This column exists if video selected from data center
+          example: 1
+        video_id:
+          type: integer
+          readOnly: true
+          example: 1
+        media_data:
+          type: string
+          writeOnly: true
+          description: This column exists if video selected from your local
+          example: 'base64 string'
+        booth_template_position_id:
+          type: integer
+          example: 1
+    BoothProject:
+      type: object
+      required:
+        - id
+        - booth_template_position_id
+        - image_id
+        - title
+        - description
+      properties:
+        id:
+          type: integer
+          readOnly: true
+          example: 1
+        selected_media_id:
+          type: integer
+          writeOnly: true
+          description: This column exists if video or image selected from data center
+        image_id:
+          type: integer
+          readOnly: true
+        media_data:
+          type: string
+          writeOnly: true
+          description: This column exists if video or image selected from your local
+          example: 'base64 string'
+        title:
+          type: string
+          maxLength: 255
+          example: 'Tên dự án'
+        description:
+          type: string
+          maxLength: 20000
+          example: 'Nội dung mô tả cho dự án'
+        booth_template_position_id:
+          type: integer
+          writeOnly: true
+          example: 1
+    BoothProduct:
+      type: object
+      required:
+        - id
+        - name
+        - price
+        - purchase_link
+        - booth_template_position_id
+        - description
+      properties:
+        id:
+          type: integer
+          readOnly: true
+          example: 1
+        name:
+          type: string
+          maxLength: 255
+          example: 'mận Hà Nội'
+        price:
+          type: number
+          format: float
+          example: 35000
+        purchase_link:
+          type: string
+          maxLength: 255
+          example: 'https://link_mua_san_pham/ma_ha_noi.png'
+        description:
+          type: string
+          maxLength: 500
+          example: 'Mô tả sản phẩm'
+        selected_media_id:
+          type: integer
+          writeOnly: true
+          description: This column exists if image selected from data center
+          example: 1
+        image_id:
+          type: integer
+          readOnly: true
+          example: 1
+        media_data:
+          type: string
+          writeOnly: true
+          description: This column exists if image selected from your local
+          example: 'base64 string'
+        booth_template_position_id:
+          type: integer
+          writeOnly: true
+          example: 1

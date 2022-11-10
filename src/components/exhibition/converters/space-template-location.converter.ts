@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { Location } from '../dto/location.dto';
-import { LocationStatus } from '../entities/location-status.entity';
+import { SpaceTemplateLocation as SpaceTemplateLocationDto } from '../dto/space-template-location.dto';
+import { SpaceTemplateLocation } from '../entities/space-template-location.entity';
 
 @Injectable()
-export class LocationStatusConverter {
-    toDto(entity: LocationStatus) {
+export class SpaceTemplateLocationConverter {
+    toDto(entity: SpaceTemplateLocation) {
         const dto = {
             id: entity.id,
             name: entity.name,
@@ -14,7 +14,7 @@ export class LocationStatusConverter {
             rotation_x: entity.rotationX,
             rotation_y: entity.rotationY,
             rotation_z: entity.rotationZ,
-        } as Location;
+        } as SpaceTemplateLocationDto;
         return dto;
     }
 }

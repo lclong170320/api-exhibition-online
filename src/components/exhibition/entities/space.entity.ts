@@ -10,7 +10,7 @@ import {
     UpdateDateColumn,
 } from 'typeorm';
 import { Exhibition } from './exhibition.entity';
-import { LocationStatus } from './location-status.entity';
+import { Location } from './location.entity';
 import { SpaceData } from './space-data.entity';
 import { SpaceTemplate } from './space-template.entity';
 
@@ -54,6 +54,6 @@ export class Space {
     })
     exhibition: Exhibition;
 
-    @OneToMany(() => LocationStatus, (locationStatus) => locationStatus.space)
-    locationStatus: LocationStatus[];
+    @OneToMany(() => Location, (location) => location.space)
+    locations: Location[];
 }

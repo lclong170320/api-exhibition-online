@@ -10,12 +10,10 @@
  * Do not edit the class manually.
  */
 
-export interface Project {
+import { Type } from '@/components/exhibition/entities/booth-template-position.entity';
+
+export interface BoothTemplatePosition {
     readonly id: number;
-    position_booth_id: number;
-    selected_media_id?: number;
-    readonly media_id: number;
-    media_data?: string;
-    title: string;
-    description: string;
+    type: Type;
+    position: string;
 }

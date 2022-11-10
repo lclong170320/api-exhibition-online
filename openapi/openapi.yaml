@@ -204,7 +204,7 @@ paths:
                     details: []
       tags:
         - Exhibition
-  '/exhibitions/{exhibitionId}/booths':
+  '/exhibitions/{exhibition_id}/booths':
     post:
       tags:
         - Exhibition
@@ -212,7 +212,7 @@ paths:
       description: Add a booth
       operationId: addBooth
       parameters:
-        - name: exhibitionId
+        - name: exhibition_id
           description: ID to get exhibition
           in: path
           required: true
@@ -257,7 +257,7 @@ paths:
                   value:
                     message: Internal server error
                     details: []
-  '/exhibitions/{exhibitionId}/booths/{boothId}':
+  '/exhibitions/{exhibition_id}/booths/{booth_id}':
     put:
       tags:
         - Exhibition
@@ -265,14 +265,14 @@ paths:
       description: Update an existing booth by Id
       operationId: updateBooth
       parameters:
-        - name: exhibitionId
+        - name: exhibition_id
           description: ID to get exhibition
           in: path
           required: true
           schema:
             type: string
             pattern: '^[0-9]+$'
-        - name: boothId
+        - name: booth_id
           description: ID to get booth
           in: path
           required: true
@@ -333,14 +333,14 @@ paths:
       description: Return a single booth
       operationId: getBoothById
       parameters:
-        - name: exhibitionId
+        - name: exhibition_id
           description: ID to get exhibition
           in: path
           required: true
           schema:
             type: string
             pattern: '^[0-9]+$'
-        - name: boothId
+        - name: booth_id
           description: ID to get booth
           in: path
           required: true
@@ -358,11 +358,12 @@ paths:
               List of populateTable columns
                 |      Populates     |
                 |--------------------|
-                | booth_data.position_booth |
-                | products.position_booth |
-                | projects.position_booth |
+                | booth_images.booth_template_position |
+                | booth_projects.booth_template_position |
+                | booth_products.booth_template_position |
+                | booth_videos.booth_template_position |
                 | booth_template |
-                | location_status |
+                | location |
       responses:
         '200':
           description: OK
@@ -1710,7 +1711,7 @@ paths:
                     details: []
   '/users':
     post:
-      security: 
+      security:
       - bearerAuth: []
       tags:
         - User
@@ -2451,6 +2452,20 @@ components:
           type: string
           pattern: '^[a-zA-Z\d\-_.,\s]+$'
           maxLength: 255
+    Category:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: integer
+          example: 0
+          description: The number id category.
+        name:
+          type: string
+          example: 'loai triễn lảm'
+          description: The name category.
     ExhibitionList:
       type: object
       required:
@@ -2475,20 +2490,76 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Exhibition'
-    Category:
+    BoothTemplatePosition:
+      type: object
+      required:
+        - id
+        - type
+        - position
+      properties:
+        id:
+          type: number
+          readOnly: true
+          example: 1
+        type:
+          type: string
+          enum: ['image', 'video', 'project', 'product']
+          example: 'image'
+        position:
+          type: string
+          maxLength: 255
+    Booth:
       type: object
       required:
         - id
         - name
+        - enterprise_id
+        - created_by
+        - location_id
+        - booth_template_id
       properties:
         id:
           type: integer
-          example: 0
-          description: The number id category.
+          example: 1
+          readOnly: true
         name:
           type: string
-          example: 'loai triễn lảm'
-          description: The name category.
+          example: 'Tên gian hàng'
+        enterprise_id:
+          type: integer
+          example: 1
+        created_by:
+          type: integer
+          readOnly: true
+          example: 1
+        location_id:
+          type: integer
+          writeOnly: true
+          example: 1
+        booth_template_id:
+          type: integer
+          writeOnly: true
+          example: 1
+        live_streams:
+          type: array
+          items:
+            $ref: '#/components/schemas/LiveStream'
+        booth_images:
+          type: array
+          items:
+            $ref: '#/components/schemas/BoothImage'
+        booth_videos:
+          type: array
+          items:
+            $ref: '#/components/schemas/BoothVideo'
+        booth_projects:
+          type: array
+          items:
+            $ref: '#/components/schemas/BoothProject'
+        booth_products:
+          type: array
+          items:
+            $ref: '#/components/schemas/BoothProduct'
     User:
         type: object
         required:
@@ -2528,13 +2599,13 @@ components:
       required:
         - id
       properties:
-        id: 
+        id:
           type: integer
         name:
           type: string
           readOnly: true
     Login:
-      required: 
+      required:
           - email
           - password
           - access_token
@@ -2549,100 +2620,12 @@ components:
         access_token:
           readOnly: true
           type: string
-    BoothData:
-      type: object
-      required:
-        - id
-        - position_booth_id
-        - media_id
-      properties:
-        id:
-          type: integer
-          readOnly: true
-        position_booth_id:
-          type: integer
-          writeOnly: true
-        selected_media_id:
-          type: integer
-          writeOnly: true
-        media_id:
-          type: integer
-          readOnly: true
-        media_data:
-          type: string
-          writeOnly: true
-    Project:
-      type: object
-      required:
-        - id
-        - position_booth_id
-        - media_id
-        - title
-        - description
-      properties:
-        id:
-          type: integer
-          readOnly: true
-          example: 1
-        position_booth_id:
-          type: integer
-          writeOnly: true
-        selected_media_id:
-          type: integer
-          writeOnly: true
-        media_id:
-          type: integer
-          readOnly: true
-        media_data:
-          type: string
-          writeOnly: true
-        title:
-          type: string
-        description:
-          type: string
-          maxLength: 20000
-    Product:
-      type: object
-      required:
-        - id
-        - name
-        - price
-        - purchase_link
-        - position_booth_id
-        - description
-        - media_id
-      properties:
-        id:
-          type: integer
-          readOnly: true
-          example: 1
-        position_booth_id:
-          type: integer
-          writeOnly: true
-        selected_media_id:
-          type: integer
-          writeOnly: true
-        media_id:
-          type: integer
-          readOnly: true
-        media_data:
-          type: string
-          writeOnly: true
-        name:
-          type: string
-        price:
-          type: integer
-        purchase_link:
-          type: string
-        description:
-          type: string
-          maxLength: 20000
     LiveStream:
       type: object
       required:
         - id
         - link
-        - date
+        - time
       properties:
         id:
           type: integer
@@ -2652,63 +2635,150 @@ components:
           type: string
           minLength: 1
           example: 'www.goole.com'
-        date:
+        time:
           type: string
           minLength: 1
           pattern: '^[1-9]\d{3}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$'
           example: '2022-12-01T00:00:00.000Z'
-    Booth:
+    BoothImage:
+      type: object
+      required:
+        - id
+        - booth_template_position_id
+        - image_id
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        selected_media_id:
+          type: integer
+          writeOnly: true
+          description: This column exists if image selected from data center
+          example: 1
+        image_id:
+          type: integer
+          readOnly: true
+          example: 1
+        media_data:
+          type: string
+          writeOnly: true
+          description: This column exists if image selected from your local
+          example: 'base64 string'
+        booth_template_position_id:
+          type: integer
+          example: 1
+    BoothVideo:
+      type: object
+      required:
+        - id
+        - booth_template_position_id
+        - video_id
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        selected_media_id:
+          type: integer
+          writeOnly: true
+          description: This column exists if video selected from data center
+          example: 1
+        video_id:
+          type: integer
+          readOnly: true
+          example: 1
+        media_data:
+          type: string
+          writeOnly: true
+          description: This column exists if video selected from your local
+          example: 'base64 string'
+        booth_template_position_id:
+          type: integer
+          example: 1
+    BoothProject:
+      type: object
+      required:
+        - id
+        - booth_template_position_id
+        - image_id
+        - title
+        - description
+      properties:
+        id:
+          type: integer
+          readOnly: true
+          example: 1
+        selected_media_id:
+          type: integer
+          writeOnly: true
+          description: This column exists if video or image selected from data center
+        image_id:
+          type: integer
+          readOnly: true
+        media_data:
+          type: string
+          writeOnly: true
+          description: This column exists if video or image selected from your local
+          example: 'base64 string'
+        title:
+          type: string
+          maxLength: 255
+          example: 'Tên dự án'
+        description:
+          type: string
+          maxLength: 20000
+          example: 'Nội dung mô tả cho dự án'
+        booth_template_position_id:
+          type: integer
+          writeOnly: true
+          example: 1
+    BoothProduct:
       type: object
       required:
         - id
         - name
-        - enterprise_id
-        - created_by
-        - location_status_id
-        - booth_template_id
-        - booth_data
-        - live_streams
+        - price
+        - purchase_link
+        - booth_template_position_id
+        - description
       properties:
         id:
           type: integer
-          example: 1
-          description: The number id booth.
           readOnly: true
+          example: 1
         name:
           type: string
-          example: 'triễn lảm'
-          description: The name category.
-        enterprise_id:
+          maxLength: 255
+          example: 'mận Hà Nội'
+        price:
+          type: number
+          format: float
+          example: 35000
+        purchase_link:
+          type: string
+          maxLength: 255
+          example: 'https://link_mua_san_pham/ma_ha_noi.png'
+        description:
+          type: string
+          maxLength: 500
+          example: 'Mô tả sản phẩm'
+        selected_media_id:
           type: integer
+          writeOnly: true
+          description: This column exists if image selected from data center
           example: 1
-        created_by:
+        image_id:
           type: integer
           readOnly: true
           example: 1
-        location_status_id:
+        media_data:
+          type: string
+          writeOnly: true
+          description: This column exists if image selected from your local
+          example: 'base64 string'
+        booth_template_position_id:
           type: integer
           writeOnly: true
           example: 1
-        booth_template_id:
-          type: integer
-          writeOnly: true
-          example: 1
-        live_streams:
-          type: array
-          items:
-            $ref: '#/components/schemas/LiveStream'
-        booth_data:
-          type: array
-          items:
-            $ref: '#/components/schemas/BoothData'
-        projects:
-          type: array
-          items:
-            $ref: '#/components/schemas/Project'
-        products:
-          type: array
-          items:
-            $ref: '#/components/schemas/Product'
   securitySchemes:
     bearerAuth:
       type: http

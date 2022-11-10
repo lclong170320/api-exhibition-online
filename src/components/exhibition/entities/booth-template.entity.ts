@@ -7,13 +7,17 @@ import {
     OneToMany,
     ManyToMany,
 } from 'typeorm';
-import { BoothOrganization } from './booth-organization.entity';
 import { Exhibition } from './exhibition.entity';
 import { PositionBooth } from './position-booth.entity';
-import { BoothTemplate as BoothTemplateDto } from '../dto/booth-template.dto';
 import { Booth } from './booth.entity';
+import { BoothTemplatePosition } from './booth-template-position.entity';
 
-@Entity({ name: 'booth_templates' })
+export enum Type {
+    PROJECT = 'project',
+    PRODUCT = 'product',
+}
+
+@Entity({ name: 'booth_template' })
 export class BoothTemplate {
     @PrimaryGeneratedColumn()
     id: number;
@@ -24,8 +28,8 @@ export class BoothTemplate {
     @Column({ name: 'name' })
     name: string;
 
-    @Column({ name: 'type', type: 'enum', enum: BoothTemplateDto.TypeEnum })
-    type: BoothTemplateDto.TypeEnum;
+    @Column({ type: 'enum', enum: Type })
+    type: Type;
 
     @Column({ type: 'datetime', name: 'created_date' })
     createdDate: Date;
@@ -48,12 +52,6 @@ export class BoothTemplate {
     })
     updatedAt: Date;
 
-    @OneToMany(
-        () => BoothOrganization,
-        (boothOrganization) => boothOrganization.boothTemplate,
-    )
-    boothOrganizations: BoothOrganization[];
-
     @OneToMany(() => Booth, (booth) => booth.boothTemplate)
     booths: Booth[];
 
@@ -62,4 +60,10 @@ export class BoothTemplate {
 
     @ManyToMany(() => Exhibition)
     exhibitions: Exhibition[];
+
+    @OneToMany(
+        () => BoothTemplatePosition,
+        (boothTemplatePosition) => boothTemplatePosition.boothTemplate,
+    )
+    boothTemplatePositions: BoothTemplatePosition[];
 }

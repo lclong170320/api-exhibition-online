@@ -68,7 +68,6 @@ export class AppModule implements NestModule {
                         allowUnknownQueryParameters: true,
                         coerceTypes: false,
                     },
-                    // validateResponses: true,
                     validateFormats: 'full',
                 }),
                 ...OpenApiValidator.middleware({

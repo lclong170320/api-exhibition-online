@@ -23,36 +23,39 @@ export class ExhibitionController {
         return this.exhibitionService.createExhibition(exhibition);
     }
 
-    @Put(':exhibitionId/booths/:boothId')
-    updateBooth(
-        @Param('exhibitionId') exhibitionId: string,
-        @Param('boothId') boothId: string,
+    @Post(':exhibition_id/booths')
+    createBooth(
+        @Param('exhibition_id') exhibitionId: string,
         @Body() boothDto: BoothDto,
     ) {
-        return this.exhibitionService.updateBooth(
-            exhibitionId,
-            boothId,
+        return this.exhibitionService.createBooth(
+            parseInt(exhibitionId),
             boothDto,
         );
     }
-
-    @Post(':exhibitionId/booths')
-    createBooth(
-        @Param('exhibitionId') exhibitionId: string,
-        @Body() boothDto: BoothDto,
-    ) {
-        return this.exhibitionService.createBooth(exhibitionId, boothDto);
-    }
-    @Get(':exhibitionId/booths/:boothId')
+    @Get(':exhibition_id/booths/:booth_id')
     getBoothById(
-        @Param('exhibitionId') exhibitionId: string,
-        @Param('boothId') boothId: string,
+        @Param('exhibition_id') exhibitionId: string,
+        @Param('booth_id') boothId: string,
         @Paginate() query: PaginateQuery,
     ) {
         return this.exhibitionService.getBoothById(
             exhibitionId,
             boothId,
             query.populate,
+        );
+    }
+
+    @Put(':exhibition_id/booths/:booth_id')
+    updateBooth(
+        @Param('exhibition_id') exhibitionId: string,
+        @Param('booth_id') boothId: string,
+        @Body() boothDto: BoothDto,
+    ) {
+        return this.exhibitionService.updateBooth(
+            exhibitionId,
+            boothId,
+            boothDto,
         );
     }
 }

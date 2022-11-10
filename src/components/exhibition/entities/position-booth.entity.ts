@@ -11,8 +11,6 @@ import {
 import { BoothData } from './booth-data.entity';
 import { BoothOrganizationData } from './booth-organization-data.entity';
 import { BoothTemplate } from './booth-template.entity';
-import { Product } from './product.entity';
-import { Project } from './project.entity';
 
 @Entity({ name: 'position_booths' })
 export class PositionBooth {
@@ -54,10 +52,4 @@ export class PositionBooth {
 
     @OneToMany(() => BoothData, (boothData) => boothData.positionBooth)
     boothData: BoothData[];
-
-    @OneToMany(() => Project, (project) => project.positionBooth)
-    projects: Project[];
-
-    @OneToMany(() => Product, (product) => product.positionBooth)
-    products: Product[];
 }

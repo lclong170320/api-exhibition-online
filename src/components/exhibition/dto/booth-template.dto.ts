@@ -16,27 +16,17 @@ export interface BoothTemplate {
     readonly id: number;
     readonly created_by: number;
     readonly created_date: string;
-    /**
-     * input base64 string /n example: iVBORw0KGgoAAAANSUhEUgAABuIAAASxCAYAAADF8I...
-     */
     model_data: string;
-    /**
-     * input base64 string example: iVBORw0KGgoAAAANSUhEUgAABuIAAASxCAYAAADF8I...
-     */
     thumbnail_data: string;
     name: string;
-    type: BoothTemplate.TypeEnum;
+    type: Type;
     readonly model_id?: number;
     readonly thumbnail_id?: number;
     position_booths?: Array<PositionBooth>;
     booth_organizations?: Array<BoothOrganization>;
 }
-// eslint-disable-next-line @typescript-eslint/no-namespace
-export namespace BoothTemplate {
-    export type TypeEnum = 'project' | 'product' | 'organize';
-    export const TypeEnum = {
-        Project: 'project' as TypeEnum,
-        Product: 'product' as TypeEnum,
-        Organize: 'organize' as TypeEnum,
-    };
+
+export enum Type {
+    PROJECT = 'project',
+    PRODUCT = 'product',
 }
