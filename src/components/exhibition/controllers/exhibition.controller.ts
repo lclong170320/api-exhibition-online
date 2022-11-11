@@ -9,8 +9,11 @@ export class ExhibitionController {
     constructor(private readonly exhibitionService: ExhibitionService) {}
 
     @Get(':id')
-    getById(@Param('id') id: string) {
-        return this.exhibitionService.findById(id);
+    getExhibitionById(
+        @Param('id') id: string,
+        @Paginate() query: PaginateQuery,
+    ) {
+        return this.exhibitionService.findExhibitionById(id, query.populate);
     }
 
     @Get()

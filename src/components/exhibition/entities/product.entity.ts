@@ -7,6 +7,7 @@ import {
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from 'typeorm';
+import { BoothOrganizationProduct } from './booth-organization-product.entity';
 import { BoothProduct } from './booth-product.entity';
 
 @Entity({ name: 'product' })
@@ -18,7 +19,7 @@ export class Product {
     @Column({ length: 255 })
     name: string;
 
-    @Column({ name: 'image_id', nullable: true })
+    @Column({ name: 'image_id' })
     imageId: number;
 
     @Column({ type: 'float' })
@@ -52,4 +53,10 @@ export class Product {
     // relation columns
     @OneToMany(() => BoothProduct, (boothProduct) => boothProduct.product)
     boothProducts: BoothProduct[];
+
+    @OneToMany(
+        () => BoothOrganizationProduct,
+        (boothOrganizationProduct) => boothOrganizationProduct.product,
+    )
+    boothOrganizationProducts: BoothOrganizationProduct[];
 }

@@ -47,7 +47,6 @@ export class SpaceTemplateService {
     }
 
     async getSpaceTemplates(query: PaginateQuery) {
-        const relations = this.parseRelations(query.populate);
         const spaceTemplate = await paginate(
             query,
             this.spaceTemplateRepository,
@@ -60,7 +59,7 @@ export class SpaceTemplateService {
                 filterableColumns: {
                     name: [FilterOperator.EQ, FilterOperator.IN],
                 },
-                relations: relations,
+                // relations: relations,
             },
         );
 

@@ -8,15 +8,24 @@ import {
 import { InjectDataSource } from '@nestjs/typeorm';
 import { lastValueFrom, map } from 'rxjs';
 import { DataSource, Repository } from 'typeorm';
-import { BoothOrganizationDataConverter } from '@/components/exhibition/converters/booth-organization-data.converter';
-import { BoothOrganizationConverter } from '@/components/exhibition/converters/booth-organization.converter';
 import { BoothOrganization as BoothOrganizationDto } from '@/components/exhibition/dto/booth-organization.dto';
-import { BoothOrganizationData as BoothOrganizationDataDto } from '@/components/exhibition/dto/booth-organization-data.dto';
-import { BoothOrganizationData } from '@/components/exhibition/entities/booth-organization-data.entity';
 import { BoothOrganization } from '@/components/exhibition/entities/booth-organization.entity';
-import { PositionBooth } from '@/components/exhibition/entities/position-booth.entity';
-import { BoothTemplate } from '@/components/exhibition/entities/booth-template.entity';
 import { ConfigService } from '@nestjs/config';
+import { BoothOrganizationTemplate } from '../entities/booth-organization-template.entity';
+import { BoothOrganizationImage } from '../entities/booth-organization-image.entity';
+import { BoothOrganizationImage as BoothOrganizationImageDto } from '@/components/exhibition/dto/booth-organization-image.dto';
+import { BoothOrganizationVideo as BoothOrganizationVideoDto } from '@/components/exhibition/dto/booth-organization-video.dto';
+import { BoothOrganizationProject as BoothOrganizationProjectDto } from '@/components/exhibition/dto/booth-organization-project.dto';
+import { BoothOrganizationProduct as BoothOrganizationProductDto } from '@/components/exhibition/dto/booth-organization-product.dto';
+import { BoothOrganizationVideo } from '../entities/booth-organization-video.entity';
+import { BoothOrganizationProject } from '../entities/booth-organization-project.entity';
+import { BoothOrganizationProduct } from '../entities/booth-organization-product.entity';
+import { BoothOrganizationTemplatePosition } from '../entities/booth-organization-template-position.entity';
+import { Image } from '../entities/image.entity';
+import { Video } from '../entities/Video.entity';
+import { Project } from '../entities/project.entity';
+import { Product } from '../entities/product.entity';
+import { BoothOrganizationConverter } from '../converters/booth-organization.converter';
 
 @Injectable()
 export class BoothOrganizationService {
@@ -24,7 +33,6 @@ export class BoothOrganizationService {
         @InjectDataSource(DbConnection.exhibitionCon)
         private readonly dataSource: DataSource,
         private readonly boothOrganizationConverter: BoothOrganizationConverter,
-        private readonly boothOrganizationDataConverter: BoothOrganizationDataConverter,
         private readonly httpService: HttpService,
         private readonly configService: ConfigService,
     ) {}
@@ -32,11 +40,17 @@ export class BoothOrganizationService {
     async getBoothOrganizationById(
         boothOrganizationId: string,
         populate: string[],
-    ) {
+    ): Promise<BoothOrganizationDto> {
         const allowPopulate = [
-            'boothOrganizationData',
-            'boothTemplate',
-            'boothOrganizationData.positionBooth',
+            'boothOrganizationTemplate',
+            'boothOrganizationProducts.product',
+            'boothOrganizationProjects.project',
+            'boothOrganizationVideos.video',
+            'boothOrganizationImages.image',
+            'boothOrganizationProducts.boothOrganizationTemplatePosition',
+            'boothOrganizationProjects.boothOrganizationTemplatePosition',
+            'boothOrganizationVideos.boothOrganizationTemplatePosition',
+            'boothOrganizationImages.boothOrganizationTemplatePosition',
         ];
 
         populate.forEach((value) => {
@@ -49,83 +63,124 @@ export class BoothOrganizationService {
 
         const boothOrganizationRepository =
             this.dataSource.getRepository(BoothOrganization);
-        const firstBooth = await boothOrganizationRepository.findOne({
-            where: {
-                id: parseInt(boothOrganizationId),
-            },
-            relations: populate,
-        });
 
-        if (!firstBooth) {
+        const firstBoothOrganization =
+            await boothOrganizationRepository.findOne({
+                where: {
+                    id: parseInt(boothOrganizationId),
+                },
+                relations: populate,
+            });
+
+        if (!firstBoothOrganization) {
             throw new NotFoundException(
-                `The 'booth_id' ${boothOrganizationId} is not found`,
+                `The 'booth_organization_id' ${boothOrganizationId} is not found`,
             );
         }
-        return this.boothOrganizationConverter.toDto(firstBooth);
+        return this.boothOrganizationConverter.toDto(firstBoothOrganization);
     }
 
     async updateBoothOrganization(
         boothOrganizationId: string,
         boothOrganizationDto: BoothOrganizationDto,
-    ): Promise<BoothOrganizationDto> {
-        const updatedBooth = await this.dataSource.transaction(
+    ) {
+        const updatedBoothOrganization = await this.dataSource.transaction(
             async (manager) => {
                 const boothOrganizationRepository =
                     manager.getRepository(BoothOrganization);
-                const boothOrganizationDataRepository = manager.getRepository(
-                    BoothOrganizationData,
+                const boothOrganizationTemplateRepository =
+                    manager.getRepository(BoothOrganizationTemplate);
+                const boothOrganizationImageRepository = manager.getRepository(
+                    BoothOrganizationImage,
                 );
-                const boothTemplateRepository =
-                    manager.getRepository(BoothTemplate);
-                const positionBoothRepository =
-                    manager.getRepository(PositionBooth);
+                const boothOrganizationVideoRepository = manager.getRepository(
+                    BoothOrganizationVideo,
+                );
+                const boothOrganizationProjectRepository =
+                    manager.getRepository(BoothOrganizationProject);
+                const boothOrganizationProductRepository =
+                    manager.getRepository(BoothOrganizationProduct);
+                const boothOrganizationTemplatePositionRepository =
+                    manager.getRepository(BoothOrganizationTemplatePosition);
+                const imageRepository = manager.getRepository(Image);
+                const videoRepository = manager.getRepository(Video);
+                const projectRepository = manager.getRepository(Project);
+                const productRepository = manager.getRepository(Product);
 
-                let boothOrganizationEntity =
+                const boothOrganizationEntity =
                     await boothOrganizationRepository.findOne({
                         where: {
                             id: parseInt(boothOrganizationId),
                         },
-                        relations: [
-                            'boothOrganizationData',
-                            'boothTemplate',
-                            'boothOrganizationData.positionBooth',
-                        ],
                     });
 
                 if (!boothOrganizationEntity) {
                     throw new NotFoundException(
-                        `The 'booth_id' ${boothOrganizationId} is not found`,
+                        `The 'booth_organization_id' ${boothOrganizationId} is not found`,
                     );
                 }
 
-                const boothTemplate = boothTemplateRepository.findOneBy({
-                    id: boothOrganizationDto.booth_template_id,
-                });
+                const firstBoothOrganizationTemplate =
+                    await boothOrganizationTemplateRepository.findOneBy({
+                        id: boothOrganizationDto.booth_organization_template_id,
+                    });
 
-                if (!boothTemplate) {
-                    throw new BadRequestException(
-                        "The 'booth_template_id' is not found ",
-                    );
-                }
+                boothOrganizationEntity.boothOrganizationTemplate =
+                    firstBoothOrganizationTemplate;
 
-                boothOrganizationEntity =
-                    await this.removeAllOldBoothOrganizationData(
+                await this.removeBoothOrganizationRelations(
+                    boothOrganizationEntity,
+                    boothOrganizationImageRepository,
+                    boothOrganizationVideoRepository,
+                    boothOrganizationProjectRepository,
+                    boothOrganizationProductRepository,
+                    imageRepository,
+                    videoRepository,
+                    projectRepository,
+                    productRepository,
+                );
+
+                const updatedBoothOrganization =
+                    await boothOrganizationRepository.save(
                         boothOrganizationEntity,
-                        boothOrganizationDataRepository,
                     );
 
-                boothOrganizationEntity =
-                    await this.createMultipleBoothOrganizationData(
-                        boothOrganizationDto,
-                        boothOrganizationEntity,
-                        boothOrganizationDataRepository,
-                        positionBoothRepository,
-                    );
+                await this.createMultipleBoothOrganizationImage(
+                    boothOrganizationDto,
+                    boothOrganizationEntity,
+                    boothOrganizationImageRepository,
+                    boothOrganizationTemplatePositionRepository,
+                    imageRepository,
+                );
 
-                return boothOrganizationEntity;
+                await this.createMultipleBoothOrganizationVideo(
+                    boothOrganizationDto,
+                    boothOrganizationEntity,
+                    boothOrganizationVideoRepository,
+                    boothOrganizationTemplatePositionRepository,
+                    videoRepository,
+                );
+
+                await this.createMultipleBoothOrganizationProduct(
+                    boothOrganizationDto,
+                    boothOrganizationEntity,
+                    boothOrganizationProductRepository,
+                    boothOrganizationTemplatePositionRepository,
+                    productRepository,
+                );
+
+                await this.createMultipleBoothOrganizationProject(
+                    boothOrganizationDto,
+                    boothOrganizationEntity,
+                    boothOrganizationProjectRepository,
+                    boothOrganizationTemplatePositionRepository,
+                    projectRepository,
+                );
+
+                return updatedBoothOrganization;
             },
         );
-        return this.boothOrganizationConverter.toDto(updatedBooth);
+        return this.boothOrganizationConverter.toDto(updatedBoothOrganization);
     }
 
     private async createUrlMedias(data: string): Promise<number> {
@@ -147,75 +202,485 @@ export class BoothOrganizationService {
         return result.id;
     }
 
-    private async removeAllOldBoothOrganizationData(
-        boothOrganization: BoothOrganization,
-        boothOrganizationDataRepository: Repository<BoothOrganizationData>,
-    ) {
-        await boothOrganizationDataRepository.remove(
-            boothOrganization.boothOrganizationData,
-        );
-        boothOrganization.boothOrganizationData = [];
-        return boothOrganization;
-    }
-
-    private async createBoothOrganizationData(
-        data: BoothOrganizationDataDto,
-        boothOrganization: BoothOrganization,
-        BoothOrganizatiobDataRepository: Repository<BoothOrganizationData>,
-        positionBoothRepository: Repository<PositionBooth>,
-    ) {
-        const boothOrganizationDataEntity =
-            this.boothOrganizationDataConverter.toEntity(data);
-
-        boothOrganizationDataEntity.mediaId = data.selected_media_id;
-
-        if (data.media_data) {
-            boothOrganizationDataEntity.mediaId = await this.createUrlMedias(
-                data.media_data,
-            );
-        }
-
-        boothOrganizationDataEntity.boothOrganization = boothOrganization;
-
-        const positionTemplateEntity = await positionBoothRepository.findOneBy({
-            id: data.position_booth_id,
-        });
-
-        if (!positionTemplateEntity) {
-            throw new BadRequestException(
-                'The "position_template_id" not found: ' +
-                    data.position_booth_id,
-            );
-        }
-
-        boothOrganizationDataEntity.positionBooth = positionTemplateEntity;
-
-        const createBoothData = await BoothOrganizatiobDataRepository.save(
-            boothOrganizationDataEntity,
-        );
-
-        return createBoothData;
-    }
-
-    private async createMultipleBoothOrganizationData(
+    private async createMultipleBoothOrganizationImage(
         boothOrganizationDto: BoothOrganizationDto,
         boothOrganization: BoothOrganization,
-        boothOrganizationDataRepository: Repository<BoothOrganizationData>,
-        positionBoothRepository: Repository<PositionBooth>,
+        boothOrganizationImageRepository: Repository<BoothOrganizationImage>,
+        boothOrganizationTemplatePositionRepository: Repository<BoothOrganizationTemplatePosition>,
+        imageRepository: Repository<Image>,
     ) {
-        const newBoothDatas = await Promise.all(
-            boothOrganizationDto.booth_organization_data.map(async (data) => {
-                const newBoothData = await this.createBoothOrganizationData(
-                    data,
-                    boothOrganization,
-                    boothOrganizationDataRepository,
-                    positionBoothRepository,
-                );
-                return newBoothData;
-            }),
-        );
+        let boothOrganizationImages = [];
+        if (boothOrganizationDto.booth_organization_images) {
+            boothOrganizationImages = await Promise.all(
+                boothOrganizationDto.booth_organization_images.map(
+                    async (boothOrganizationImage) => {
+                        const createdBoothOrganizationImage =
+                            await this.createBoothOrganizationImage(
+                                boothOrganizationImage,
+                                boothOrganization,
+                                boothOrganizationImageRepository,
+                                imageRepository,
+                                boothOrganizationTemplatePositionRepository,
+                            );
+                        return createdBoothOrganizationImage;
+                    },
+                ),
+            );
+        }
 
-        boothOrganization.boothOrganizationData = newBoothDatas;
+        return boothOrganizationImages;
+    }
+
+    private async createMultipleBoothOrganizationVideo(
+        boothOrganizationDto: BoothOrganizationDto,
+        boothOrganization: BoothOrganization,
+        boothOrganizationVideoRepository: Repository<BoothOrganizationVideo>,
+        boothOrganizationTemplatePositionRepository: Repository<BoothOrganizationTemplatePosition>,
+        videoRepository: Repository<Video>,
+    ) {
+        let boothOrganizationVideos = [];
+        if (boothOrganizationDto.booth_organization_videos) {
+            boothOrganizationVideos = await Promise.all(
+                boothOrganizationDto.booth_organization_videos.map(
+                    async (boothOrganizationVideo) => {
+                        const createdBoothOrganizationVideo =
+                            await this.createBoothOrganizationVideo(
+                                boothOrganizationVideo,
+                                boothOrganization,
+                                boothOrganizationVideoRepository,
+                                videoRepository,
+                                boothOrganizationTemplatePositionRepository,
+                            );
+                        return createdBoothOrganizationVideo;
+                    },
+                ),
+            );
+        }
+
+        return boothOrganizationVideos;
+    }
+
+    private async createMultipleBoothOrganizationProject(
+        boothOrganizationDto: BoothOrganizationDto,
+        boothOrganization: BoothOrganization,
+        boothOrganizationProjectRepository: Repository<BoothOrganizationProject>,
+        boothOrganizationTemplatePositionRepository: Repository<BoothOrganizationTemplatePosition>,
+        projectRepository: Repository<Project>,
+    ) {
+        let boothOrganizationProjects = [];
+        if (boothOrganizationDto.booth_organization_projects) {
+            boothOrganizationProjects = await Promise.all(
+                boothOrganizationDto.booth_organization_projects.map(
+                    async (boothOrganizationVideo) => {
+                        const createdBoothOrganizationProject =
+                            await this.createBoothOrganizationProject(
+                                boothOrganizationVideo,
+                                boothOrganization,
+                                boothOrganizationProjectRepository,
+                                projectRepository,
+                                boothOrganizationTemplatePositionRepository,
+                            );
+                        return createdBoothOrganizationProject;
+                    },
+                ),
+            );
+        }
+
+        return boothOrganizationProjects;
+    }
+
+    private async createMultipleBoothOrganizationProduct(
+        boothOrganizationDto: BoothOrganizationDto,
+        boothOrganization: BoothOrganization,
+        boothOrganizationProductRepository: Repository<BoothOrganizationProduct>,
+        boothOrganizationTemplatePositionRepository: Repository<BoothOrganizationTemplatePosition>,
+        productRepository: Repository<Product>,
+    ) {
+        let boothOrganizationProducts = [];
+        if (boothOrganizationDto.booth_organization_products) {
+            boothOrganizationProducts = await Promise.all(
+                boothOrganizationDto.booth_organization_products.map(
+                    async (boothOrganizationProduct) => {
+                        const createdBoothOrganizationProduct =
+                            await this.createBoothOrganizationProduct(
+                                boothOrganizationProduct,
+                                boothOrganization,
+                                boothOrganizationProductRepository,
+                                productRepository,
+                                boothOrganizationTemplatePositionRepository,
+                            );
+                        return createdBoothOrganizationProduct;
+                    },
+                ),
+            );
+        }
+
+        return boothOrganizationProducts;
+    }
+
+    private async removeBoothOrganizationRelations(
+        boothOrganization: BoothOrganization,
+        boothOrganizationImageRepository: Repository<BoothOrganizationImage>,
+        boothOrganizationVideoRepository: Repository<BoothOrganizationVideo>,
+        boothOrganizationProjectRepository: Repository<BoothOrganizationProject>,
+        boothOrganizationProductRepository: Repository<BoothOrganizationProduct>,
+        imageRepository: Repository<Image>,
+        videoRepository: Repository<Video>,
+        projectRepository: Repository<Project>,
+        productRepository: Repository<Product>,
+    ) {
+        const boothOrganizationImages =
+            await boothOrganizationImageRepository.find({
+                where: {
+                    boothOrganization: {
+                        id: boothOrganization.id,
+                    },
+                },
+            });
+        if (boothOrganizationImages) {
+            await Promise.all(
+                boothOrganizationImages.map(async (boothOrganizationImage) => {
+                    this.removeBoothOrganizationImage(
+                        boothOrganizationImage,
+                        boothOrganizationImageRepository,
+                        imageRepository,
+                    );
+                }),
+            );
+        }
+        const boothOrganizationVideos =
+            await boothOrganizationVideoRepository.find({
+                where: {
+                    boothOrganization: {
+                        id: boothOrganization.id,
+                    },
+                },
+            });
+        if (boothOrganizationVideos) {
+            await Promise.all(
+                boothOrganizationVideos.map(async (boothOrganizationVideo) => {
+                    this.removeBoothOrganizationVideo(
+                        boothOrganizationVideo,
+                        boothOrganizationVideoRepository,
+                        videoRepository,
+                    );
+                }),
+            );
+        }
+        const boothOrganizationProjects =
+            await boothOrganizationProjectRepository.find({
+                where: {
+                    boothOrganization: {
+                        id: boothOrganization.id,
+                    },
+                },
+            });
+        if (boothOrganizationProjects) {
+            await Promise.all(
+                boothOrganizationProjects.map(
+                    async (boothOrganizationProject) => {
+                        this.removeBoothOrganizationProject(
+                            boothOrganizationProject,
+                            boothOrganizationProjectRepository,
+                            projectRepository,
+                        );
+                    },
+                ),
+            );
+        }
+        const boothOrganizationProducts =
+            await boothOrganizationProductRepository.find({
+                where: {
+                    boothOrganization: {
+                        id: boothOrganization.id,
+                    },
+                },
+            });
+        if (boothOrganizationProducts) {
+            await Promise.all(
+                boothOrganizationProducts.map(
+                    async (boothOrganizationProduct) => {
+                        this.removeBoothOrganizationProduct(
+                            boothOrganizationProduct,
+                            boothOrganizationProductRepository,
+                            productRepository,
+                        );
+                    },
+                ),
+            );
+        }
+
         return boothOrganization;
+    }
+
+    private async removeBoothOrganizationImage(
+        boothOrganizationImage: BoothOrganizationImage,
+        boothOrganizationImageRepository: Repository<BoothOrganizationImage>,
+        imageRepository: Repository<Image>,
+    ) {
+        const firstBoothOrganizationImage =
+            await boothOrganizationImageRepository.findOne({
+                where: {
+                    id: boothOrganizationImage.id,
+                },
+                relations: ['image'],
+            });
+        if (!firstBoothOrganizationImage) {
+            throw new BadRequestException(
+                `The booth_image_id '${boothOrganizationImage.id}' is not found`,
+            );
+        }
+        await boothOrganizationImageRepository.remove(boothOrganizationImage);
+
+        await imageRepository.remove(firstBoothOrganizationImage.image);
+    }
+
+    private async removeBoothOrganizationVideo(
+        boothOrganizationVideo: BoothOrganizationVideo,
+        boothOrganizationVideoRepository: Repository<BoothOrganizationVideo>,
+        videoRepository: Repository<Video>,
+    ) {
+        const firstBoothOrganizationVideo =
+            await boothOrganizationVideoRepository.findOne({
+                where: {
+                    id: boothOrganizationVideo.id,
+                },
+                relations: ['video'],
+            });
+        if (!firstBoothOrganizationVideo) {
+            throw new BadRequestException(
+                `The booth_image_id '${boothOrganizationVideo.id}' is not found`,
+            );
+        }
+        await boothOrganizationVideoRepository.remove(boothOrganizationVideo);
+        await videoRepository.remove(firstBoothOrganizationVideo.video);
+    }
+
+    private async removeBoothOrganizationProject(
+        boothOrganizationProject: BoothOrganizationProject,
+        boothOrganizationProjectRepository: Repository<BoothOrganizationProject>,
+        projectRepository: Repository<Project>,
+    ) {
+        const firstBoothOrganizationProject =
+            await boothOrganizationProjectRepository.findOne({
+                where: {
+                    id: boothOrganizationProject.id,
+                },
+                relations: ['project'],
+            });
+        if (!firstBoothOrganizationProject) {
+            throw new BadRequestException(
+                `The booth_organization_id '${boothOrganizationProject.id}' is not found`,
+            );
+        }
+        await boothOrganizationProjectRepository.remove(
+            boothOrganizationProject,
+        );
+        await projectRepository.remove(firstBoothOrganizationProject.project);
+    }
+
+    private async removeBoothOrganizationProduct(
+        boothOrganizationProduct: BoothOrganizationProduct,
+        boothOrganizationProductRepository: Repository<BoothOrganizationProduct>,
+        productRepository: Repository<Product>,
+    ) {
+        const firstBoothOrganizationProduct =
+            await boothOrganizationProductRepository.findOne({
+                where: {
+                    id: boothOrganizationProduct.id,
+                },
+                relations: ['product'],
+            });
+        await boothOrganizationProductRepository.remove(
+            boothOrganizationProduct,
+        );
+        if (!firstBoothOrganizationProduct) {
+            throw new BadRequestException(
+                `The booth_image_id '${boothOrganizationProduct.id}' is not found`,
+            );
+        }
+        await productRepository.remove(firstBoothOrganizationProduct.product);
+    }
+
+    private async createBoothOrganizationImage(
+        boothOrganizationImageDto: BoothOrganizationImageDto,
+        boothOrganization: BoothOrganization,
+        boothOrganizationImageRepository: Repository<BoothOrganizationImage>,
+        imageRepository: Repository<Image>,
+        boothOrganizationTemplatePositionRepository: Repository<BoothOrganizationTemplatePosition>,
+    ) {
+        const firstBoothOrganizationTemplatePosition =
+            await boothOrganizationTemplatePositionRepository.findOneBy({
+                id: boothOrganizationImageDto.booth_organization_template_position_id,
+            });
+
+        if (!firstBoothOrganizationTemplatePosition) {
+            throw new BadRequestException(
+                `The booth_organization_template_position_id ${boothOrganizationImageDto.booth_organization_template_position_id}`,
+            );
+        }
+
+        const imageEntity = new Image();
+        imageEntity.imageId = boothOrganizationImageDto.image_id;
+
+        if (boothOrganizationImageDto.media_data) {
+            imageEntity.imageId = await this.createUrlMedias(
+                boothOrganizationImageDto.media_data,
+            );
+        }
+
+        const createdImage = await imageRepository.save(imageEntity);
+
+        const boothOrganizationImageEntity = new BoothOrganizationImage();
+
+        boothOrganizationImageEntity.image = createdImage;
+        boothOrganizationImageEntity.boothOrganization = boothOrganization;
+        boothOrganizationImageEntity.boothOrganizationTemplatePosition =
+            firstBoothOrganizationTemplatePosition;
+
+        const createdBoothOrganizationImage =
+            await boothOrganizationImageRepository.save(
+                boothOrganizationImageEntity,
+            );
+
+        return createdBoothOrganizationImage;
+    }
+
+    private async createBoothOrganizationVideo(
+        boothOrganizationVideoDto: BoothOrganizationVideoDto,
+        boothOrganization: BoothOrganization,
+        boothOrganizationVideoRepository: Repository<BoothOrganizationVideo>,
+        videoRepository: Repository<Video>,
+        boothOrganizationTemplatePositionRepository: Repository<BoothOrganizationTemplatePosition>,
+    ) {
+        const firstBoothOrganizationTemplatePosition =
+            await boothOrganizationTemplatePositionRepository.findOneBy({
+                id: boothOrganizationVideoDto.booth_organization_template_position_id,
+            });
+
+        if (!firstBoothOrganizationTemplatePosition) {
+            throw new BadRequestException(
+                `The booth_organization_template_position_id ${boothOrganizationVideoDto.booth_organization_template_position_id}`,
+            );
+        }
+
+        const videoEntity = new Video();
+        videoEntity.videoId = boothOrganizationVideoDto.video_id;
+
+        if (boothOrganizationVideoDto.media_data) {
+            videoEntity.videoId = await this.createUrlMedias(
+                boothOrganizationVideoDto.media_data,
+            );
+        }
+
+        const createdVideo = await videoRepository.save(videoEntity);
+
+        const boothOrganizationVideoEntity = new BoothOrganizationVideo();
+
+        boothOrganizationVideoEntity.video = createdVideo;
+        boothOrganizationVideoEntity.boothOrganization = boothOrganization;
+        boothOrganizationVideoEntity.boothOrganizationTemplatePosition =
+            firstBoothOrganizationTemplatePosition;
+
+        const createdBoothOrganizationVideo =
+            await boothOrganizationVideoRepository.save(
+                boothOrganizationVideoEntity,
+            );
+
+        return createdBoothOrganizationVideo;
+    }
+
+    private async createBoothOrganizationProject(
+        boothOrganizationProjectDto: BoothOrganizationProjectDto,
+        boothOrganization: BoothOrganization,
+        boothOrganizationProjectRepository: Repository<BoothOrganizationProject>,
+        projectRepository: Repository<Project>,
+        boothOrganizationTemplatePositionRepository: Repository<BoothOrganizationTemplatePosition>,
+    ) {
+        const firstBoothOrganizationTemplatePosition =
+            await boothOrganizationTemplatePositionRepository.findOneBy({
+                id: boothOrganizationProjectDto.booth_organization_template_position_id,
+            });
+
+        if (!firstBoothOrganizationTemplatePosition) {
+            throw new BadRequestException(
+                `The booth_organization_template_position_id ${boothOrganizationProjectDto.booth_organization_template_position_id}`,
+            );
+        }
+
+        const projectEntity = new Project();
+        projectEntity.imageId = boothOrganizationProjectDto.selected_media_id;
+        projectEntity.title = boothOrganizationProjectDto.title;
+        projectEntity.description = boothOrganizationProjectDto.description;
+
+        if (boothOrganizationProjectDto.media_data) {
+            projectEntity.imageId = await this.createUrlMedias(
+                boothOrganizationProjectDto.media_data,
+            );
+        }
+
+        const createdProject = await projectRepository.save(projectEntity);
+
+        const boothOrganizationVideoEntity = new BoothOrganizationProject();
+
+        boothOrganizationVideoEntity.project = createdProject;
+        boothOrganizationVideoEntity.boothOrganization = boothOrganization;
+        boothOrganizationVideoEntity.boothOrganizationTemplatePosition =
+            firstBoothOrganizationTemplatePosition;
+
+        const createdBoothOrganizationProject =
+            await boothOrganizationProjectRepository.save(
+                boothOrganizationVideoEntity,
+            );
+
+        return createdBoothOrganizationProject;
+    }
+
+    private async createBoothOrganizationProduct(
+        boothOrganizationProductDto: BoothOrganizationProductDto,
+        boothOrganization: BoothOrganization,
+        boothOrganizationProductRepository: Repository<BoothOrganizationProduct>,
+        productRepository: Repository<Product>,
+        boothOrganizationTemplatePositionRepository: Repository<BoothOrganizationTemplatePosition>,
+    ) {
+        const firstBoothOrganizationTemplatePosition =
+            await boothOrganizationTemplatePositionRepository.findOneBy({
+                id: boothOrganizationProductDto.booth_organization_template_position_id,
+            });
+
+        if (!firstBoothOrganizationTemplatePosition) {
+            throw new BadRequestException(
+                `The booth_organization_template_position_id ${boothOrganizationProductDto.booth_organization_template_position_id}`,
+            );
+        }
+
+        const productEntity = new Product();
+        productEntity.imageId = boothOrganizationProductDto.selected_media_id;
+        productEntity.name = boothOrganizationProductDto.name;
+        productEntity.price = boothOrganizationProductDto.price;
+        productEntity.purchaseLink = boothOrganizationProductDto.purchase_link;
+        productEntity.description = boothOrganizationProductDto.description;
+
+        if (boothOrganizationProductDto.media_data) {
+            productEntity.imageId = await this.createUrlMedias(
+                boothOrganizationProductDto.media_data,
+            );
+        }
+
+        const createdProduct = await productRepository.save(productEntity);
+
+        const boothOrganizationProductEntity = new BoothOrganizationProduct();
+
+        boothOrganizationProductEntity.product = createdProduct;
+        boothOrganizationProductEntity.boothOrganization = boothOrganization;
+        boothOrganizationProductEntity.boothOrganizationTemplatePosition =
+            firstBoothOrganizationTemplatePosition;
+
+        const createdBoothOrganizationProduct =
+            await boothOrganizationProductRepository.save(
+                boothOrganizationProductEntity,
+            );
+
+        return createdBoothOrganizationProduct;
     }
 }

@@ -8,7 +8,6 @@ import {
     ManyToMany,
 } from 'typeorm';
 import { Exhibition } from './exhibition.entity';
-import { PositionBooth } from './position-booth.entity';
 import { Booth } from './booth.entity';
 import { BoothTemplatePosition } from './booth-template-position.entity';
 
@@ -25,7 +24,7 @@ export class BoothTemplate {
     @Column({ name: 'created_by' })
     createdBy: number;
 
-    @Column({ name: 'name' })
+    @Column()
     name: string;
 
     @Column({ type: 'enum', enum: Type })
@@ -54,9 +53,6 @@ export class BoothTemplate {
 
     @OneToMany(() => Booth, (booth) => booth.boothTemplate)
     booths: Booth[];
-
-    @OneToMany(() => PositionBooth, (position) => position.boothTemplate)
-    positionBooths: PositionBooth[];
 
     @ManyToMany(() => Exhibition)
     exhibitions: Exhibition[];

@@ -171,6 +171,18 @@ paths:
           schema:
             type: string
             pattern: '^[0-9]+$'
+        - in: query
+          name: populate
+          schema:
+            type: array
+            items:
+              type: string
+              example: 'booth_organization'
+          description: |
+            List of populatable columns:
+              - category
+              - space
+              - booth_organization
       responses:
         '200':
           description: OK
@@ -478,6 +490,75 @@ paths:
                     details: []
       tags:
         - Booth
+  '/booth-templates/organization/{id}':
+    get:
+      summary: Get booth organization template by ID
+      description: Return a single booth organization template
+      operationId: getBoothOrganizationTemplateById
+      parameters:
+        - name: id
+          description: ID to get booth organization template
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^[0-9]+$'
+        - in: query
+          name: populate
+          schema:
+            type: array
+            items:
+              type: string
+              example: 'booth_organization_template_positions'
+          description: |
+            List of populatable columns:
+            - booth_organization_template_positions
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BoothOrganizationTemplate'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Bad Request
+                    details:
+                      - field: .params.id
+                        message: 'should match pattern "^[0-9]+$"'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Not Found
+                    details:
+                      - field: .params.id
+                        message: 'The id not exist: "^[0-9]+$"'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Internal server error
+                    details: []
+      tags:
+        - Booth
   '/booth-templates':
     get:
       summary: Show list booth templates
@@ -593,7 +674,7 @@ paths:
       operationId: getBoothOrganizationById
       parameters:
       - name: id
-        description: ID to update booth organization
+        description: ID to get booth organization
         in: path
         required: true
         schema:
@@ -605,9 +686,18 @@ paths:
           type: array
           items:
             type: string
-            example: 'position_spaces'
-        description:
-         " Searching on allow columns:['booth_organization_data, booth_template, booth_organization_data.position_booth']"
+            example: 'booth_organization_images.image'
+        description: |
+          List of populatable columns:
+            - booth_organization_template
+            - booth_organization_products.product
+            - booth_organization_projects.project
+            - booth_organization_videos.video
+            - booth_organization_images.image
+            - booth_organization_products.booth_organization_template_position
+            - booth_organization_projects.booth_organization_template_position
+            - booth_organization_videos.booth_organization_template_position
+            - booth_organization_images.booth_organization_template_position
       tags:
         - Booth
       responses:
@@ -657,19 +747,19 @@ paths:
      put:
       tags:
         - Booth
-      summary: Update an existing booth
-      description: Update an existing booth by Id
+      summary: Update an existing booth organization
+      description: Update an existing booth organization by Id
       operationId: updateBoothOrganization
       parameters:
         - name: id
-          description: ID to update booth
+          description: ID to update booth organization
           in: path
           required: true
           schema:
             type: string
             pattern: '^[0-9]+$'
       requestBody:
-        description: Update an existing booth
+        description: Update an existing booth organization
         content:
           application/json:
             schema:
@@ -1841,17 +1931,15 @@ components:
       required:
         - id
         - name
-        - category_id
         - booth_number
         - exhibition_code
         - date_exhibition_start
         - date_exhibition_end
-        - booth_template_ids
-        - space_template_id
-        - space_id
-        - organization_booth_id
         - introduction
         - agenda
+        - category_id
+        - space_template_id
+        - booth_organization_template_id
       properties:
         id:
           type: integer
@@ -1862,19 +1950,15 @@ components:
           minLength: 1
           maxLength: 255
           example: Triển lãm xúc tiến đầu tư thương mại
+        booth_number:
+          type: integer
+          example: 100
         exhibition_code:
           type: string
           minLength: 1
           maxLength: 255
           pattern: '^[a-zA-Z0-9_-]+$'
           example: TL0001
-        category_id:
-          type: integer
-          writeOnly: true
-          example: 1
-        booth_number:
-          type: integer
-          example: 100
         date_exhibition_start:
           type: string
           minLength: 1
@@ -1885,26 +1969,6 @@ components:
           minLength: 1
           pattern: '^[1-9]\d{3}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$'
           example: '2022-12-01T00:00:00.000Z'
-        booth_template_ids:
-          writeOnly: true
-          type: array
-          items:
-            type: integer
-          example:
-            - 1
-            - 2
-        space_id:
-          type: integer
-          readOnly: true
-          example: 1
-        space_template_id:
-          type: integer
-          writeOnly: true
-          example: 1
-        organization_booth_id:
-          type: integer
-          readOnly: true
-          example: 1
         introduction:
           type: string
           minLength: 1
@@ -1915,71 +1979,241 @@ components:
           minLength: 1
           maxLength: 20000
           example: '07h45 - 08h20: Đón tiếp đại biểu, 08h20 - 08h40: Ca nhạc chào mừng'
-        status:
-          type: string
-          enum: ['new', 'listing', 'finished']
-          example: 'new'
-        number_booth:
-          type: number
+        category_id:
+          type: integer
+          writeOnly: true
+          example: 1
+        booth_organization_id:
+          type: integer
+          readOnly: true
+          example: 1
+        space_id:
+          type: integer
+          readOnly: true
+          example: 1
+        space_template_id:
+          type: integer
+          writeOnly: true
+          example: 1
+        booth_organization_template_id:
+          type: integer
+          writeOnly: true
           example: 1
     BoothOrganization:
       type: object
       required:
         - id
-        - booth_template_id
-        - user_id
-        - name
-        - booth_organization_data
+        - position_x
+        - position_y
+        - position_z
+        - rotation_x
+        - rotation_y
+        - rotation_z
+        - booth_organization_template_id
       properties:
         id:
           type: integer
           readOnly: true
           example: 1
-        booth_template_id:
-          type: integer
+        position_x:
+          type: number
           example: 1
-        user_id:
+        position_y:
+          type: number
+          example: 1
+        position_z:
+          type: number
+          example: 1
+        rotation_x:
+          type: number
+          example: 1
+        rotation_y:
+          type: number
+          example: 1
+        rotation_z:
+          type: number
+          example: 1
+        booth_organization_template_id:
+          type: integer
+          writeOnly: true
+          example: 1
+        booth_organization_images:
+          writeOnly: true
+          type: array
+          items:
+            $ref: '#/components/schemas/BoothOrganizationImage'
+        booth_organization_videos:
+          writeOnly: true
+          type: array
+          items:
+            $ref: '#/components/schemas/BoothOrganizationVideo'
+        booth_organization_projects:
+          writeOnly: true
+          type: array
+          items:
+            $ref: '#/components/schemas/BoothOrganizationProject'
+        booth_organization_products:
+          writeOnly: true
+          type: array
+          items:
+            $ref: '#/components/schemas/BoothOrganizationProduct'
+    BoothOrganizationImage:
+      type: object
+      required:
+        - id
+        - image_id
+        - booth_organization_template_position_id
+      properties:
+        id:
+          type: integer
+          readOnly: true
+          example: 1
+        selected_media_id:
+          type: integer
+          writeOnly: true
+          example: 1
+        image_id:
+          type: integer
+          readOnly: true
+          example: 1
+        media_data:
+          type: string
+          writeOnly: true
+          example: 'base64 string'
+        booth_organization_template_position_id:
+          type: integer
+          writeOnly: true
+          example: 1
+    BoothOrganizationVideo:
+      type: object
+      required:
+        - id
+        - video_id
+        - booth_organization_template_position_id
+      properties:
+        id:
+          type: integer
+          readOnly: true
+          example: 1
+        selected_media_id:
+          type: integer
+          writeOnly: true
+          example: 1
+        video_id:
+          type: integer
+          readOnly: true
+          example: 1
+        media_data:
+          type: string
+          writeOnly: true
+          example: 'base64 string'
+        booth_organization_template_position_id:
+          type: integer
+          writeOnly: true
+          example: 1
+    BoothOrganizationProject:
+      type: object
+      required:
+        - id
+        - image_id
+        - title
+        - description
+        - booth_organization_template_position_id
+      properties:
+        id:
+          type: integer
+          readOnly: true
+          example: 1
+        selected_media_id:
+          type: integer
+          writeOnly: true
+          example: 1
+        image_id:
+          type: integer
+          readOnly: true
+          example: 1
+        media_data:
+          type: string
+          writeOnly: true
+          example: 'base64 string'
+        title:
+          type: string
+          maxLength: 255
+          example: "Tên dự án"
+        description:
+          type: string
+          maxLength: 20000
+          example: "Mô tả dự án"
+        booth_organization_template_position_id:
+          type: integer
+          writeOnly: true
+          example: 1
+    BoothOrganizationProduct:
+      type: object
+      required:
+        - id
+        - name
+        - image_id
+        - price
+        - purchase_link
+        - description
+        - booth_organization_template_position_id
+      properties:
+        id:
           type: integer
           readOnly: true
           example: 1
         name:
           type: string
-          minLength: 1
           maxLength: 255
-          example: Gian hàng ban tổ chức
-        booth_organization_data:
-          type: array
-          items:
-            $ref: '#/components/schemas/BoothOrganizationData'
-    BoothOrganizationData:
-      type: object
-      required:
-        - id
-        - position_booth_id
-      properties:
-        id:
-          type: integer
-          readOnly: true
-          example:
-        position_booth_id:
-          type: integer
-          writeOnly: true
-        position_booth:
-          $ref: '#/components/schemas/PositionBooth'
+          example: "name"
         selected_media_id:
           type: integer
           writeOnly: true
-        media_id:
+          example: 1
+        image_id:
           type: integer
           readOnly: true
+          example: 1
         media_data:
           type: string
           writeOnly: true
-        title:
+          example: 'base64 string'
+        price:
+          type: number
+          format: float
+          example: 20000
+        purchase_link:
           type: string
+          maxLength: 255
+          example: 'https://link_mua_san_pham/ma_ha_noi.png'
         description:
           type: string
-          maxLength: 20000
+          maxLength: 500
+          example: 'Mô tả sản phẩm'
+        booth_organization_template_position_id:
+          type: integer
+          writeOnly: true
+          example: 1
+    BoothOrganizationTemplatePosition:
+      type: object
+      required:
+        - id
+        - type
+        - position
+      properties:
+        id:
+          type: number
+          readOnly: true
+          example: 1
+        position:
+          type: string
+          maxLength: 255
+          example: vitri1
+        type:
+          type: string
+          enum: ['image', 'video', 'project', 'product']
+          example: 'image'
     Space:
       type: object
       required:
@@ -2142,6 +2376,45 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Space'
+    BoothOrganizationTemplate:
+      type: object
+      required:
+        - id
+        - name
+        - created_by
+        - created_date
+        - model_id
+        - thumbnail_id
+      properties:
+        id:
+          type: integer
+          readOnly: true
+          example: 1
+        name:
+          type: string
+          maxLength: 255
+          example: "Mẫu gian hàng BTC"
+        created_by:
+          type: integer
+          readOnly: true
+          example: 1
+        created_date:
+          type: string
+          readOnly: true
+        model_id:
+          type: integer
+          readOnly: true
+        thumbnail_id:
+          type: integer
+          readOnly: true
+        model_data:
+          type: string
+          description: 'input base64 string /n example: iVBORw0KGgoAAAANSUhEUgAABuIAAASxCAYAAADF8I...'
+          writeOnly: true
+        thumbnail_data:
+          type: string
+          description: "input base64 string example: iVBORw0KGgoAAAANSUhEUgAABuIAAASxCAYAAADF8I..."
+          writeOnly: true
     PositionSpace:
       type: object
       readOnly: true

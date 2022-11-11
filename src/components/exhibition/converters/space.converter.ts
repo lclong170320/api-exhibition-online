@@ -16,7 +16,6 @@ export class SpaceConverter {
         const dto = {
             id: entity.id,
             name: entity.name,
-            user_id: entity.userId,
             exhibition_id: entity.exhibition?.id,
             space_template_id: entity.spaceTemplate?.id,
             space_template: entity.spaceTemplate

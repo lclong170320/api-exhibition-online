@@ -1,32 +1,67 @@
+import { Injectable } from '@nestjs/common';
 import { BoothOrganization as BoothOrganizationDto } from '@/components/exhibition/dto/booth-organization.dto';
 import { BoothOrganization } from '@/components/exhibition/entities/booth-organization.entity';
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import { BoothOrganizationDataConverter } from './booth-organization-data.converter';
-import { BoothTemplateConverter } from './booth-template.converter';
+import { BoothOrganizationImageConverter } from './booth-organization-image.converter';
+import { BoothOrganizationVideoConverter } from './booth-organization-video.converter';
+import { BoothOrganizationProjectConverter } from './booth-organization-project.converter';
+import { BoothOrganizationProductConverter } from './booth-organization-product.converter';
+import { BoothOrganizationTemplateConverter } from './booth-organization-template.converter';
 
 @Injectable()
 export class BoothOrganizationConverter {
     constructor(
-        private readonly boothOrganizationDataConverter: BoothOrganizationDataConverter,
-        @Inject(forwardRef(() => BoothTemplateConverter))
-        private readonly boothTemplateConverter: BoothTemplateConverter,
+        private readonly boothOrganizationImageConverter: BoothOrganizationImageConverter,
+        private readonly boothOrganizationVideoConverter: BoothOrganizationVideoConverter,
+        private readonly boothOrganizationProjectConverter: BoothOrganizationProjectConverter,
+        private readonly boothOrganizationProductConverter: BoothOrganizationProductConverter,
+        private readonly boothOrganizationTemplateConverter: BoothOrganizationTemplateConverter,
     ) {}
 
     toEntity(dto: BoothOrganizationDto) {
         const entity = new BoothOrganization();
-        entity.name = dto.name;
-        entity.boothOrganizationData = dto.booth_organization_data.map((data) =>
-            this.boothOrganizationDataConverter.toEntity(data),
-        );
+        entity.positionX = dto.position_x;
+        entity.positionY = dto.position_y;
+        entity.positionZ = dto.position_z;
+        entity.rotationX = dto.rotation_x;
+        entity.rotationY = dto.rotation_y;
+        entity.rotationZ = dto.rotation_z;
         return entity;
     }
 
     toDto(entity: BoothOrganization) {
         const dto = {
             id: entity.id,
-            name: entity.name,
-            exhibition_id: entity.exhibition?.id,
-            user_id: entity.userId,
+            position_x: entity.positionX,
+            position_y: entity.positionY,
+            position_z: entity.positionZ,
+            rotation_x: entity.rotationX,
+            rotation_y: entity.rotationY,
+            rotation_z: entity.rotationZ,
+            booth_organization_template: entity.boothOrganizationTemplate
+                ? this.boothOrganizationTemplateConverter.toDto(
+                      entity.boothOrganizationTemplate,
+                  )
+                : undefined,
+            booth_organization_images: entity.boothOrganizationImages
+                ? entity.boothOrganizationImages.map((data) =>
+                      this.boothOrganizationImageConverter.toDto(data),
+                  )
+                : undefined,
+            booth_organization_videos: entity.boothOrganizationVideos
+                ? entity.boothOrganizationVideos.map((data) =>
+                      this.boothOrganizationVideoConverter.toDto(data),
+                  )
+                : undefined,
+            booth_organization_projects: entity.boothOrganizationProjects
+                ? entity.boothOrganizationProjects.map((data) =>
+                      this.boothOrganizationProjectConverter.toDto(data),
+                  )
+                : undefined,
+            booth_organization_products: entity.boothOrganizationProducts
+                ? entity.boothOrganizationProducts.map((data) =>
+                      this.boothOrganizationProductConverter.toDto(data),
+                  )
+                : undefined,
         } as BoothOrganizationDto;
 
         return dto;

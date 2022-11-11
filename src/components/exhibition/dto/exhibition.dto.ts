@@ -9,43 +9,28 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { Space } from './space.dto';
-import { BoothTemplate } from './booth-template.dto';
-import { Category } from './category.dto';
-import { SpaceTemplate } from './space-template.dto';
+
+import { Status } from '../entities/exhibition.entity';
 import { BoothOrganization } from './booth-organization.dto';
-import { Booth } from './booth.dto';
+import { Category } from './category.dto';
+import { Space } from './space.dto';
 
 export interface Exhibition {
     readonly id: number;
     name: string;
-    exhibition_code: string;
-    category_id: number;
-    category?: Category;
     booth_number: number;
+    exhibition_code: string;
     date_exhibition_start: string;
     date_exhibition_end: string;
-    booth_template_ids: Array<number>;
-    readonly booth_templates?: Array<BoothTemplate>;
-    readonly space_id: number;
-    space?: Space;
-    space_template_id: number;
-    readonly space_template?: SpaceTemplate;
-    readonly organization_booth_id: number;
-    organization_booth?: BoothOrganization;
-    booths: Array<Booth>;
-    readonly organization_booth_template_id: number;
     introduction: string;
     agenda: string;
-    status?: Exhibition.StatusEnum;
-}
-
-// eslint-disable-next-line @typescript-eslint/no-namespace
-export namespace Exhibition {
-    export type StatusEnum = 'new' | 'listing' | 'finished';
-    export const StatusEnum = {
-        New: 'new' as StatusEnum,
-        Listing: 'listing' as StatusEnum,
-        Finished: 'finished' as StatusEnum,
-    };
+    status: Status;
+    category_id: number;
+    readonly booth_organization_id?: number;
+    readonly space_id?: number;
+    space_template_id: number;
+    booth_organization_template_id: number;
+    category?: Category;
+    space?: Space;
+    booth_organization?: BoothOrganization;
 }

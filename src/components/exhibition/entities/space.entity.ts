@@ -1,6 +1,7 @@
 import {
     Column,
     CreateDateColumn,
+    DeleteDateColumn,
     Entity,
     JoinColumn,
     ManyToOne,
@@ -22,9 +23,6 @@ export class Space {
     @Column({ length: 255 })
     name: string;
 
-    @Column({ name: 'user_id' })
-    userId: number;
-
     @CreateDateColumn({
         type: 'timestamp',
         name: 'created_at',
@@ -36,6 +34,13 @@ export class Space {
         name: 'updated_at',
     })
     updatedAt: Date;
+
+    @DeleteDateColumn({
+        type: 'timestamp',
+        name: 'deleted_at',
+        nullable: true,
+    })
+    deletedAt: Date;
 
     @OneToMany(() => SpaceData, (spaceData) => spaceData.space)
     spaceDatas: SpaceData[];

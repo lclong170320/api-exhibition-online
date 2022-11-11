@@ -6,7 +6,6 @@ import {
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from 'typeorm';
-import { Exhibition } from './exhibition.entity';
 import { PositionSpace } from './position-space.entity';
 import { SpaceTemplateLocation } from './space-template-location.entity';
 import { Space } from './space.entity';
@@ -48,9 +47,6 @@ export class SpaceTemplate {
         (positionSpace) => positionSpace.spaceTemplate,
     )
     positionSpaces: PositionSpace[];
-
-    @OneToMany(() => Exhibition, (exhibition) => exhibition.spaceTemplate)
-    exhibitions: Exhibition[];
 
     @OneToMany(
         () => SpaceTemplateLocation,

@@ -12,13 +12,11 @@ import { BoothTemplateConverter } from '@/components/exhibition/converters/booth
 import { ConfigService } from '@nestjs/config';
 import { HttpService } from '@nestjs/axios';
 import { lastValueFrom, map } from 'rxjs';
-import { BoothTemplate as BoothTemplateDto } from '@/components/exhibition/dto/booth-template.dto';
 import { DataSource } from 'typeorm';
-import { PositionBooth } from '../entities/position-booth.entity';
-import { PositionBoothConverter } from '../converters/position-booth.converter';
-import { PositionBooth as PositionBoothDto } from '@/components/exhibition/dto/position-booth.dto';
 import { PaginateQuery } from '@/decorators/paginate.decorator';
 import { paginate, FilterOperator } from 'nestjs-paginate';
+import { BoothOrganizationTemplate } from '../entities/booth-organization-template.entity';
+import { BoothOrganizationTemplateConverter } from '../converters/booth-organization-template.converter';
 
 @Injectable()
 export class BoothTemplateService {
@@ -31,9 +29,9 @@ export class BoothTemplateService {
         private readonly dataSource: DataSource,
         private boothTemplateListConverter: BoothTemplateListConverter,
         private boothTemplateConverter: BoothTemplateConverter,
+        private boothOrganizationTemplateConverter: BoothOrganizationTemplateConverter,
         private readonly httpService: HttpService,
         private readonly configService: ConfigService,
-        private positionBoothConverter: PositionBoothConverter,
     ) {}
 
     async findBoothTemplateById(id: string, populate: string[]) {
@@ -103,76 +101,107 @@ export class BoothTemplateService {
         return result.id;
     }
 
-    async createBoothTemplate(
-        boothTemplateDto: BoothTemplateDto,
-    ): Promise<BoothTemplateDto> {
-        const allowExtension = this.configService
-            .get<string>('TYPE_BOOTH_TEMPLATE')
-            .split(',');
-        boothTemplateDto.position_booths.map((item) => {
-            if (!allowExtension.includes(item.type)) {
+    // async createBoothTemplate(
+    //     boothTemplateDto: BoothTemplateDto,
+    // ): Promise<BoothTemplateDto> {
+    //     const allowExtension = this.configService
+    //         .get<string>('TYPE_BOOTH_TEMPLATE')
+    //         .split(',');
+    //     boothTemplateDto.position_booths.map((item) => {
+    //         if (!allowExtension.includes(item.type)) {
+    //             throw new BadRequestException(
+    //                 'Not allowed extension: ' + item.type,
+    //             );
+    //         }
+    //     });
+
+    //     // const createdBoothTemplate = await this.dataSource.transaction(
+    //     //     async (manager) => {
+    //     //         const boothTemplateRepository =
+    //     //             manager.getRepository(BoothTemplate);
+    //     //         const positionBoothRepository = manager.getRepository(
+    //     //             BoothOrganizationTemplatePosition,
+    //     //         );
+
+    //     //         const created_by = 1; // TODO: handle getUserId from access token
+    //     //         const boothTemplateEntity =
+    //     //             this.boothTemplateConverter.toEntity(boothTemplateDto);
+    //     //         boothTemplateEntity.modelId = await this.createUrlMedias(
+    //     //             boothTemplateDto.model_data,
+    //     //         );
+
+    //     //         boothTemplateEntity.thumbnailId = await this.createUrlMedias(
+    //     //             boothTemplateDto.thumbnail_data,
+    //     //         );
+    //     //         boothTemplateEntity.createdBy = created_by;
+    //     //         boothTemplateEntity.createdDate = new Date();
+    //     //         const createdBoothTemplate = await boothTemplateRepository.save(
+    //     //             boothTemplateEntity,
+    //     //         );
+
+    //     //         const positionBooths = await Promise.all(
+    //     //             boothTemplateDto.position_booths.map(async (data) => {
+    //     //                 const positionBooth = await this.createPositionBooth(
+    //     //                     data,
+    //     //                     createdBoothTemplate,
+    //     //                     positionBoothRepository,
+    //     //                 );
+    //     //                 return positionBooth;
+    //     //             }),
+    //     //         );
+    //     //         createdBoothTemplate.boothTemplatePositions = positionBooths;
+
+    //     //         return createdBoothTemplate;
+    //     //     },
+    //     // );
+
+    // //     return this.boothTemplateConverter.toDto(createdBoothTemplate);
+    // // }
+
+    // private async createPositionBooth(
+    //     positionBoothDto: PositionBoothDto,
+    //     boothTemplateEntity: BoothTemplate,
+    //     boothOrganizationTemplatePositionRepository: Repository<BoothOrganizationTemplatePosition>,
+    // ): Promise<BoothOrganizationTemplatePosition> {
+    //     const positionBoothEntity =
+    //         this.positionBoothConverter.toEntity(positionBoothDto);
+
+    //     positionBoothEntity.boothTemplate = boothTemplateEntity;
+
+    //     const createdPositionBooth =
+    //         await boothOrganizationTemplatePositionRepository.save(
+    //             positionBoothEntity,
+    //         );
+
+    //     return createdPositionBooth;
+    // }
+
+    async findBoothOrganizationTemplateById(id: string, populate: string[]) {
+        const boothOrganizationTemplateRepository =
+            this.dataSource.manager.getRepository(BoothOrganizationTemplate);
+        const allowPopulate = ['boothOrganizationTemplatePositions'];
+
+        populate.forEach((value) => {
+            if (!allowPopulate.includes(value)) {
                 throw new BadRequestException(
-                    'Not allowed extension: ' + item.type,
+                    'Query value is not allowed ' + value,
                 );
             }
         });
+        const firstBoothOrganizationTemplate =
+            await boothOrganizationTemplateRepository.findOne({
+                where: {
+                    id: parseInt(id),
+                },
+                relations: populate,
+            });
 
-        const createdBoothTemplate = await this.dataSource.transaction(
-            async (manager) => {
-                const boothTemplateRepository =
-                    manager.getRepository(BoothTemplate);
-                const positionBoothRepository =
-                    manager.getRepository(PositionBooth);
+        if (!firstBoothOrganizationTemplate) {
+            throw new NotFoundException(`The 'booth_id' ${id} is not found`);
+        }
 
-                const created_by = 1; // TODO: handle getUserId from access token
-                const boothTemplateEntity =
-                    this.boothTemplateConverter.toEntity(boothTemplateDto);
-                boothTemplateEntity.modelId = await this.createUrlMedias(
-                    boothTemplateDto.model_data,
-                );
-
-                boothTemplateEntity.thumbnailId = await this.createUrlMedias(
-                    boothTemplateDto.thumbnail_data,
-                );
-                boothTemplateEntity.createdBy = created_by;
-                boothTemplateEntity.createdDate = new Date();
-                const createdBoothTemplate = await boothTemplateRepository.save(
-                    boothTemplateEntity,
-                );
-
-                const positionBooths = await Promise.all(
-                    boothTemplateDto.position_booths.map(async (data) => {
-                        const positionBooth = await this.createPositionBooth(
-                            data,
-                            createdBoothTemplate,
-                            positionBoothRepository,
-                        );
-                        return positionBooth;
-                    }),
-                );
-                createdBoothTemplate.positionBooths = positionBooths;
-
-                return createdBoothTemplate;
-            },
+        return this.boothOrganizationTemplateConverter.toDto(
+            firstBoothOrganizationTemplate,
         );
-
-        return this.boothTemplateConverter.toDto(createdBoothTemplate);
-    }
-
-    private async createPositionBooth(
-        positionBoothDto: PositionBoothDto,
-        boothTemplateEntity: BoothTemplate,
-        positionBoothRepository: Repository<PositionBooth>,
-    ): Promise<PositionBooth> {
-        const positionBoothEntity =
-            this.positionBoothConverter.toEntity(positionBoothDto);
-
-        positionBoothEntity.boothTemplate = boothTemplateEntity;
-
-        const createdPositionBooth = await positionBoothRepository.save(
-            positionBoothEntity,
-        );
-
-        return createdPositionBooth;
     }
 }

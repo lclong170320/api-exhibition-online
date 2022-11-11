@@ -6,7 +6,6 @@ import {
     JoinColumn,
     ManyToOne,
     OneToMany,
-    OneToOne,
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from 'typeorm';
@@ -15,31 +14,23 @@ import { BoothOrganizationProduct } from './booth-organization-product.entity';
 import { BoothOrganizationProject } from './booth-organization-project.entity';
 import { BoothOrganizationTemplate } from './booth-organization-template.entity';
 import { BoothOrganizationVideo } from './booth-organization-video.entity';
-import { Exhibition } from './exhibition.entity';
-
-@Entity({ name: 'booth_organization' })
-export class BoothOrganization {
+export enum Type {
+    IMAGE = 'image',
+    VIDEO = 'video',
+    PROJECT = 'project',
+    PRODUCT = 'product',
+}
+@Entity({ name: 'booth_organization_template_position' })
+export class BoothOrganizationTemplatePosition {
     // table columns
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({ name: 'position_x' })
-    positionX: number;
+    @Column({ length: 255 })
+    position: string;
 
-    @Column({ name: 'position_y' })
-    positionY: number;
-
-    @Column({ name: 'position_z' })
-    positionZ: number;
-
-    @Column({ name: 'rotation_x' })
-    rotationX: number;
-
-    @Column({ name: 'rotation_y' })
-    rotationY: number;
-
-    @Column({ name: 'rotation_z' })
-    rotationZ: number;
+    @Column({ type: 'enum', enum: Type })
+    type: Type;
 
     @CreateDateColumn({
         type: 'timestamp',
@@ -63,40 +54,39 @@ export class BoothOrganization {
     // relation columns
     @OneToMany(
         () => BoothOrganizationImage,
-        (boothOrganizationImage) => boothOrganizationImage.boothOrganization,
+        (boothOrganizationImage) =>
+            boothOrganizationImage.boothOrganizationTemplatePosition,
     )
     boothOrganizationImages: BoothOrganizationImage[];
 
     @OneToMany(
         () => BoothOrganizationVideo,
-        (boothOrganizationVideo) => boothOrganizationVideo.boothOrganization,
+        (boothOrganizationVideo) =>
+            boothOrganizationVideo.boothOrganizationTemplatePosition,
     )
     boothOrganizationVideos: BoothOrganizationVideo[];
 
     @OneToMany(
-        () => BoothOrganizationProject,
-        (boothOrganizationProject) =>
-            boothOrganizationProject.boothOrganization,
-    )
-    boothOrganizationProjects: BoothOrganizationProject[];
-
-    @OneToMany(
         () => BoothOrganizationProduct,
         (boothOrganizationProduct) =>
-            boothOrganizationProduct.boothOrganization,
+            boothOrganizationProduct.boothOrganizationTemplatePosition,
     )
     boothOrganizationProducts: BoothOrganizationProduct[];
+
+    @OneToMany(
+        () => BoothOrganizationProject,
+        (boothOrganizationProject) =>
+            boothOrganizationProject.boothOrganizationTemplatePosition,
+    )
+    boothOrganizationProjects: BoothOrganizationProject[];
 
     @ManyToOne(
         () => BoothOrganizationTemplate,
         (boothOrganizationTemplate) =>
-            boothOrganizationTemplate.boothOrganizations,
+            boothOrganizationTemplate.boothOrganizationTemplatePositions,
     )
     @JoinColumn({
         name: 'booth_organization_template_id',
     })
     boothOrganizationTemplate: BoothOrganizationTemplate;
-
-    @OneToOne(() => Exhibition, (exhibition) => exhibition.boothOrganization)
-    exhibition: Exhibition;
 }

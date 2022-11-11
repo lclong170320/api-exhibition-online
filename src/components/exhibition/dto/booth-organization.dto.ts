@@ -9,12 +9,24 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { BoothOrganizationData } from './booth-organization-data.dto';
+import { BoothOrganizationProject } from './booth-organization-project.dto';
+import { BoothOrganizationVideo } from './booth-organization-video.dto';
+import { BoothOrganizationImage } from './booth-organization-image.dto';
+import { BoothOrganizationProduct } from './booth-organization-product.dto';
+import { BoothOrganizationTemplate } from './booth-organization-template.dto';
 
 export interface BoothOrganization {
     readonly id: number;
-    booth_template_id?: number;
-    readonly user_id: number;
-    name: string;
-    booth_organization_data?: Array<BoothOrganizationData>;
+    position_x: number;
+    position_y: number;
+    position_z: number;
+    rotation_x: number;
+    rotation_y: number;
+    rotation_z: number;
+    booth_organization_template_id?: number;
+    booth_organization_template?: BoothOrganizationTemplate;
+    booth_organization_images?: Array<BoothOrganizationImage>;
+    booth_organization_videos?: Array<BoothOrganizationVideo>;
+    booth_organization_projects?: Array<BoothOrganizationProject>;
+    booth_organization_products?: Array<BoothOrganizationProduct>;
 }

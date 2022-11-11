@@ -3,7 +3,7 @@ import {
     Injectable,
     NotFoundException,
 } from '@nestjs/common';
-import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
+import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 
 import { BoothOrganization } from '@/components/exhibition/entities/booth-organization.entity';
@@ -24,7 +24,6 @@ import { paginate } from '@/utils/pagination';
 import { ConfigService } from '@nestjs/config';
 import { HttpService } from '@nestjs/axios';
 import { BoothConverter } from '../converters/booth.converter';
-import { BoothDataConverter } from '../converters/booth-data.converter';
 import { LiveStreamConverter } from '../converters/live-stream.converter';
 import { Booth as BoothDto } from '@/components/exhibition/dto/booth.dto';
 import { LiveStream } from '../entities/live-stream.entity';
@@ -42,22 +41,22 @@ import { BoothVideo as BoothVideoDto } from '../dto/booth-video.dto';
 import { BoothProject as BoothProjectDto } from '../dto/booth-project.dto';
 import { BoothProduct as BoothProductDto } from '../dto/booth-product.dto';
 import { Image } from '../entities/image.entity';
-import { Video } from '../entities/video.entity';
+import { Video } from '../entities/Video.entity';
 import { Project } from '../entities/project.entity';
 import { Product } from '../entities/product.entity';
+import { BoothOrganizationTemplate } from '../entities/booth-organization-template.entity';
+import { SpaceTemplateLocation } from '../entities/space-template-location.entity';
+import { Status } from '../entities/location.entity';
 
 @Injectable()
 export class ExhibitionService {
     constructor(
-        @InjectRepository(Exhibition, DbConnection.exhibitionCon)
-        private readonly exhibitionRepository: Repository<Exhibition>,
         private readonly exhibitionConverter: ExhibitionConverter,
         private readonly exhibitionListConverter: ExhibitionListConverter,
         @InjectDataSource(DbConnection.exhibitionCon)
         private readonly dataSource: DataSource,
         private readonly configService: ConfigService,
         private readonly httpService: HttpService,
-        private readonly boothDataConverter: BoothDataConverter,
         private readonly liveStreamConverter: LiveStreamConverter,
         private readonly boothConverter: BoothConverter,
     ) {}
@@ -84,9 +83,11 @@ export class ExhibitionService {
             'boothTemplates',
             'spaceTemplate',
         ];
+        const exhibitionRepository =
+            this.dataSource.manager.getRepository(Exhibition);
         const [exhibitions, total] = await paginate(
             query,
-            this.exhibitionRepository,
+            exhibitionRepository,
             {
                 searchableColumns,
                 sortableColumns,
@@ -104,26 +105,30 @@ export class ExhibitionService {
         );
     }
 
-    async findById(id: string): Promise<ExhibitionDto> {
-        const exhibitionId = parseInt(id);
-        const exhibitionEntity = await this.exhibitionRepository.findOne({
+    async findExhibitionById(
+        id: string,
+        populate: string[],
+    ): Promise<ExhibitionDto> {
+        const allowPopulate = ['category', 'space', 'boothOrganization'];
+
+        populate.forEach((value) => {
+            if (!allowPopulate.includes(value)) {
+                throw new BadRequestException(
+                    'Query value is not allowed ' + value,
+                );
+            }
+        });
+        const exhibitionRepository =
+            this.dataSource.manager.getRepository(Exhibition);
+        const exhibitionEntity = await exhibitionRepository.findOne({
             where: {
-                id: exhibitionId,
+                id: parseInt(id),
             },
-            relations: [
-                'category',
-                'space',
-                'boothTemplates',
-                'spaceTemplate',
-                'boothOrganization',
-                'boothOrganization.boothTemplate',
-            ],
+            relations: populate,
         });
 
         if (!exhibitionEntity) {
-            throw new NotFoundException(
-                `The 'exhibition_id' ${exhibitionId} not found`,
-            );
+            throw new NotFoundException(`The 'exhibition_id' ${id} not found`);
         }
 
         return this.exhibitionConverter.toDto(exhibitionEntity);
@@ -142,19 +147,20 @@ export class ExhibitionService {
         return firstCategory;
     }
 
-    private async findBoothTemplateById(
+    private async findBoothOrganizationTemplateById(
         id: number,
-        boothTemplateRepository: Repository<BoothTemplate>,
-    ): Promise<BoothTemplate> {
-        const boothTemplate = await boothTemplateRepository.findOneBy({
-            id: id,
-        });
-        if (!boothTemplate) {
+        boothOrganizationTemplateRepository: Repository<BoothOrganizationTemplate>,
+    ): Promise<BoothOrganizationTemplate> {
+        const boothOrganizationTemplate =
+            await boothOrganizationTemplateRepository.findOneBy({
+                id: id,
+            });
+        if (!boothOrganizationTemplate) {
             throw new BadRequestException(
-                `The booth template id '${id}' is not found`,
+                `The booth organization template id '${id}' is not found`,
             );
         }
-        return boothTemplate;
+        return boothOrganizationTemplate;
     }
 
     private async findSpaceTemplateById(
@@ -172,104 +178,152 @@ export class ExhibitionService {
         return spaceTemplate;
     }
 
+    private async findSpaceTemplateLocation(
+        spaceTemplateId: number,
+        spaceTemplateLocationRepository: Repository<SpaceTemplateLocation>,
+    ): Promise<SpaceTemplateLocation[]> {
+        const spaceTemplateLocation =
+            await spaceTemplateLocationRepository.findBy({
+                spaceTemplate: {
+                    id: spaceTemplateId,
+                },
+            });
+        if (!spaceTemplateLocation) {
+            throw new BadRequestException(`The space template is not found`);
+        }
+        return spaceTemplateLocation;
+    }
+
     private async createSpace(
-        spaceTemplate: SpaceTemplate,
+        spaceTemplateId: number,
         spaceRepository: Repository<Space>,
+        spaceTemplateRepository: Repository<SpaceTemplate>,
     ): Promise<Space> {
+        const firstSpaceTemplate = await this.findSpaceTemplateById(
+            spaceTemplateId,
+            spaceTemplateRepository,
+        );
+
         const spaceEntity = new Space();
         spaceEntity.name = 'Khong gian trien lam mac dinh';
-        spaceEntity.userId = 1; // TODO: handle getUserId from access token
-        spaceEntity.spaceTemplate = spaceTemplate;
+        spaceEntity.spaceTemplate = firstSpaceTemplate;
 
         const createdSpaces = await spaceRepository.save(spaceEntity);
 
         return createdSpaces;
     }
 
-    private async createBoothOrganization(
-        boothTemplate: BoothTemplate,
-        boothOrganizationRepository: Repository<BoothOrganization>,
-    ): Promise<BoothOrganization> {
-        const boothOrganizationEntity = new BoothOrganization();
-        boothOrganizationEntity.name = `Gian hàng ban tổ chức`;
-        // TODO: handle getUserId from access token
-        boothOrganizationEntity.userId = 1;
-        // boothOrganizationEntity.boothTemplate = boothTemplate;
-        return await boothOrganizationRepository.save(boothOrganizationEntity);
+    private async createLocation(
+        space: Space,
+        spaceTemplateLocation: SpaceTemplateLocation,
+        locationRepository: Repository<Location>,
+    ): Promise<Location> {
+        const LocationEntity = new Location();
+        LocationEntity.space = space;
+        LocationEntity.spaceTemplateLocation = spaceTemplateLocation;
+        LocationEntity.status = Status.AVAILABLE;
+
+        const createdLocation = await locationRepository.save(LocationEntity);
+
+        return createdLocation;
     }
 
-    async createExhibition(
-        exhibitionDto: ExhibitionDto,
-    ): Promise<ExhibitionDto> {
+    private async createBoothOrganization(
+        boothOrganizationTemplateId: number,
+        boothOrganizationRepository: Repository<BoothOrganization>,
+        boothOrganizationTemplateRepository: Repository<BoothOrganizationTemplate>,
+    ): Promise<BoothOrganization> {
+        const boothOrganizationTemplate =
+            await this.findBoothOrganizationTemplateById(
+                boothOrganizationTemplateId,
+                boothOrganizationTemplateRepository,
+            );
+
+        const boothOrganizationEntity = new BoothOrganization();
+        // TODO: default value
+        boothOrganizationEntity.positionX = 1;
+        boothOrganizationEntity.positionY = 1;
+        boothOrganizationEntity.positionZ = 1;
+        boothOrganizationEntity.rotationX = 1;
+        boothOrganizationEntity.rotationY = 1;
+        boothOrganizationEntity.rotationX = 1;
+        boothOrganizationEntity.boothOrganizationTemplate =
+            boothOrganizationTemplate;
+
+        const createdBoothOrganization = await boothOrganizationRepository.save(
+            boothOrganizationEntity,
+        );
+        return createdBoothOrganization;
+    }
+
+    async createExhibition(exhibitionDto: ExhibitionDto) {
         if (!this.checkDateExhibition(exhibitionDto)) {
             throw new BadRequestException('The exhibition time is not correct');
         }
-
         const createdExhibition = await this.dataSource.transaction(
             async (manager) => {
-                const exhibitionRepository = manager.getRepository(Exhibition);
                 const categoryRepository = manager.getRepository(Category);
+                const exhibitionRepository = manager.getRepository(Exhibition);
+                const boothOrganizationTemplateRepository =
+                    manager.getRepository(BoothOrganizationTemplate);
                 const boothOrganizationRepository =
                     manager.getRepository(BoothOrganization);
-                const spaceRepository = manager.getRepository(Space);
                 const spaceTemplateRepository =
                     manager.getRepository(SpaceTemplate);
-                const boothTemplateRepository =
-                    manager.getRepository(BoothTemplate);
+                const spaceRepository = manager.getRepository(Space);
+                const spaceTemplateLocationRepository = manager.getRepository(
+                    SpaceTemplateLocation,
+                );
+                const locationRepository = manager.getRepository(Location);
 
                 const firstCategory = await this.findCategoryById(
                     exhibitionDto.category_id,
                     categoryRepository,
                 );
 
-                const boothTemplates = await Promise.all(
-                    exhibitionDto.booth_template_ids.map(
-                        async (boothTemplateId) => {
-                            const boothTemplate =
-                                await this.findBoothTemplateById(
-                                    boothTemplateId,
-                                    boothTemplateRepository,
-                                );
-                            return boothTemplate;
-                        },
-                    ),
-                );
+                const createdBoothOrganization =
+                    await this.createBoothOrganization(
+                        exhibitionDto.booth_organization_template_id,
+                        boothOrganizationRepository,
+                        boothOrganizationTemplateRepository,
+                    );
 
-                const spaceTemplate = await this.findSpaceTemplateById(
+                const createdSpace = await this.createSpace(
                     exhibitionDto.space_template_id,
+                    spaceRepository,
                     spaceTemplateRepository,
                 );
 
-                const boothOrganizationTemplate =
-                    await this.findBoothTemplateById(
-                        exhibitionDto.organization_booth_template_id,
-                        boothTemplateRepository,
+                const spaceTemplateLocations =
+                    await this.findSpaceTemplateLocation(
+                        exhibitionDto.space_template_id,
+                        spaceTemplateLocationRepository,
                     );
 
-                const space = await this.createSpace(
-                    spaceTemplate,
-                    spaceRepository,
-                );
+                console.log(spaceTemplateLocations);
 
-                const boothOrganization = await this.createBoothOrganization(
-                    boothOrganizationTemplate,
-                    boothOrganizationRepository,
+                await Promise.all(
+                    spaceTemplateLocations.map(
+                        async (spaceTemplateLocation) => {
+                            const location = await this.createLocation(
+                                createdSpace,
+                                spaceTemplateLocation,
+                                locationRepository,
+                            );
+                            return location;
+                        },
+                    ),
                 );
 
                 const exhibitionEntity =
                     this.exhibitionConverter.toEntity(exhibitionDto);
 
                 exhibitionEntity.category = firstCategory;
-                exhibitionEntity.boothTemplates = boothTemplates;
-                exhibitionEntity.spaceTemplate = spaceTemplate;
-                exhibitionEntity.space = space;
-                exhibitionEntity.boothOrganization = boothOrganization;
-                exhibitionEntity.status = 'new';
+                exhibitionEntity.space = createdSpace;
+                exhibitionEntity.boothOrganization = createdBoothOrganization;
                 const createdExhibition = await exhibitionRepository.save(
                     exhibitionEntity,
                 );
-
-                createdExhibition.boothOrganization = boothOrganization;
 
                 return createdExhibition;
             },
@@ -283,7 +337,9 @@ export class ExhibitionService {
         boothId: string,
         populate: string[],
     ) {
-        const exhibitionEntity = await this.exhibitionRepository.findOne({
+        const exhibitionRepository =
+            this.dataSource.manager.getRepository(Exhibition);
+        const exhibitionEntity = await exhibitionRepository.findOne({
             where: {
                 id: parseInt(exhibitionId),
             },
@@ -924,7 +980,6 @@ export class ExhibitionService {
                 const boothEntity = await boothRepository.findOne({
                     where: {
                         id: parseInt(boothId),
-                        // exhibition: firstExhibition.booths,
                     },
                     relations: [
                         'liveStreams',

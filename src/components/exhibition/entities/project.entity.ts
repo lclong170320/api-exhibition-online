@@ -7,6 +7,7 @@ import {
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from 'typeorm';
+import { BoothOrganizationProject } from './booth-organization-project.entity';
 import { BoothProject } from './booth-project.entity';
 
 @Entity({ name: 'project' })
@@ -45,4 +46,10 @@ export class Project {
     // relation columns
     @OneToMany(() => BoothProject, (boothProject) => boothProject.project)
     boothProjects: BoothProject[];
+
+    @OneToMany(
+        () => BoothOrganizationProject,
+        (boothOrganizationProject) => boothOrganizationProject.project,
+    )
+    boothOrganizationProjects: BoothOrganizationProject[];
 }

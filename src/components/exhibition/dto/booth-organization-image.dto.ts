@@ -10,10 +10,13 @@
  * Do not edit the class manually.
  */
 
-export interface BoothData {
+import { BoothOrganizationTemplatePosition } from './booth-organization-template-position.dto';
+
+export interface BoothOrganizationImage {
     readonly id: number;
-    position_booth_id: number;
     selected_media_id?: number;
-    readonly media_id: number;
+    readonly image_id: number;
     media_data?: string;
+    booth_organization_template_position_id?: number;
+    booth_organization_template_position?: BoothOrganizationTemplatePosition;
 }

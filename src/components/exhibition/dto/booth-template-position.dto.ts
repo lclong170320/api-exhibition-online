@@ -10,7 +10,12 @@
  * Do not edit the class manually.
  */
 
-import { Type } from '@/components/exhibition/entities/booth-template-position.entity';
+export enum Type {
+    IMAGE = 'image',
+    VIDEO = 'video',
+    PROJECT = 'project',
+    PRODUCT = 'product',
+}
 
 export interface BoothTemplatePosition {
     readonly id: number;

@@ -228,60 +228,213 @@ components:
       type: object
       required:
         - id
-        - booth_template_id
-        - user_id
-        - name
-        - booth_organization_data
+        - position_x
+        - position_y
+        - position_z
+        - rotation_x
+        - rotation_y
+        - rotation_z
+        - booth_organization_template_id
       properties:
         id:
           type: integer
           readOnly: true
           example: 1
-        booth_template_id:
-          type: integer
+        position_x:
+          type: number
           example: 1
-        user_id:
+        position_y:
+          type: number
+          example: 1
+        position_z:
+          type: number
+          example: 1
+        rotation_x:
+          type: number
+          example: 1
+        rotation_y:
+          type: number
+          example: 1
+        rotation_z:
+          type: number
+          example: 1
+        booth_organization_template_id:
+          type: integer
+          writeOnly: true
+          example: 1
+        booth_organization_images:
+          type: array
+          items:
+            $ref: '#/components/schemas/BoothOrganizationImage'
+        booth_organization_videos:
+          type: array
+          items:
+            $ref: '#/components/schemas/BoothOrganizationVideo'
+        booth_organization_projects:
+          type: array
+          items:
+            $ref: '#/components/schemas/BoothOrganizationProject'
+        booth_organization_products:
+          type: array
+          items:
+            $ref: '#/components/schemas/BoothOrganizationProduct'
+    BoothOrganizationImage:
+      type: object
+      required:
+        - id
+        - image_id
+        - booth_organization_template_position_id
+      properties:
+        id:
+          type: integer
+          readOnly: true
+          example: 1
+        selected_media_id:
+          type: integer
+          writeOnly: true
+          example: 1
+        image_id:
+          type: integer
+          readOnly: true
+          example: 1
+        media_data:
+          type: string
+          writeOnly: true
+          example: 'base64 string'
+        booth_organization_template_position_id:
+          type: integer
+          writeOnly: true
+          example: 1
+    BoothOrganizationVideo:
+      type: object
+      required:
+        - id
+        - video_id
+        - booth_organization_template_position_id
+      properties:
+        id:
+          type: integer
+          readOnly: true
+          example: 1
+        selected_media_id:
+          type: integer
+          writeOnly: true
+          example: 1
+        video_id:
+          type: integer
+          readOnly: true
+          example: 1
+        media_data:
+          type: string
+          writeOnly: true
+          example: 'base64 string'
+        booth_organization_template_position_id:
+          type: integer
+          writeOnly: true
+          example: 1
+    BoothOrganizationProject:
+      type: object
+      required:
+        - id
+        - image_id
+        - title
+        - description
+        - booth_organization_template_position_id
+      properties:
+        id:
+          type: integer
+          readOnly: true
+          example: 1
+        selected_media_id:
+          type: integer
+          writeOnly: true
+          example: 1
+        image_id:
+          type: integer
+          readOnly: true
+          example: 1
+        media_data:
+          type: string
+          writeOnly: true
+          example: 'base64 string'
+        title:
+          type: string
+          maxLength: 255
+          example: "Tên dự án"
+        description:
+          type: string
+          maxLength: 20000
+          example: "Mô tả dự án"
+        booth_organization_template_position_id:
+          type: integer
+          writeOnly: true
+          example: 1
+    BoothOrganizationProduct:
+      type: object
+      required:
+        - id
+        - name
+        - image_id
+        - price
+        - purchase_link
+        - description
+        - booth_organization_template_position_id
+      properties:
+        id:
           type: integer
           readOnly: true
           example: 1
         name:
           type: string
-          minLength: 1
           maxLength: 255
-          example: Gian hàng ban tổ chức
-        booth_organization_data:
-          type: array
-          items:
-            $ref: '#/components/schemas/BoothOrganizationData'
-    BoothOrganizationData:
-      type: object
-      required:
-        - id
-        - position_booth_id
-      properties:
-        id:
-          type: integer
-          readOnly: true
-          example:
-        position_booth_id:
-          type: integer
-          writeOnly: true
-        position_booth:
-          $ref: '#/components/schemas/PositionBooth'
+          example: "name"
         selected_media_id:
           type: integer
           writeOnly: true
-        media_id:
+          example: 1
+        image_id:
           type: integer
           readOnly: true
+          example: 1
         media_data:
           type: string
           writeOnly: true
-        title:
+          example: 'base64 string'
+        price:
+          type: number
+          format: float
+          example: 20000
+        purchase_link:
           type: string
+          maxLength: 255
+          example: 'https://link_mua_san_pham/ma_ha_noi.png'
         description:
           type: string
-          maxLength: 20000
+          maxLength: 500
+          example: 'Mô tả sản phẩm'
+        booth_organization_template_position_id:
+          type: integer
+          writeOnly: true
+          example: 1
+    BoothOrganizationTemplatePosition:
+      type: object
+      required:
+        - id
+        - type
+        - position
+      properties:
+        id:
+          type: number
+          readOnly: true
+          example: 1
+        position:
+          type: string
+          maxLength: 255
+          example: vitri1
+        type:
+          type: string
+          enum: ['image', 'video', 'project', 'product']
+          example: 'image'
     Space:
       type: object
       required:

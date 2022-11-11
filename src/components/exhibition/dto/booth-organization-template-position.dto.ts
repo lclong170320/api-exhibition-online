@@ -9,10 +9,10 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
+import { Type } from '@/components/exhibition/entities/booth-organization-template-position.entity';
 
-export interface PositionBooth {
+export interface BoothOrganizationTemplatePosition {
     readonly id: number;
-    type: string;
-    label: string;
-    object_3d_id: string;
+    position: string;
+    type: Type;
 }

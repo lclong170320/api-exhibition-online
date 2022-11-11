@@ -8,6 +8,7 @@ import {
     UpdateDateColumn,
 } from 'typeorm';
 import { BoothImage } from './booth-image.entity';
+import { BoothOrganizationImage } from './booth-organization-image.entity';
 
 @Entity({ name: 'image' })
 export class Image {
@@ -40,4 +41,10 @@ export class Image {
     // relation columns
     @OneToMany(() => BoothImage, (boothImage) => boothImage.image)
     boothImages: BoothImage[];
+
+    @OneToMany(
+        () => BoothOrganizationImage,
+        (boothOrganizationImage) => boothOrganizationImage.image,
+    )
+    boothOrganizationImages: BoothOrganizationImage[];
 }

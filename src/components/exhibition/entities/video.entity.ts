@@ -7,6 +7,7 @@ import {
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from 'typeorm';
+import { BoothOrganizationVideo } from './booth-organization-video.entity';
 import { BoothVideo } from './booth-video.entity';
 
 @Entity({ name: 'video' })
@@ -39,4 +40,10 @@ export class Video {
     // relation columns
     @OneToMany(() => BoothVideo, (boothVideo) => boothVideo.video)
     boothVideos: BoothVideo[];
+
+    @OneToMany(
+        () => BoothOrganizationVideo,
+        (boothOrganizationVideo) => boothOrganizationVideo.video,
+    )
+    boothOrganizationVideos: BoothOrganizationVideo[];
 }

@@ -9,22 +9,17 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { BoothOrganization } from './booth-organization.dto';
 
-export interface BoothTemplate {
+import { BoothOrganizationTemplatePosition } from './booth-organization-template-position.dto';
+
+export interface BoothOrganizationTemplate {
     readonly id: number;
+    name: string;
     readonly created_by: number;
     readonly created_date: string;
-    model_data: string;
-    thumbnail_data: string;
-    name: string;
-    type: Type;
-    readonly model_id?: number;
-    readonly thumbnail_id?: number;
-    booth_organizations?: Array<BoothOrganization>;
-}
-
-export enum Type {
-    PROJECT = 'project',
-    PRODUCT = 'product',
+    readonly model_id: number;
+    readonly thumbnail_id: number;
+    model_data?: string;
+    thumbnail_data?: string;
+    booth_organization_template_positions?: Array<BoothOrganizationTemplatePosition>;
 }
