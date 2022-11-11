@@ -9,12 +9,16 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { SpaceData } from './space-data.dto';
+import { SpaceVideo } from './space-video.dto';
+import { SpaceImage } from './space-image.dto';
+import { Location } from './location.dto';
 
 export interface Space {
     readonly id: number;
-    readonly user_id?: number;
-    space_template_id: number;
+    space_template_id?: number;
     name: string;
-    space_datas: Array<SpaceData>;
+    exhibition_id: number;
+    locations?: Array<Location>;
+    space_images?: Array<SpaceImage>;
+    space_videos?: Array<SpaceVideo>;
 }

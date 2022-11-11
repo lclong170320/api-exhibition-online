@@ -9,35 +9,24 @@ import {
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from 'typeorm';
-import { Location } from './location.entity';
+import { SpaceImage } from './space-image.entity';
 import { SpaceTemplate } from './space-template.entity';
-
-@Entity({ name: 'space_template_location' })
-export class SpaceTemplateLocation {
+import { SpaceVideo } from './space-video.entity';
+export enum Type {
+    IMAGE = 'image',
+    VIDEO = 'video',
+}
+@Entity({ name: 'space_template_position' })
+export class SpaceTemplatePosition {
     // table columns
     @PrimaryGeneratedColumn()
     id: number;
 
     @Column({ length: 255 })
-    name: string;
+    position: string;
 
-    @Column({ name: 'position_x' })
-    positionX: number;
-
-    @Column({ name: 'position_y' })
-    positionY: number;
-
-    @Column({ name: 'position_z' })
-    positionZ: number;
-
-    @Column({ name: 'rotation_x' })
-    rotationX: number;
-
-    @Column({ name: 'rotation_y' })
-    rotationY: number;
-
-    @Column({ name: 'rotation_z' })
-    rotationZ: number;
+    @Column({ type: 'enum', enum: Type })
+    type: Type;
 
     @CreateDateColumn({
         type: 'timestamp',
@@ -61,13 +50,22 @@ export class SpaceTemplateLocation {
     // relation columns
     @ManyToOne(
         () => SpaceTemplate,
-        (spaceTemplate) => spaceTemplate.spaceTemplateLocations,
+        (spaceTemplate) => spaceTemplate.spaceTemplatePositions,
     )
     @JoinColumn({
         name: 'space_template_id',
     })
     spaceTemplate: SpaceTemplate;
 
-    @OneToMany(() => Location, (location) => location.spaceTemplateLocation)
-    locations: Location[];
+    @OneToMany(
+        () => SpaceImage,
+        (spaceImage) => spaceImage.spaceTemplatePosition,
+    )
+    spaceImages: SpaceImage[];
+
+    @OneToMany(
+        () => SpaceVideo,
+        (spaceVideo) => spaceVideo.spaceTemplatePosition,
+    )
+    spaceVideos: SpaceVideo[];
 }

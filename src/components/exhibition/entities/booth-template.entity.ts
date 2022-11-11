@@ -1,11 +1,12 @@
 import {
-    Entity,
-    PrimaryGeneratedColumn,
-    CreateDateColumn,
-    UpdateDateColumn,
     Column,
-    OneToMany,
+    CreateDateColumn,
+    DeleteDateColumn,
+    Entity,
     ManyToMany,
+    OneToMany,
+    PrimaryGeneratedColumn,
+    UpdateDateColumn,
 } from 'typeorm';
 import { Exhibition } from './exhibition.entity';
 import { Booth } from './booth.entity';
@@ -18,6 +19,7 @@ export enum Type {
 
 @Entity({ name: 'booth_template' })
 export class BoothTemplate {
+    // tables column
     @PrimaryGeneratedColumn()
     id: number;
 
@@ -51,6 +53,14 @@ export class BoothTemplate {
     })
     updatedAt: Date;
 
+    @DeleteDateColumn({
+        type: 'timestamp',
+        name: 'deleted_at',
+        nullable: true,
+    })
+    deletedAt: Date;
+
+    // relation columns
     @OneToMany(() => Booth, (booth) => booth.boothTemplate)
     booths: Booth[];
 

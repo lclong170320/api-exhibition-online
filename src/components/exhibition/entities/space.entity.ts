@@ -12,11 +12,13 @@ import {
 } from 'typeorm';
 import { Exhibition } from './exhibition.entity';
 import { Location } from './location.entity';
-import { SpaceData } from './space-data.entity';
+import { SpaceImage } from './space-image.entity';
 import { SpaceTemplate } from './space-template.entity';
+import { SpaceVideo } from './space-video.entity';
 
-@Entity({ name: 'spaces' })
+@Entity({ name: 'space' })
 export class Space {
+    // table columns
     @PrimaryGeneratedColumn()
     id: number;
 
@@ -42,23 +44,26 @@ export class Space {
     })
     deletedAt: Date;
 
-    @OneToMany(() => SpaceData, (spaceData) => spaceData.space)
-    spaceDatas: SpaceData[];
+    // relation columns
+    @OneToOne(() => Exhibition, (exhibition) => exhibition.space, {
+        nullable: false,
+    })
+    exhibition: Exhibition;
 
     @ManyToOne(() => SpaceTemplate, (spaceTemplate) => spaceTemplate.spaces, {
         nullable: false,
     })
     @JoinColumn({
         name: 'space_template_id',
-        foreignKeyConstraintName: 'fk-spaces-space_templates',
     })
     spaceTemplate: SpaceTemplate;
 
-    @OneToOne(() => Exhibition, (exhibition) => exhibition.space, {
-        nullable: false,
-    })
-    exhibition: Exhibition;
-
     @OneToMany(() => Location, (location) => location.space)
     locations: Location[];
+
+    @OneToMany(() => SpaceImage, (spaceImage) => spaceImage.space)
+    spaceImages: SpaceImage[];
+
+    @OneToMany(() => SpaceVideo, (spaceVideo) => spaceVideo.space)
+    spaceVideos: SpaceVideo[];
 }

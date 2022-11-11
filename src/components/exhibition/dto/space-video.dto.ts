@@ -9,15 +9,15 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { PositionSpace } from './position-space.dto';
 
-export interface SpaceData {
+import { SpaceTemplatePosition } from './space-template-position.dto';
+
+export interface SpaceVideo {
     readonly id: number;
-    position_space_id: number;
-    position_space?: PositionSpace;
-    selected_media_id?: number;
-    readonly media_id: number;
+    space_id: number;
+    space_template_position_id: number;
+    readonly space_template_position?: SpaceTemplatePosition;
+    select_media_id?: number;
+    readonly video_id: number;
     media_data?: string;
-    title?: string;
-    description?: string;
 }

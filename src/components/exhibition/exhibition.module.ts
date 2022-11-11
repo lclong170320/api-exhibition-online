@@ -10,8 +10,6 @@ import { BoothOrganization } from './entities/booth-organization.entity';
 import { BoothTemplate } from './entities/booth-template.entity';
 import { Category } from './entities/category.entity';
 import { Exhibition } from './entities/exhibition.entity';
-import { PositionSpace } from './entities/position-space.entity';
-import { SpaceData } from './entities/space-data.entity';
 import { SpaceTemplate } from './entities/space-template.entity';
 import { Space } from './entities/space.entity';
 import { BoothOrganizationService } from './services/booth-organization.service';
@@ -21,15 +19,11 @@ import { BoothTemplateController } from './controllers/booth-template.controller
 import { SpaceController } from './controllers/space.controller';
 import { SpaceService } from './services/space.service';
 import { SpaceConverter } from './converters/space.converter';
-import { SpaceDataConverter } from './converters/space-data.converter';
 import { SpaceTemplateController } from './controllers/space-template.controller';
 import { SpaceTemplateService } from './services/space-template.service';
-import { SpaceTemplateConverter } from './converters/space-template.converter';
-import { PositionSpaceConverter } from './converters/position-space.converter';
 import { SpaceTemplateListConverter } from './converters/space-template-list.converter';
 import { ExhibitionListConverter } from './converters/exhibition-list.converter';
 import { Booth } from './entities/booth.entity';
-import { SpaceTemplateLocation } from './entities/space-template-location.entity';
 import { Location } from './entities/location.entity';
 import { BoothConverter } from './converters/booth.converter';
 import { LiveStreamConverter } from './converters/live-stream.converter';
@@ -40,16 +34,14 @@ import { Video } from './entities/video.entity';
 import { Image } from './entities/image.entity';
 import { ExhibitionService } from './services/exhibition.service';
 import { BoothTemplateService } from './services/booth-template.service';
-import { BoothImageConverter } from './converters/booth-image.converter';
-import { BoothVideoConverter } from './converters/booth-video.converter';
-import { BoothProjectConverter } from './converters/booth-project.converter';
-import { BoothProductConverter } from './converters/booth-product.converter';
-import { LocationConverter } from './converters/location.converter';
-import { BoothImage } from './entities/booth-image.entity';
-import { BoothVideo } from './entities/booth-video.entity';
-import { BoothProject } from './entities/booth-project.entity';
-import { BoothProduct } from './entities/booth-product.entity';
+import { SpaceTemplatePosition } from './entities/space-template-position.entity';
+import { SpaceTemplatePositionConverter } from './converters/space-template-position.converter';
+import { SpaceTemplateLocation } from './entities/space-template-location.entity';
 import { SpaceTemplateLocationConverter } from './converters/space-template-location.converter';
+import { SpaceTemplateConverter } from './converters/space-template.converter';
+import { LocationConverter } from './converters/location.converter';
+import { SpaceImageConverter } from './converters/space-image.converter';
+import { SpaceVideoConverter } from './converters/space-video.converter';
 import { BoothOrganizationImage } from './entities/booth-organization-image.entity';
 import { BoothOrganizationVideo } from './entities/booth-organization-video.entity';
 import { BoothOrganizationProject } from './entities/booth-organization-project.entity';
@@ -64,6 +56,14 @@ import { BoothOrganizationVideoConverter } from './converters/booth-organization
 import { BoothOrganizationProductConverter } from './converters/booth-organization-product.converter';
 import { BoothOrganizationProjectConverter } from './converters/booth-organization-project.converter';
 import { BoothOrganizationTemplateConverter } from './converters/booth-organization-template.converter';
+import { BoothImageConverter } from './converters/booth-image.converter';
+import { BoothVideoConverter } from './converters/booth-video.converter';
+import { BoothProjectConverter } from './converters/booth-project.converter';
+import { BoothProductConverter } from './converters/booth-product.converter';
+import { BoothImage } from './entities/booth-image.entity';
+import { BoothProduct } from './entities/booth-product.entity';
+import { BoothProject } from './entities/booth-project.entity';
+import { BoothVideo } from './entities/booth-video.entity';
 
 @Module({
     controllers: [
@@ -87,10 +87,17 @@ import { BoothOrganizationTemplateConverter } from './converters/booth-organizat
         BoothTemplateConverter,
         BoothTemplateListConverter,
         SpaceConverter,
-        SpaceDataConverter,
         SpaceTemplateConverter,
+        SpaceTemplatePositionConverter,
+        SpaceTemplateLocationConverter,
         SpaceTemplateListConverter,
-        PositionSpaceConverter,
+        ExhibitionListConverter,
+        BoothConverter,
+        LiveStreamConverter,
+        LocationConverter,
+        SpaceImageConverter,
+        SpaceVideoConverter,
+        SpaceTemplateListConverter,
         BoothConverter,
         LiveStreamConverter,
         BoothImageConverter,
@@ -128,20 +135,16 @@ import { BoothOrganizationTemplateConverter } from './converters/booth-organizat
                 Exhibition,
                 Image,
                 BoothOrganization,
-                Space,
-                SpaceData,
                 BoothTemplate,
+                Space,
                 SpaceTemplate,
-                PositionSpace,
-                Booth,
+                SpaceTemplatePosition,
                 SpaceTemplateLocation,
-                Location,
+                Booth,
                 LiveStream,
                 Location,
-                PositionSpace,
                 Product,
                 Project,
-                SpaceData,
                 SpaceTemplateLocation,
                 SpaceTemplate,
                 Space,

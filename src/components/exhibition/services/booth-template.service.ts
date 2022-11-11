@@ -115,48 +115,48 @@ export class BoothTemplateService {
     //         }
     //     });
 
-    //     // const createdBoothTemplate = await this.dataSource.transaction(
-    //     //     async (manager) => {
-    //     //         const boothTemplateRepository =
-    //     //             manager.getRepository(BoothTemplate);
-    //     //         const positionBoothRepository = manager.getRepository(
-    //     //             BoothOrganizationTemplatePosition,
-    //     //         );
+    //     const createdBoothTemplate = await this.dataSource.transaction(
+    //         async (manager) => {
+    //             const boothTemplateRepository =
+    //                 manager.getRepository(BoothTemplate);
+    //             const positionBoothRepository = manager.getRepository(
+    //                 BoothOrganizationTemplatePosition,
+    //             );
 
-    //     //         const created_by = 1; // TODO: handle getUserId from access token
-    //     //         const boothTemplateEntity =
-    //     //             this.boothTemplateConverter.toEntity(boothTemplateDto);
-    //     //         boothTemplateEntity.modelId = await this.createUrlMedias(
-    //     //             boothTemplateDto.model_data,
-    //     //         );
+    //             const created_by = 1; // TODO: handle getUserId from access token
+    //             const boothTemplateEntity =
+    //                 this.boothTemplateConverter.toEntity(boothTemplateDto);
+    //             boothTemplateEntity.modelId = await this.createUrlMedias(
+    //                 boothTemplateDto.model_data,
+    //             );
 
-    //     //         boothTemplateEntity.thumbnailId = await this.createUrlMedias(
-    //     //             boothTemplateDto.thumbnail_data,
-    //     //         );
-    //     //         boothTemplateEntity.createdBy = created_by;
-    //     //         boothTemplateEntity.createdDate = new Date();
-    //     //         const createdBoothTemplate = await boothTemplateRepository.save(
-    //     //             boothTemplateEntity,
-    //     //         );
+    //             boothTemplateEntity.thumbnailId = await this.createUrlMedias(
+    //                 boothTemplateDto.thumbnail_data,
+    //             );
+    //             boothTemplateEntity.createdBy = created_by;
+    //             boothTemplateEntity.createdDate = new Date();
+    //             const createdBoothTemplate = await boothTemplateRepository.save(
+    //                 boothTemplateEntity,
+    //             );
 
-    //     //         const positionBooths = await Promise.all(
-    //     //             boothTemplateDto.position_booths.map(async (data) => {
-    //     //                 const positionBooth = await this.createPositionBooth(
-    //     //                     data,
-    //     //                     createdBoothTemplate,
-    //     //                     positionBoothRepository,
-    //     //                 );
-    //     //                 return positionBooth;
-    //     //             }),
-    //     //         );
-    //     //         createdBoothTemplate.boothTemplatePositions = positionBooths;
+    //             const positionBooths = await Promise.all(
+    //                 boothTemplateDto.position_booths.map(async (data) => {
+    //                     const positionBooth = await this.createPositionBooth(
+    //                         data,
+    //                         createdBoothTemplate,
+    //                         positionBoothRepository,
+    //                     );
+    //                     return positionBooth;
+    //                 }),
+    //             );
+    //             createdBoothTemplate.boothTemplatePositions = positionBooths;
 
-    //     //         return createdBoothTemplate;
-    //     //     },
-    //     // );
+    //             return createdBoothTemplate;
+    //         },
+    //     );
 
-    // //     return this.boothTemplateConverter.toDto(createdBoothTemplate);
-    // // }
+    //     return this.boothTemplateConverter.toDto(createdBoothTemplate);
+    // }
 
     // private async createPositionBooth(
     //     positionBoothDto: PositionBoothDto,

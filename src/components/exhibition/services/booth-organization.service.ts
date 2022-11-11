@@ -22,7 +22,7 @@ import { BoothOrganizationProject } from '../entities/booth-organization-project
 import { BoothOrganizationProduct } from '../entities/booth-organization-product.entity';
 import { BoothOrganizationTemplatePosition } from '../entities/booth-organization-template-position.entity';
 import { Image } from '../entities/image.entity';
-import { Video } from '../entities/Video.entity';
+import { Video } from '../entities/video.entity';
 import { Project } from '../entities/project.entity';
 import { Product } from '../entities/product.entity';
 import { BoothOrganizationConverter } from '../converters/booth-organization.converter';
@@ -43,6 +43,7 @@ export class BoothOrganizationService {
     ): Promise<BoothOrganizationDto> {
         const allowPopulate = [
             'boothOrganizationTemplate',
+            'boothOrganizationTemplate.boothOrganizationTemplatePositions',
             'boothOrganizationProducts.product',
             'boothOrganizationProjects.project',
             'boothOrganizationVideos.video',

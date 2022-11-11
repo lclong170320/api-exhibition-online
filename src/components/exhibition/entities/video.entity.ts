@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 import { BoothOrganizationVideo } from './booth-organization-video.entity';
 import { BoothVideo } from './booth-video.entity';
+import { SpaceVideo } from './space-video.entity';
 
 @Entity({ name: 'video' })
 export class Video {
@@ -40,6 +41,9 @@ export class Video {
     // relation columns
     @OneToMany(() => BoothVideo, (boothVideo) => boothVideo.video)
     boothVideos: BoothVideo[];
+
+    @OneToMany(() => SpaceVideo, (spaceVideo) => spaceVideo.video)
+    spaceVideos: SpaceVideo[];
 
     @OneToMany(
         () => BoothOrganizationVideo,

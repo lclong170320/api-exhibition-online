@@ -18,7 +18,6 @@ import { BoothProduct } from './booth-product.dto';
 export interface Booth {
     readonly id: number;
     readonly created_by: number;
-    name: string;
     enterprise_id: number;
     location_id?: number;
     booth_template_id?: number;

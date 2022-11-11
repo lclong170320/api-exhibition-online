@@ -4,11 +4,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { BoothTemplateConverter } from '../exhibition/converters/booth-template.converter';
 import { BoothConverter } from '../exhibition/converters/booth.converter';
 import CategoryConverter from '../exhibition/converters/category.converter';
-import { ExhibitionConverter } from '../exhibition/converters/exhibition.converter';
 import { LiveStreamConverter } from '../exhibition/converters/live-stream.converter';
-import { PositionSpaceConverter } from '../exhibition/converters/position-space.converter';
-import { SpaceDataConverter } from '../exhibition/converters/space-data.converter';
+import { LocationConverter } from '../exhibition/converters/location.converter';
+import { SpaceImageConverter } from '../exhibition/converters/space-image.converter';
+import { SpaceTemplateLocationConverter } from '../exhibition/converters/space-template-location.converter';
+import { SpaceTemplatePositionConverter } from '../exhibition/converters/space-template-position.converter';
 import { SpaceTemplateConverter } from '../exhibition/converters/space-template.converter';
+import { SpaceVideoConverter } from '../exhibition/converters/space-video.converter';
 import { SpaceConverter } from '../exhibition/converters/space.converter';
 import { SpaceTemplateLocation } from '../exhibition/entities/space-template-location.entity';
 import { BoothOrganization } from '../exhibition/entities/booth-organization.entity';
@@ -17,8 +19,6 @@ import { Booth } from '../exhibition/entities/booth.entity';
 import { Category } from '../exhibition/entities/category.entity';
 import { Exhibition } from '../exhibition/entities/exhibition.entity';
 import { Location } from '../exhibition/entities/location.entity';
-import { PositionSpace } from '../exhibition/entities/position-space.entity';
-import { SpaceData } from '../exhibition/entities/space-data.entity';
 import { SpaceTemplate } from '../exhibition/entities/space-template.entity';
 import { Space } from '../exhibition/entities/space.entity';
 import { MediaConverter } from '../media/converters/media.converter';
@@ -29,8 +29,6 @@ import { BoothImageConverter } from '../exhibition/converters/booth-image.conver
 import { BoothVideoConverter } from '../exhibition/converters/booth-video.converter';
 import { BoothProjectConverter } from '../exhibition/converters/booth-project.converter';
 import { BoothProductConverter } from '../exhibition/converters/booth-product.converter';
-import { LocationConverter } from '../exhibition/converters/location.converter';
-import { SpaceTemplateLocationConverter } from '../exhibition/converters/space-template-location.converter';
 import { BoothImage } from '../exhibition/entities/booth-image.entity';
 import { BoothVideo } from '../exhibition/entities/booth-video.entity';
 import { BoothProject } from '../exhibition/entities/booth-project.entity';
@@ -54,19 +52,17 @@ import { BoothOrganizationVideoConverter } from '../exhibition/converters/booth-
 import { BoothOrganizationProductConverter } from '../exhibition/converters/booth-organization-product.converter';
 import { BoothOrganizationProjectConverter } from '../exhibition/converters/booth-organization-project.converter';
 import { BoothOrganizationTemplateConverter } from '../exhibition/converters/booth-organization-template.converter';
+import { SpaceTemplatePosition } from '../exhibition/entities/space-template-position.entity';
 
 @Module({
     controllers: [PublicController],
     providers: [
         PublicService,
-        ExhibitionConverter,
+        // ExhibitionConverter,
         CategoryConverter,
-        ExhibitionConverter,
         SpaceTemplateConverter,
         SpaceConverter,
         BoothTemplateConverter,
-        PositionSpaceConverter,
-        SpaceDataConverter,
         BoothConverter,
         LiveStreamConverter,
         BoothTemplateConverter,
@@ -76,7 +72,11 @@ import { BoothOrganizationTemplateConverter } from '../exhibition/converters/boo
         BoothProductConverter,
         LocationConverter,
         SpaceTemplateLocationConverter,
+        LiveStreamConverter,
         MediaConverter,
+        SpaceTemplatePositionConverter,
+        SpaceImageConverter,
+        SpaceVideoConverter,
         BoothOrganizationTemplatePositionConverter,
         BoothOrganizationConverter,
         BoothOrganizationImageConverter,
@@ -104,13 +104,18 @@ import { BoothOrganizationTemplateConverter } from '../exhibition/converters/boo
                 Booth,
                 Category,
                 Exhibition,
+                BoothOrganization,
+                Space,
+                BoothTemplate,
+                SpaceTemplate,
+                SpaceTemplatePosition,
+                Booth,
+                Location,
                 Image,
                 LiveStream,
                 Location,
-                PositionSpace,
                 Product,
                 Project,
-                SpaceData,
                 SpaceTemplateLocation,
                 SpaceTemplate,
                 Space,

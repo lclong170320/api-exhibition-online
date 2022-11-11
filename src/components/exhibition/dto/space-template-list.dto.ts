@@ -12,13 +12,7 @@
 import { SpaceTemplate } from './space-template.dto';
 
 export interface SpaceTemplateList {
-    /**
-     * The number of items to skip before starting to collect the result set.
-     */
     page: number;
-    /**
-     * The number of items to return.
-     */
     limit: number;
     total: number;
     space_templates: Array<SpaceTemplate>;

@@ -9,14 +9,24 @@ import {
     Injectable,
 } from '@nestjs/common';
 import { Space as SpaceDto } from '@/components/exhibition/dto/space.dto';
-import { SpaceData as SpaceDataDto } from '@/components/exhibition/dto/space-data.dto';
 import { Space } from '@/components/exhibition/entities/space.entity';
-import { SpaceData } from '@/components/exhibition/entities/space-data.entity';
 import { SpaceTemplate } from '@/components/exhibition/entities/space-template.entity';
-import { PositionSpace } from '@/components/exhibition/entities/position-space.entity';
 import { SpaceConverter } from '@/components/exhibition/converters/space.converter';
 import { HttpService } from '@nestjs/axios';
-import { SpaceDataConverter } from '@/components/exhibition/converters/space-data.converter';
+import { SpaceTemplatePosition } from '../entities/space-template-position.entity';
+import { SpaceImage } from '../entities/space-image.entity';
+import { SpaceVideo } from '../entities/space-video.entity';
+import { SpaceImage as SpaceImageDto } from '../dto/space-image.dto';
+import { SpaceVideo as SpaceVideoDto } from '../dto/space-video.dto';
+import { SpaceVideoConverter } from '../converters/space-video.converter';
+import { SpaceImageConverter } from '../converters/space-image.converter';
+import { Video } from '../entities/video.entity';
+import { Image } from '../entities/image.entity';
+import { Location } from '../entities/location.entity';
+import { Location as LocationDto } from '../dto/location.dto';
+import { SpaceTemplateLocation } from '../entities/space-template-location.entity';
+import { LocationConverter } from '../converters/location.converter';
+// import { BoothTemplate } from '../entities/booth-template.entity';
 
 @Injectable()
 export class SpaceService {
@@ -26,14 +36,22 @@ export class SpaceService {
         private readonly configService: ConfigService,
         private readonly httpService: HttpService,
         private readonly spaceConverter: SpaceConverter,
-        private readonly spaceDataConverter: SpaceDataConverter,
+        private readonly spaceVideoConverter: SpaceVideoConverter,
+        private readonly spaceImageConverter: SpaceImageConverter,
+        private readonly locationConverter: LocationConverter,
     ) {}
 
     async getSpaceById(spaceId: string, populate: string[]) {
         const allowPopulate = [
-            'spaceDatas',
-            'spaceDatas.positionSpace',
+            'exhibition',
+            'spaceImages',
+            'spaceVideos',
             'spaceTemplate',
+            'spaceTemplate.spaceTemplatePositions',
+            'spaceImages.image',
+            'spaceImages.spaceTemplatePosition',
+            'spaceVideos.video',
+            'spaceVideos.spaceTemplatePosition',
         ];
 
         populate.forEach((value) => {
@@ -43,7 +61,6 @@ export class SpaceService {
                 );
             }
         });
-
         const spaceRepository = this.dataSource.getRepository(Space);
         const firstSpace = await spaceRepository.findOne({
             where: {
@@ -64,17 +81,22 @@ export class SpaceService {
         const updatedSpace = await this.dataSource.transaction(
             async (manager) => {
                 const spaceRepository = manager.getRepository(Space);
-                const spaceDataRepository = manager.getRepository(SpaceData);
-                const positionSpaceRepository =
-                    manager.getRepository(PositionSpace);
+                const spaceImageRepository = manager.getRepository(SpaceImage);
+                const spaceVideoRepository = manager.getRepository(SpaceVideo);
+                const spaceTemplatePositionRepository = manager.getRepository(
+                    SpaceTemplatePosition,
+                );
+                const spaceTemplateLocationRepository = manager.getRepository(
+                    SpaceTemplateLocation,
+                );
                 const spaceTemplateRepository =
                     manager.getRepository(SpaceTemplate);
-
+                const locationRepository = manager.getRepository(Location);
                 let spaceEntity = await spaceRepository.findOne({
                     where: {
                         id: parseInt(spaceId),
                     },
-                    relations: ['spaceDatas', 'spaceTemplate'],
+                    relations: ['exhibition'],
                 });
 
                 if (!spaceEntity) {
@@ -95,16 +117,19 @@ export class SpaceService {
 
                 spaceEntity = await this.removeOldSpaceData(
                     spaceEntity,
-                    spaceDataRepository,
+                    spaceImageRepository,
+                    spaceVideoRepository,
+                    locationRepository,
                 );
-
-                spaceEntity = await this.createSpaceDatas(
+                await this.createSpaceData(
                     spaceDto,
                     spaceEntity,
-                    spaceDataRepository,
-                    positionSpaceRepository,
+                    spaceImageRepository,
+                    spaceVideoRepository,
+                    spaceTemplatePositionRepository,
+                    spaceTemplateLocationRepository,
+                    locationRepository,
                 );
-
                 return spaceEntity;
             },
         );
@@ -114,10 +139,35 @@ export class SpaceService {
 
     private async removeOldSpaceData(
         space: Space,
-        spaceDataRepository: Repository<SpaceData>,
+        spaceImageRepository: Repository<SpaceImage>,
+        spaceVideoRepository: Repository<SpaceVideo>,
+        locationRepository: Repository<Location>,
     ) {
-        await spaceDataRepository.remove(space.spaceDatas);
-        space.spaceDatas = [];
+        const spaceImages = await spaceImageRepository.find({
+            where: {
+                space: {
+                    id: space.id,
+                },
+            },
+        });
+        await spaceImageRepository.remove(spaceImages);
+        const spaceVideos = await spaceVideoRepository.find({
+            where: {
+                space: {
+                    id: space.id,
+                },
+            },
+        });
+
+        await spaceVideoRepository.remove(spaceVideos);
+        const spaceLocations = await locationRepository.find({
+            where: {
+                space: {
+                    id: space.id,
+                },
+            },
+        });
+        await locationRepository.remove(spaceLocations);
         return space;
     }
 
@@ -140,60 +190,158 @@ export class SpaceService {
         return result.id;
     }
 
-    private async createSpaceData(
-        data: SpaceDataDto,
+    private async createSpaceVideo(
+        data: SpaceVideoDto,
         space: Space,
-        spaceDataRepository: Repository<SpaceData>,
-        positionSpaceRepository: Repository<PositionSpace>,
+        spaceVideoRepository: Repository<SpaceVideo>,
+        spaceTemplatePositionRepository: Repository<SpaceTemplatePosition>,
     ) {
-        const spaceDataEntity = this.spaceDataConverter.toEntity(data);
-
-        spaceDataEntity.mediaId = data.selected_media_id;
+        const videoRepository = this.dataSource.getRepository(Video);
+        const spaceVideoEntity = this.spaceVideoConverter.toEntity(data);
+        const video = await videoRepository.findOneBy({
+            id: data.select_media_id,
+        });
+        spaceVideoEntity.video = video;
 
         if (data.media_data) {
-            spaceDataEntity.mediaId = await this.createUrlMedias(
-                data.media_data,
-            );
+            const newVideoId = await this.createUrlMedias(data.media_data);
+            const newVideo = await videoRepository.findOneBy({
+                id: newVideoId,
+            });
+            spaceVideoEntity.video = newVideo;
         }
+        spaceVideoEntity.space = space;
+        const spaceTemplatePosition =
+            await spaceTemplatePositionRepository.findOneBy({
+                id: data.space_template_position_id,
+            });
 
-        spaceDataEntity.space = space;
-
-        const positionSpaceEntity = await positionSpaceRepository.findOneBy({
-            id: data.position_space_id,
-        });
-
-        if (!positionSpaceEntity) {
+        if (!spaceTemplatePosition) {
             throw new BadRequestException(
-                'The "position_space_id" not found: ' + data.position_space_id,
+                'The "space_template_position_id" not found: ' +
+                    data.space_template_position_id,
             );
         }
 
-        spaceDataEntity.positionSpace = positionSpaceEntity;
+        spaceVideoEntity.spaceTemplatePosition = spaceTemplatePosition;
 
-        const createSpaceData = await spaceDataRepository.save(spaceDataEntity);
-
-        return createSpaceData;
-    }
-
-    private async createSpaceDatas(
-        spaceDto: SpaceDto,
-        space: Space,
-        spaceDataRepository: Repository<SpaceData>,
-        positionSpaceRepository: Repository<PositionSpace>,
-    ) {
-        const newSpaceDatas = await Promise.all(
-            spaceDto.space_datas.map(async (data) => {
-                const newSpaceData = await this.createSpaceData(
-                    data,
-                    space,
-                    spaceDataRepository,
-                    positionSpaceRepository,
-                );
-                return newSpaceData;
-            }),
+        const createSpaceVideo = await spaceVideoRepository.save(
+            spaceVideoEntity,
         );
 
-        space.spaceDatas = newSpaceDatas;
+        return createSpaceVideo;
+    }
+
+    private async createSpaceImage(
+        data: SpaceImageDto,
+        space: Space,
+        spaceImageRepository: Repository<SpaceImage>,
+        spaceTemplatePositionRepository: Repository<SpaceTemplatePosition>,
+    ) {
+        const imageRepository = this.dataSource.getRepository(Image);
+        const spaceImageEntity = this.spaceImageConverter.toEntity(data);
+        const image = await imageRepository.findOneBy({
+            id: data.select_media_id,
+        });
+        spaceImageEntity.image = image;
+
+        if (data.media_data) {
+            const newImageId = await this.createUrlMedias(data.media_data);
+            const newImage = await imageRepository.findOneBy({
+                id: newImageId,
+            });
+            spaceImageEntity.image = newImage;
+        }
+        spaceImageEntity.space = space;
+        const spaceTemplatePosition =
+            await spaceTemplatePositionRepository.findOneBy({
+                id: data.space_template_position_id,
+            });
+
+        if (!spaceTemplatePosition) {
+            throw new BadRequestException(
+                'The "space_template_position_id" not found: ' +
+                    data.space_template_position_id,
+            );
+        }
+
+        spaceImageEntity.spaceTemplatePosition = spaceTemplatePosition;
+
+        const createSpaceImage = await spaceImageRepository.save(
+            spaceImageEntity,
+        );
+
+        return createSpaceImage;
+    }
+    private async createLocation(
+        data: LocationDto,
+        space: Space,
+        LocationRepository: Repository<Location>,
+        spaceTemplateLocationRepository: Repository<SpaceTemplateLocation>,
+    ) {
+        const locationEntity = this.locationConverter.toEntity(data);
+
+        locationEntity.space = space;
+        const spaceTemplateLocation =
+            await spaceTemplateLocationRepository.findOneBy({
+                id: data.space_template_location_id,
+            });
+
+        if (!spaceTemplateLocation) {
+            throw new BadRequestException(
+                'The "space_template_location_id" not found: ' +
+                    data.space_template_location_id,
+            );
+        }
+
+        locationEntity.spaceTemplateLocation = spaceTemplateLocation;
+        const createLocation = await LocationRepository.save(locationEntity);
+
+        return createLocation;
+    }
+
+    private async createSpaceData(
+        spaceDto: SpaceDto,
+        space: Space,
+        spaceImageRepository: Repository<SpaceImage>,
+        spaceVideoRepository: Repository<SpaceVideo>,
+        spaceTemplatePositionRepository: Repository<SpaceTemplatePosition>,
+        spaceTemplateLocationRepository: Repository<SpaceTemplateLocation>,
+        locationRepository: Repository<Location>,
+    ) {
+        await Promise.all(
+            spaceDto.space_images?.map(async (data) => {
+                const newSpaceImage = await this.createSpaceImage(
+                    data,
+                    space,
+                    spaceImageRepository,
+                    spaceTemplatePositionRepository,
+                );
+                return newSpaceImage;
+            }),
+        );
+        await Promise.all(
+            spaceDto.space_videos?.map(async (data) => {
+                const newSpaceVideo = await this.createSpaceVideo(
+                    data,
+                    space,
+                    spaceVideoRepository,
+                    spaceTemplatePositionRepository,
+                );
+                return newSpaceVideo;
+            }),
+        );
+        await Promise.all(
+            spaceDto.locations?.map(async (data) => {
+                const newSpaceVideo = await this.createLocation(
+                    data,
+                    space,
+                    locationRepository,
+                    spaceTemplateLocationRepository,
+                );
+                return newSpaceVideo;
+            }),
+        );
         return space;
     }
 }

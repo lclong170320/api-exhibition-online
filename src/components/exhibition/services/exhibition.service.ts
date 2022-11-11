@@ -300,8 +300,6 @@ export class ExhibitionService {
                         spaceTemplateLocationRepository,
                     );
 
-                console.log(spaceTemplateLocations);
-
                 await Promise.all(
                     spaceTemplateLocations.map(
                         async (spaceTemplateLocation) => {
@@ -884,7 +882,7 @@ export class ExhibitionService {
                     boothTemplateRepository,
                 );
 
-                const boothEntity = this.boothConverter.toEntity(boothDto);
+                const boothEntity = new Booth();
 
                 boothEntity.createdBy = 1; // TODO: handle getUserId from access token
                 boothEntity.exhibition = firstExhibition;
@@ -1009,7 +1007,6 @@ export class ExhibitionService {
                     boothTemplateRepository,
                 );
 
-                boothEntity.name = boothDto.name;
                 boothEntity.createdBy = 1; // TODO: handle getUserId from access token
                 boothEntity.exhibition = firstExhibition;
                 boothEntity.boothTemplate = firstBoothTemplate;

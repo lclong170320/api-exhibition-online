@@ -25,9 +25,6 @@ export class Booth {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({ length: 255 })
-    name: string;
-
     @Column({ name: 'enterprise_id' })
     enterpriseId: number;
 

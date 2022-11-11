@@ -20,17 +20,9 @@ export class BoothConverter {
         private readonly boothProjectConverter: BoothProjectConverter,
         private readonly boothProductConverter: BoothProductConverter,
     ) {}
-
-    toEntity(dto: BoothDto) {
-        const entity = new Booth();
-        entity.name = dto.name;
-        return entity;
-    }
-
     toDto(entity: Booth) {
         const dto = {
             id: entity.id,
-            name: entity.name,
             created_by: entity.createdBy,
             enterprise_id: entity.enterpriseId,
             booth_template: entity.boothTemplate

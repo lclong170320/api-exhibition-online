@@ -1,6 +1,6 @@
+import { SpaceTemplateLocation as SpaceTemplateLocationDto } from '@/components/exhibition/dto/space-template-location.dto';
+import { SpaceTemplateLocation } from '@/components/exhibition/entities/space-template-location.entity';
 import { Injectable } from '@nestjs/common';
-import { SpaceTemplateLocation as SpaceTemplateLocationDto } from '../dto/space-template-location.dto';
-import { SpaceTemplateLocation } from '../entities/space-template-location.entity';
 
 @Injectable()
 export class SpaceTemplateLocationConverter {

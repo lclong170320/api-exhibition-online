@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Post, Body, Put } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
 import { ExhibitionService } from '@/components/exhibition/services/exhibition.service';
 import { Exhibition as ExhibitionDto } from '@/components/exhibition/dto/exhibition.dto';
 import { Paginate, PaginateQuery } from '@/decorators/paginate.decorator';
@@ -26,9 +26,9 @@ export class ExhibitionController {
         return this.exhibitionService.createExhibition(exhibition);
     }
 
-    @Post(':exhibition_id/booths')
+    @Post(':exhibitionId/booths')
     createBooth(
-        @Param('exhibition_id') exhibitionId: string,
+        @Param('exhibitionId') exhibitionId: string,
         @Body() boothDto: BoothDto,
     ) {
         return this.exhibitionService.createBooth(
@@ -36,10 +36,10 @@ export class ExhibitionController {
             boothDto,
         );
     }
-    @Get(':exhibition_id/booths/:booth_id')
+    @Get(':exhibitionId/booths/:boothId')
     getBoothById(
-        @Param('exhibition_id') exhibitionId: string,
-        @Param('booth_id') boothId: string,
+        @Param('exhibitionId') exhibitionId: string,
+        @Param('boothId') boothId: string,
         @Paginate() query: PaginateQuery,
     ) {
         return this.exhibitionService.getBoothById(

@@ -2,19 +2,18 @@ import { SpaceTemplateConverter } from '@/components/exhibition/converters/space
 import { SpaceTemplate } from '@/components/exhibition/entities/space-template.entity';
 import { DbConnection } from '@/database/config/db';
 import { PaginateQuery } from '@/decorators/paginate.decorator';
+import { paginate } from '@/utils/pagination';
 import {
     Injectable,
     NotFoundException,
     BadRequestException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FilterOperator, paginate } from 'nestjs-paginate';
 import { Repository } from 'typeorm';
 import { SpaceTemplateListConverter } from '../converters/space-template-list.converter';
 
 @Injectable()
 export class SpaceTemplateService {
-    private readonly limitDefault = 10;
     constructor(
         @InjectRepository(SpaceTemplate, DbConnection.exhibitionCon)
         private readonly spaceTemplateRepository: Repository<SpaceTemplate>,
@@ -23,10 +22,9 @@ export class SpaceTemplateService {
     ) {}
 
     async findSpaceTemplateById(id: string, populate: string[]) {
-        const allowPopulate = ['positionSpaces', 'spaces'];
-
+        const populatableColumns = ['spaces', 'spaceTemplatePositions'];
         populate.forEach((value) => {
-            if (!allowPopulate.includes(value)) {
+            if (!populatableColumns.includes(value)) {
                 throw new BadRequestException(
                     'Query value is not allowed ' + value,
                 );
@@ -47,44 +45,30 @@ export class SpaceTemplateService {
     }
 
     async getSpaceTemplates(query: PaginateQuery) {
-        const spaceTemplate = await paginate(
+        const sortableColumns = ['name', 'createdDate'];
+        const searchableColumns = ['name'];
+        const defaultSortBy = [['createdAt', 'DESC']];
+        const populatableColumns = [
+            'spaces',
+            'spaceTemplatePositions',
+            'spaceTemplateLocations',
+        ];
+        const [spaceTemplates, total] = await paginate(
             query,
             this.spaceTemplateRepository,
             {
-                maxLimit: query.limit,
-                defaultLimit: this.limitDefault,
-                sortableColumns: ['id', 'name'],
-                defaultSortBy: [['createdAt', 'DESC']],
-                searchableColumns: ['id', 'name'],
-                filterableColumns: {
-                    name: [FilterOperator.EQ, FilterOperator.IN],
-                },
-                // relations: relations,
+                sortableColumns,
+                defaultSortBy,
+                searchableColumns,
+                populatableColumns,
             },
         );
 
         return this.spaceTemplateListConverter.toDto(
-            spaceTemplate.meta.currentPage,
-            spaceTemplate.meta.itemsPerPage,
-            spaceTemplate.meta.totalItems,
-            spaceTemplate.data,
+            query.page,
+            query.limit,
+            total,
+            spaceTemplates,
         );
-    }
-
-    private parseRelations(relations: string[]) {
-        const results: ('spaces' | 'positionSpaces' | 'exhibitions')[] = [];
-        for (const relation of relations) {
-            if (relation === 'spaces') {
-                results.push('spaces');
-            }
-            if (relation === 'positionSpaces') {
-                results.push('positionSpaces');
-            }
-            if (relation === 'exhibitions') {
-                results.push('exhibitions');
-            }
-        }
-
-        return results;
     }
 }

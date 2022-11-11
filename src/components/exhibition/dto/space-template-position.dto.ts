@@ -10,13 +10,12 @@
  * Do not edit the class manually.
  */
 
-export interface SpaceTemplateLocation {
+export interface SpaceTemplatePosition {
     readonly id: number;
-    name: string;
-    position_x?: number;
-    position_y?: number;
-    position_z?: number;
-    rotation_x?: number;
-    rotation_y?: number;
-    rotation_z?: number;
+    position: string;
+    type: Type;
+}
+export enum Type {
+    Image = 'image',
+    Video = 'video',
 }

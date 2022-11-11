@@ -690,6 +690,7 @@ paths:
         description: |
           List of populatable columns:
             - booth_organization_template
+            - booth_organization_template.booth_organization_template_positions
             - booth_organization_products.product
             - booth_organization_projects.project
             - booth_organization_videos.video
@@ -826,9 +827,10 @@ paths:
             type: array
             items:
               type: string
-              example: 'position_spaces'
-          description:
-           " Searching on allow columns:['position_spaces', 'spaces']"
+              example: 'space_template_positions'
+          description: |
+            - space_template_positions
+            - spaces
       responses:
         '200':
           description: OK
@@ -923,9 +925,10 @@ paths:
           type: array
           items:
             type: string
-            example: 'position_spaces'
-        description:
-         " Searching on allow columns:['position_spaces, spaces']"
+            example: 'space_template_positions'
+        description: |
+          - space_template_positions
+          - spaces
       responses:
         '200':
           description: OK
@@ -991,9 +994,18 @@ paths:
           type: array
           items:
             type: string
-            example: 'position_spaces'
-        description:
-         " Searching on allow columns:['space_datas, space_datas.position_space, space_template']"
+            example: 'space_template'
+        description: |
+            List of populatable columns:
+            - exhibition
+            - space_template
+            - space_template.space_template_positions
+            - space_images
+            - space_images.image
+            - space_images.space_template_position
+            - space_videos
+            - space_videos.video
+            - space_videos.space_template_position
       tags:
         - Space
       responses:
@@ -2003,12 +2015,6 @@ components:
       type: object
       required:
         - id
-        - position_x
-        - position_y
-        - position_z
-        - rotation_x
-        - rotation_y
-        - rotation_z
         - booth_organization_template_id
       properties:
         id:
@@ -2218,9 +2224,8 @@ components:
       type: object
       required:
         - id
-        - space_template_id
         - name
-        - space_datas
+        - exhibition_id
       properties:
         id:
           type: integer
@@ -2234,42 +2239,141 @@ components:
           minLength: 1
           maxLength: 255
           example: 'Mau khong gian tien sanh mac dinh'
-        user_id:
-          type: integer
-          readOnly: true
+        exhibition_id:
+          type: number
           example: 1
-        space_datas:
+        locations:
           type: array
           items:
-            $ref: '#/components/schemas/SpaceData'
-    SpaceData:
+            $ref: '#/components/schemas/Location'
+        space_images:
+          type: array
+          items:
+            $ref: '#/components/schemas/SpaceImage'
+        space_videos:
+          type: array
+          items:
+            $ref: '#/components/schemas/SpaceVideo'
+    SpaceVideo:
       type: object
       required:
         - id
-        - position_space_id
-        - media_id
+        - space_id
+        - space_template_position_id
+        - video_id
       properties:
         id:
           type: integer
           readOnly: true
-        position_space_id:
-          type: integer
+          example: 1
+        space_id:
+          type: number
           writeOnly: true
-        position_space:
-          $ref: '#/components/schemas/PositionSpace'
-        selected_media_id:
-          type: integer
+          example: 1
+        space_template_position_id:
+          type: number
           writeOnly: true
-        media_id:
-          type: integer
+          example: 1
+        select_media_id:
+          type: number
+          writeOnly: true
+          example: 1
+        video_id:
+          type: number
           readOnly: true
+          example: 1
         media_data:
           type: string
           writeOnly: true
-        title:
+          example: "base64 string"
+    SpaceImage:
+      type: object
+      required:
+        - id
+        - space_id
+        - space_template_position_id
+        - image_id
+      properties:
+        id:
+          type: integer
+          readOnly: true
+          example: 1
+        space_id:
+          type: number
+          writeOnly: true
+          example: 1
+        space_template_position_id:
+          type: number
+          writeOnly: true
+          example: 1
+        select_media_id:
+          type: number
+          writeOnly: true
+          example: 1
+        image_id:
+          type: number
+          readOnly: true
+          example: 1
+        media_data:
           type: string
-        description:
+          writeOnly: true
+          example: "base64 string"
+    Location:
+      type: object
+      required:
+        - id
+        - status
+        - space_id
+        - space_template_location_id
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        status:
           type: string
+          enum: ['available', 'reserved']
+          default: 'available'
+        space_id:
+          type: number
+          writeOnly: true
+          example: 1
+        space_template_location_id:
+          type: number
+          writeOnly: true
+          example: 1
+        space_template_location:
+          $ref: '#/components/schemas/SpaceTemplateLocation'
+    SpaceTemplateLocation:
+      readOnly: true
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          example: 'a'
+        position_x:
+          type: number
+          example: 1
+        position_y:
+          type: number
+          example: 1
+        position_z:
+          type: number
+          example: 1
+        rotation_x:
+          type: number
+          example: 1
+        rotation_y:
+          type: number
+          example: 1
+        rotation_z:
+          type: number
+          example: 1
     BoothTemplateList:
       type: object
       required:
@@ -2351,6 +2455,8 @@ components:
         - name
         - model_id
         - thumbnail_id
+        - created_by
+        - created_date
       properties:
         id:
           type: integer
@@ -2359,19 +2465,27 @@ components:
           type: string
           minLength: 1
           maxLength: 255
+        created_by:
+          type: number
+          example: 1
+          readOnly: true
         model_id:
           type: integer
           readOnly: true
         thumbnail_id:
           type: integer
           readOnly: true
-        exhibition_map_id:
+        map_id:
           type: integer
           readOnly: true
-        position_spaces:
+        created_date:
+          type: string
+          pattern: '^[1-9]\d{3}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$'
+          example: '2022-01-01T00:00:00.000Z'
+        space_template_positions:
           type: array
           items:
-            $ref: '#/components/schemas/PositionSpace'
+            $ref: '#/components/schemas/SpaceTemplatePosition'
         spaces:
           type: array
           items:
@@ -2415,7 +2529,7 @@ components:
           type: string
           description: "input base64 string example: iVBORw0KGgoAAAANSUhEUgAABuIAAASxCAYAAADF8I..."
           writeOnly: true
-    PositionSpace:
+    SpaceTemplatePosition:
       type: object
       readOnly: true
       required:
@@ -2426,15 +2540,12 @@ components:
         id:
           type: integer
           readOnly: true
-        object_3d_id:
+        position:
           type: string
-          pattern: '^[a-zA-Z\d\-_.,\s]+$'
           maxLength: 255
         type:
           type: string
-          description: "input value [image, video, text]"
-          minLength: 1
-          maxLength: 255
+          enum: ['image','video']
     SpaceTemplateList:
       type: object
       required:

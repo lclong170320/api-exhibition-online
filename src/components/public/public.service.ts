@@ -1,9 +1,9 @@
 import { DbConnection } from '@/database/config/db';
-import { PaginateQuery } from '@/decorators/paginate.decorator';
+// import { PaginateQuery } from '@/decorators/paginate.decorator';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
-import { ExhibitionConverter } from '../exhibition/converters/exhibition.converter';
+// import { ExhibitionConverter } from '../exhibition/converters/exhibition.converter';
 import { Exhibition } from '../exhibition/entities/exhibition.entity';
 import { MediaConverter } from '@/components/media/converters/media.converter';
 import { Media } from '@/components/media/entities/media.entity';
@@ -15,52 +15,45 @@ export class PublicService {
         private readonly exhibitionRepository: Repository<Exhibition>,
         @InjectDataSource(DbConnection.mediaCon)
         private readonly mediaDataSource: DataSource,
-        private readonly exhibitionConverter: ExhibitionConverter,
+        // private readonly exhibitionConverter: ExhibitionConverter,
         private readonly mediaConverter: MediaConverter,
     ) {}
 
-    async getExhibitionById(id: string, query: PaginateQuery) {
-        const exhibitionId = parseInt(id);
-        const populatableColumns = [
-            'booths',
-            'booths.boothProjects',
-            'booths.boothProducts',
-            'booths.boothVideos',
-            'booths.boothImages',
-            'booths.boothProjects.boothTemplatePosition',
-            'booths.boothProducts.boothTemplatePosition',
-            'booths.boothVideos.boothTemplatePosition',
-            'booths.boothImages.boothTemplatePosition',
-            'booths.boothTemplate',
-            'booths.location',
-            'boothOrganization',
-            'boothOrganization.boothTemplate',
-            'boothOrganization.boothTemplate.positionBooths',
-            'boothOrganization.boothOrganizationData',
-            'boothTemplates.positionBooths',
-            'boothTemplates',
-            'category',
-            'space.spaceTemplate',
-            'space.spaceDatas',
-            'space.spaceTemplate.positionSpaces',
-            'space',
-            'spaceTemplate',
-            'spaceTemplate.positionSpaces',
-        ];
+    // async getExhibitionById(id: string, query: PaginateQuery) {
+    //     const exhibitionId = parseInt(id);
+    //     const populatableColumns = [
+    //         'booths',
+    //         'booths.boothData',
+    //         'booths.boothTemplate',
+    //         'booths.locationStatus',
+    //         'boothOrganization',
+    //         'boothOrganization.boothTemplate',
+    //         'boothOrganization.boothTemplate.positionBooths',
+    //         'boothOrganization.boothOrganizationData',
+    //         'boothTemplates.positionBooths',
+    //         'boothTemplates',
+    //         'category',
+    //         'space.spaceTemplate',
+    //         'space.spaceDatas',
+    //         'space.spaceTemplate.positionSpaces',
+    //         'space',
+    //         'spaceTemplate',
+    //         'spaceTemplate.positionSpaces',
+    //     ];
 
-        const exhibitionEntity = await this.exhibitionRepository.findOne({
-            where: {
-                id: exhibitionId,
-            },
-            relations: this.parsePopulate(query.populate, populatableColumns),
-        });
+    //     const exhibitionEntity = await this.exhibitionRepository.findOne({
+    //         where: {
+    //             id: exhibitionId,
+    //         },
+    //         relations: this.parsePopulate(query.populate, populatableColumns),
+    //     });
 
-        if (!exhibitionEntity) {
-            throw new NotFoundException(`The 'id' not found: ${exhibitionId}`);
-        }
+    //     if (!exhibitionEntity) {
+    //         throw new NotFoundException(`The 'id' not found: ${exhibitionId}`);
+    //     }
 
-        return this.exhibitionConverter.toDto(exhibitionEntity);
-    }
+    //     return this.exhibitionConverter.toDto(exhibitionEntity);
+    // }
 
     private parsePopulate(populate: string[], populatableColumns: string[]) {
         return populate.filter((value) => populatableColumns.includes(value));

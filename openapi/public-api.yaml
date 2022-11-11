@@ -977,3 +977,129 @@ components:
           type: integer
           writeOnly: true
           example: 1
+    Location:
+      type: object
+      required:
+        - id
+        - status
+        - space_id
+        - space_template_location_id
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        status:
+          type: string
+          enum: ['available', 'reserved']
+          default: 'available'
+        space_id:
+          type: number
+          writeOnly: true
+          example: 1
+        space_template_location_id:
+          type: number
+          writeOnly: true
+          example: 1
+        space_template_location:
+          $ref: '#/components/schemas/SpaceTemplateLocation'
+    SpaceTemplateLocation:
+      readOnly: true
+      type: object
+      required:
+        - id
+        - name
+        - position_x
+        - position_y
+        - position_z
+        - rotation_x
+        - rotation_y
+        - rotation_z
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          example: 'a'
+        position_x:
+          type: number
+          example: 1
+        position_y:
+          type: number
+          example: 1
+        position_z:
+          type: number
+          example: 1
+        rotation_x:
+          type: number
+          example: 1
+        rotation_y:
+          type: number
+          example: 1
+        rotation_z:
+          type: number
+          example: 1
+    SpaceVideo:
+      type: object
+      required:
+        - id
+        - space_id
+        - space_template_position_id
+        - video_id
+      properties:
+        id: 
+          type: integer
+          readOnly: true
+          example: 1
+        space_id:
+          type: number
+          writeOnly: true
+          example: 1
+        space_template_position_id:
+          type: number
+          writeOnly: true
+          example: 1
+        select_media_id:
+          type: number
+          writeOnly: true
+          example: 1
+        video_id:
+          type: number
+          readOnly: true
+          example: 1
+        media_data:
+          type: string
+          writeOnly: true
+          example: "base64 string"
+    SpaceImage:
+      type: object
+      required:
+        - id
+        - space_id
+        - space_template_position_id
+        - image_id
+      properties:
+        id: 
+          type: integer
+          readOnly: true
+          example: 1
+        space_id:
+          type: number
+          writeOnly: true
+          example: 1
+        space_template_position_id:
+          type: number
+          writeOnly: true
+          example: 1
+        select_media_id:
+          type: number
+          writeOnly: true
+          example: 1
+        image_id:
+          type: number
+          readOnly: true
+          example: 1
+        media_data:
+          type: string
+          writeOnly: true
+          example: "base64 string"

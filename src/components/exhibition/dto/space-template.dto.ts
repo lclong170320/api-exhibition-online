@@ -10,14 +10,16 @@
  * Do not edit the class manually.
  */
 import { Space } from './space.dto';
-import { PositionSpace } from './position-space.dto';
+import { SpaceTemplatePosition } from './space-template-position.dto';
 
 export interface SpaceTemplate {
     readonly id: number;
     name: string;
+    readonly created_by: number;
     readonly model_id: number;
     readonly thumbnail_id: number;
-    readonly exhibition_map_id?: number;
-    position_spaces?: Array<PositionSpace>;
+    readonly map_id?: number;
+    created_date: string;
+    space_template_positions?: Array<SpaceTemplatePosition>;
     spaces?: Array<Space>;
 }

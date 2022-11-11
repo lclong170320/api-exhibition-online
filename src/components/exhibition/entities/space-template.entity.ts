@@ -1,22 +1,27 @@
 import {
     Column,
     CreateDateColumn,
+    DeleteDateColumn,
     Entity,
     OneToMany,
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from 'typeorm';
-import { PositionSpace } from './position-space.entity';
-import { SpaceTemplateLocation } from './space-template-location.entity';
+import { SpaceTemplatePosition } from './space-template-position.entity';
 import { Space } from './space.entity';
+import { SpaceTemplateLocation } from './space-template-location.entity';
 
-@Entity({ name: 'space_templates' })
+@Entity({ name: 'space_template' })
 export class SpaceTemplate {
+    // table columns
     @PrimaryGeneratedColumn()
     id: number;
 
     @Column({ name: 'name' })
     name: string;
+
+    @Column({ name: 'created_by' })
+    createdBy: number;
 
     @Column({ name: 'model_id' })
     modelId: number;
@@ -24,8 +29,11 @@ export class SpaceTemplate {
     @Column({ name: 'thumbnail_id' })
     thumbnailId: number;
 
-    @Column({ name: 'exhibition_map_id' })
-    exhibitionMapId: number;
+    @Column({ name: 'map_id' })
+    mapId: number;
+
+    @Column({ type: 'datetime', name: 'created_date' })
+    createdDate: Date;
 
     @CreateDateColumn({
         type: 'timestamp',
@@ -39,18 +47,26 @@ export class SpaceTemplate {
     })
     updatedAt: Date;
 
+    @DeleteDateColumn({
+        type: 'timestamp',
+        name: 'deleted_at',
+        nullable: true,
+    })
+    deletedAt: Date;
+
+    // relation columns
     @OneToMany(() => Space, (space) => space.spaceTemplate)
     spaces: Space[];
 
     @OneToMany(
-        () => PositionSpace,
-        (positionSpace) => positionSpace.spaceTemplate,
+        () => SpaceTemplatePosition,
+        (spaceTemplatePosition) => spaceTemplatePosition.spaceTemplate,
     )
-    positionSpaces: PositionSpace[];
+    spaceTemplatePositions: SpaceTemplatePosition[];
 
     @OneToMany(
         () => SpaceTemplateLocation,
         (spaceTemplateLocation) => spaceTemplateLocation.spaceTemplate,
     )
-    spaceTemplateLocation: SpaceTemplateLocation[];
+    spaceTemplateLocations: SpaceTemplateLocation[];
 }

@@ -17,12 +17,12 @@ import { BoothOrganizationTemplate } from './booth-organization-template.dto';
 
 export interface BoothOrganization {
     readonly id: number;
-    position_x: number;
-    position_y: number;
-    position_z: number;
-    rotation_x: number;
-    rotation_y: number;
-    rotation_z: number;
+    position_x?: number;
+    position_y?: number;
+    position_z?: number;
+    rotation_x?: number;
+    rotation_y?: number;
+    rotation_z?: number;
     booth_organization_template_id?: number;
     booth_organization_template?: BoothOrganizationTemplate;
     booth_organization_images?: Array<BoothOrganizationImage>;

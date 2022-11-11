@@ -10,13 +10,14 @@
  * Do not edit the class manually.
  */
 
-export interface SpaceTemplateLocation {
+import { SpaceTemplatePosition } from './space-template-position.dto';
+
+export interface SpaceImage {
     readonly id: number;
-    name: string;
-    position_x?: number;
-    position_y?: number;
-    position_z?: number;
-    rotation_x?: number;
-    rotation_y?: number;
-    rotation_z?: number;
+    space_id: number;
+    space_template_position_id: number;
+    readonly space_template_position?: SpaceTemplatePosition;
+    select_media_id?: number;
+    readonly image_id: number;
+    media_data?: string;
 }

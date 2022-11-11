@@ -9,11 +9,16 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-
 import { SpaceTemplateLocation } from './space-template-location.dto';
 
 export interface Location {
     readonly id: number;
-    status: string;
-    space_template_location: SpaceTemplateLocation;
+    status: Status;
+    space_id: number;
+    space_template_location_id: number;
+    readonly space_template_location?: SpaceTemplateLocation;
+}
+export enum Status {
+    AVAILABLE = 'available',
+    RESERVED = 'reserved',
 }
