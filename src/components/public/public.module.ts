@@ -53,12 +53,13 @@ import { BoothOrganizationProductConverter } from '../exhibition/converters/boot
 import { BoothOrganizationProjectConverter } from '../exhibition/converters/booth-organization-project.converter';
 import { BoothOrganizationTemplateConverter } from '../exhibition/converters/booth-organization-template.converter';
 import { SpaceTemplatePosition } from '../exhibition/entities/space-template-position.entity';
+import { ExhibitionConverter } from '../exhibition/converters/exhibition.converter';
 
 @Module({
     controllers: [PublicController],
     providers: [
         PublicService,
-        // ExhibitionConverter,
+        ExhibitionConverter,
         CategoryConverter,
         SpaceTemplateConverter,
         SpaceConverter,

@@ -1,4 +1,4 @@
-// import { Paginate, PaginateQuery } from '@/decorators/paginate.decorator';
+import { Paginate, PaginateQuery } from '@/decorators/paginate.decorator';
 import { Controller, Get, Param } from '@nestjs/common';
 import { PublicService } from '../public/public.service';
 
@@ -6,13 +6,13 @@ import { PublicService } from '../public/public.service';
 export class PublicController {
     constructor(private readonly publicService: PublicService) {}
 
-    // @Get('/exhibitions/:id')
-    // getExhibitionById(
-    //     @Param('id') id: string,
-    //     @Paginate() query: PaginateQuery,
-    // ) {
-    //     return this.publicService.getExhibitionById(id, query);
-    // }
+    @Get('/exhibitions/:id')
+    getExhibitionById(
+        @Param('id') id: string,
+        @Paginate() query: PaginateQuery,
+    ) {
+        return this.publicService.getExhibitionById(id, query);
+    }
 
     @Get('/medias/:id')
     getMediaById(@Param('id') id: string) {
