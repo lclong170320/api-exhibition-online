@@ -41,7 +41,7 @@ import { BoothVideo as BoothVideoDto } from '../dto/booth-video.dto';
 import { BoothProject as BoothProjectDto } from '../dto/booth-project.dto';
 import { BoothProduct as BoothProductDto } from '../dto/booth-product.dto';
 import { Image } from '../entities/image.entity';
-import { Video } from '../entities/Video.entity';
+import { Video } from '../entities/video.entity';
 import { Project } from '../entities/project.entity';
 import { Product } from '../entities/product.entity';
 import { BoothOrganizationTemplate } from '../entities/booth-organization-template.entity';
