@@ -19,7 +19,7 @@ export class BoothConverter {
         private readonly boothVideoConverter: BoothVideoConverter,
         private readonly boothProjectConverter: BoothProjectConverter,
         private readonly boothProductConverter: BoothProductConverter,
-    ) { }
+    ) {}
     toDto(entity: Booth) {
         const dto = {
             id: entity.id,
@@ -28,31 +28,33 @@ export class BoothConverter {
             booth_template: entity.boothTemplate
                 ? this.boothTemplateConverter.toDto(entity.boothTemplate)
                 : undefined,
-            location: entity.location ? this.locationConverter.toDto(entity.location) : undefined,
+            location: entity.location
+                ? this.locationConverter.toDto(entity.location)
+                : undefined,
             live_streams: entity.liveStreams
                 ? entity.liveStreams.map((data) =>
-                    this.liveStreamConverter.toDto(data),
-                )
+                      this.liveStreamConverter.toDto(data),
+                  )
                 : undefined,
             booth_images: entity.boothImages?.length
                 ? entity.boothImages.map((data) =>
-                    this.boothImageConverter.toDto(data),
-                )
+                      this.boothImageConverter.toDto(data),
+                  )
                 : undefined,
             booth_videos: entity.boothVideos?.length
                 ? entity.boothVideos.map((data) =>
-                    this.boothVideoConverter.toDto(data),
-                )
+                      this.boothVideoConverter.toDto(data),
+                  )
                 : undefined,
             booth_projects: entity.boothProjects?.length
                 ? entity.boothProjects.map((data) =>
-                    this.boothProjectConverter.toDto(data),
-                )
+                      this.boothProjectConverter.toDto(data),
+                  )
                 : undefined,
             booth_products: entity.boothProducts?.length
                 ? entity.boothProducts.map((data) =>
-                    this.boothProductConverter.toDto(data),
-                )
+                      this.boothProductConverter.toDto(data),
+                  )
                 : undefined,
         } as BoothDto;
 

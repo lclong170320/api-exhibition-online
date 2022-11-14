@@ -11,7 +11,7 @@ export class BoothOrganizationVideoConverter {
     toDto(entity: BoothOrganizationVideo) {
         const dto = {
             id: entity.id,
-            video_id: entity.video?.id ?? undefined,
+            video_id: entity.video?.videoId ?? undefined,
             booth_organization_template_position:
                 entity.boothOrganizationTemplatePosition
                     ? this.boothOrganizationTemplatePositionConverter.toDto(

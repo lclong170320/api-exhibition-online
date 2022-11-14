@@ -7,7 +7,7 @@ export class BoothVideoConverter {
     toDto(entity: BoothVideo) {
         const dto = {
             id: entity.id,
-            video_id: entity.video?.id ?? undefined,
+            video_id: entity.video?.videoId ?? undefined,
             booth_template_position: entity.boothTemplatePosition ?? undefined,
         } as BoothVideoDto;
 

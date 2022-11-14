@@ -7,7 +7,7 @@ export class BoothImageConverter {
     toDto(entity: BoothImage) {
         const dto = {
             id: entity.id,
-            image_id: entity.image?.id ?? undefined,
+            image_id: entity.image?.imageId ?? undefined,
             booth_template_position: entity.boothTemplatePosition ?? undefined,
         } as BoothImageDto;
 
