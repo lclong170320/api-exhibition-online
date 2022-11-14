@@ -24,7 +24,7 @@ export class PublicService {
         const populatableColumns = [
             'booths',
             'booths.boothTemplate',
-            'booths.location',
+            'booths.location.spaceTemplateLocation',
             'space',
             'space.spaceTemplate',
             'space.spaceImages.image',
