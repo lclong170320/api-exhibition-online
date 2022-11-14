@@ -181,6 +181,9 @@ export class BoothOrganizationService {
                 return updatedBoothOrganization;
             },
         );
+
+        delete updatedBoothOrganization['boothOrganizationTemplate'];
+
         return this.boothOrganizationConverter.toDto(updatedBoothOrganization);
     }
 
@@ -522,7 +525,7 @@ export class BoothOrganizationService {
         }
 
         const imageEntity = new Image();
-        imageEntity.imageId = boothOrganizationImageDto.image_id;
+        imageEntity.imageId = boothOrganizationImageDto.selected_media_id;
 
         if (boothOrganizationImageDto.media_data) {
             imageEntity.imageId = await this.createUrlMedias(
@@ -566,7 +569,7 @@ export class BoothOrganizationService {
         }
 
         const videoEntity = new Video();
-        videoEntity.videoId = boothOrganizationVideoDto.video_id;
+        videoEntity.videoId = boothOrganizationVideoDto.selected_media_id;
 
         if (boothOrganizationVideoDto.media_data) {
             videoEntity.videoId = await this.createUrlMedias(
