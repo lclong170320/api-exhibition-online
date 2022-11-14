@@ -12,6 +12,7 @@
 
 import { Status } from '../entities/exhibition.entity';
 import { BoothOrganization } from './booth-organization.dto';
+import { Booth } from './booth.dto';
 import { Category } from './category.dto';
 import { Space } from './space.dto';
 
@@ -33,4 +34,5 @@ export interface Exhibition {
     category?: Category;
     space?: Space;
     booth_organization?: BoothOrganization;
+    booths?: Array<Booth>;
 }
