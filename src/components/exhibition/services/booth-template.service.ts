@@ -17,6 +17,11 @@ import { PaginateQuery } from '@/decorators/paginate.decorator';
 import { paginate, FilterOperator } from 'nestjs-paginate';
 import { BoothOrganizationTemplate } from '../entities/booth-organization-template.entity';
 import { BoothOrganizationTemplateConverter } from '../converters/booth-organization-template.converter';
+import { BoothTemplate as BoothTemplateDto } from '@/components/exhibition/dto/booth-template.dto';
+import { BoothTemplatePosition as BoothTemplatePositionDto } from '@/components/exhibition/dto/booth-template-position.dto';
+
+import { BoothTemplatePosition } from '../entities/booth-template-position.entity';
+import { BoothTemplatePositionConverter } from '../converters/booth-template-position.converter';
 
 @Injectable()
 export class BoothTemplateService {
@@ -29,6 +34,7 @@ export class BoothTemplateService {
         private readonly dataSource: DataSource,
         private boothTemplateListConverter: BoothTemplateListConverter,
         private boothTemplateConverter: BoothTemplateConverter,
+        private boothTemplatePositionConverter: BoothTemplatePositionConverter,
         private boothOrganizationTemplateConverter: BoothOrganizationTemplateConverter,
         private readonly httpService: HttpService,
         private readonly configService: ConfigService,
@@ -101,80 +107,74 @@ export class BoothTemplateService {
         return result.id;
     }
 
-    // async createBoothTemplate(
-    //     boothTemplateDto: BoothTemplateDto,
-    // ): Promise<BoothTemplateDto> {
-    //     const allowExtension = this.configService
-    //         .get<string>('TYPE_BOOTH_TEMPLATE')
-    //         .split(',');
-    //     boothTemplateDto.position_booths.map((item) => {
-    //         if (!allowExtension.includes(item.type)) {
-    //             throw new BadRequestException(
-    //                 'Not allowed extension: ' + item.type,
-    //             );
-    //         }
-    //     });
+    async createBoothTemplate(
+        boothTemplateDto: BoothTemplateDto,
+    ): Promise<BoothTemplateDto> {
+        const createdBoothTemplate = await this.dataSource.transaction(
+            async (manager) => {
+                const boothTemplateRepository =
+                    manager.getRepository(BoothTemplate);
+                const boothTemplatePositionRepository = manager.getRepository(
+                    BoothTemplatePosition,
+                );
 
-    //     const createdBoothTemplate = await this.dataSource.transaction(
-    //         async (manager) => {
-    //             const boothTemplateRepository =
-    //                 manager.getRepository(BoothTemplate);
-    //             const positionBoothRepository = manager.getRepository(
-    //                 BoothOrganizationTemplatePosition,
-    //             );
+                const created_by = 1; // TODO: handle getUserId from access token
+                const boothTemplateEntity =
+                    this.boothTemplateConverter.toEntity(boothTemplateDto);
+                boothTemplateEntity.modelId = await this.createUrlMedias(
+                    boothTemplateDto.model_data,
+                );
 
-    //             const created_by = 1; // TODO: handle getUserId from access token
-    //             const boothTemplateEntity =
-    //                 this.boothTemplateConverter.toEntity(boothTemplateDto);
-    //             boothTemplateEntity.modelId = await this.createUrlMedias(
-    //                 boothTemplateDto.model_data,
-    //             );
+                boothTemplateEntity.thumbnailId = await this.createUrlMedias(
+                    boothTemplateDto.thumbnail_data,
+                );
+                boothTemplateEntity.createdBy = created_by;
+                boothTemplateEntity.createdDate = new Date();
+                const createdBoothTemplate = await boothTemplateRepository.save(
+                    boothTemplateEntity,
+                );
+                const boothTemplatePosition = await Promise.all(
+                    boothTemplateDto.booth_template_positions.map(
+                        async (data) => {
+                            const boothTemplatePosition =
+                                await this.createBoothTemplatePosition(
+                                    data,
+                                    createdBoothTemplate,
+                                    boothTemplatePositionRepository,
+                                );
+                            return boothTemplatePosition;
+                        },
+                    ),
+                );
+                createdBoothTemplate.boothTemplatePositions =
+                    boothTemplatePosition;
 
-    //             boothTemplateEntity.thumbnailId = await this.createUrlMedias(
-    //                 boothTemplateDto.thumbnail_data,
-    //             );
-    //             boothTemplateEntity.createdBy = created_by;
-    //             boothTemplateEntity.createdDate = new Date();
-    //             const createdBoothTemplate = await boothTemplateRepository.save(
-    //                 boothTemplateEntity,
-    //             );
+                return createdBoothTemplate;
+            },
+        );
 
-    //             const positionBooths = await Promise.all(
-    //                 boothTemplateDto.position_booths.map(async (data) => {
-    //                     const positionBooth = await this.createPositionBooth(
-    //                         data,
-    //                         createdBoothTemplate,
-    //                         positionBoothRepository,
-    //                     );
-    //                     return positionBooth;
-    //                 }),
-    //             );
-    //             createdBoothTemplate.boothTemplatePositions = positionBooths;
+        return this.boothTemplateConverter.toDto(createdBoothTemplate);
+    }
 
-    //             return createdBoothTemplate;
-    //         },
-    //     );
+    private async createBoothTemplatePosition(
+        boothTemplatePositionDto: BoothTemplatePositionDto,
+        boothTemplateEntity: BoothTemplate,
+        boothTemplatePositionRepository: Repository<BoothTemplatePosition>,
+    ): Promise<BoothTemplatePosition> {
+        const boothTemplatePositionEntity =
+            this.boothTemplatePositionConverter.toEntity(
+                boothTemplatePositionDto,
+            );
 
-    //     return this.boothTemplateConverter.toDto(createdBoothTemplate);
-    // }
+        boothTemplatePositionEntity.boothTemplate = boothTemplateEntity;
 
-    // private async createPositionBooth(
-    //     positionBoothDto: PositionBoothDto,
-    //     boothTemplateEntity: BoothTemplate,
-    //     boothOrganizationTemplatePositionRepository: Repository<BoothOrganizationTemplatePosition>,
-    // ): Promise<BoothOrganizationTemplatePosition> {
-    //     const positionBoothEntity =
-    //         this.positionBoothConverter.toEntity(positionBoothDto);
+        const createdBoothTemplatePosition =
+            await boothTemplatePositionRepository.save(
+                boothTemplatePositionEntity,
+            );
 
-    //     positionBoothEntity.boothTemplate = boothTemplateEntity;
-
-    //     const createdPositionBooth =
-    //         await boothOrganizationTemplatePositionRepository.save(
-    //             positionBoothEntity,
-    //         );
-
-    //     return createdPositionBooth;
-    // }
+        return createdBoothTemplatePosition;
+    }
 
     async findBoothOrganizationTemplateById(id: string, populate: string[]) {
         const boothOrganizationTemplateRepository =

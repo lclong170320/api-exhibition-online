@@ -502,7 +502,7 @@ components:
         - created_date
         - model_id
         - thumbnail_id
-        - position_booths
+        - booth_template_positions
       properties:
         id:
           type: integer
@@ -535,11 +535,11 @@ components:
         thumbnail_id:
           type: integer
           readOnly: true
-        position_booths:
+        booth_template_positions:
           writeOnly: true
           type: array
           items:
-            $ref: '#/components/schemas/PositionBooth'
+            $ref: '#/components/schemas/BoothTemplatePosition'
     PositionBooth:
       type: object
       required:

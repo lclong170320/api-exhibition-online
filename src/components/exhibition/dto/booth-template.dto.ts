@@ -9,7 +9,8 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { BoothOrganization } from './booth-organization.dto';
+import { BoothTemplatePosition } from './booth-template-position.dto';
+import { Booth } from './booth.dto';
 
 export interface BoothTemplate {
     readonly id: number;
@@ -21,7 +22,8 @@ export interface BoothTemplate {
     type: Type;
     readonly model_id?: number;
     readonly thumbnail_id?: number;
-    booth_organizations?: Array<BoothOrganization>;
+    booths?: Array<Booth>;
+    booth_template_positions?: Array<BoothTemplatePosition>;
 }
 
 export enum Type {

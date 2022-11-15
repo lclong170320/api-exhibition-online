@@ -54,6 +54,7 @@ import { BoothOrganizationProjectConverter } from '../exhibition/converters/boot
 import { BoothOrganizationTemplateConverter } from '../exhibition/converters/booth-organization-template.converter';
 import { SpaceTemplatePosition } from '../exhibition/entities/space-template-position.entity';
 import { ExhibitionConverter } from '../exhibition/converters/exhibition.converter';
+import { BoothTemplatePositionConverter } from '../exhibition/converters/booth-template-position.converter';
 
 @Module({
     controllers: [PublicController],
@@ -85,6 +86,7 @@ import { ExhibitionConverter } from '../exhibition/converters/exhibition.convert
         BoothOrganizationProductConverter,
         BoothOrganizationProjectConverter,
         BoothOrganizationTemplateConverter,
+        BoothTemplatePositionConverter,
     ],
     imports: [
         TypeOrmModule.forFeature(

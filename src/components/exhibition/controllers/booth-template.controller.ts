@@ -1,6 +1,7 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { BoothTemplateService } from '@/components/exhibition/services/booth-template.service';
 import { Paginate, PaginateQuery } from '@/decorators/paginate.decorator';
+import { BoothTemplate as BoothTemplateDto } from '@/components/exhibition/dto/booth-template.dto';
 
 @Controller('booth-templates')
 export class BoothTemplateController {
@@ -31,5 +32,10 @@ export class BoothTemplateController {
             id,
             query.populate,
         );
+    }
+
+    @Post()
+    createBoothTemplate(@Body() boothTemplateDto: BoothTemplateDto) {
+        return this.boothTemplateService.createBoothTemplate(boothTemplateDto);
     }
 }

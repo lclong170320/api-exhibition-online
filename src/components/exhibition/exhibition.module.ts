@@ -64,6 +64,7 @@ import { BoothImage } from './entities/booth-image.entity';
 import { BoothProduct } from './entities/booth-product.entity';
 import { BoothProject } from './entities/booth-project.entity';
 import { BoothVideo } from './entities/booth-video.entity';
+import { BoothTemplatePositionConverter } from './converters/booth-template-position.converter';
 
 @Module({
     controllers: [
@@ -113,6 +114,7 @@ import { BoothVideo } from './entities/booth-video.entity';
         BoothOrganizationProductConverter,
         BoothOrganizationProjectConverter,
         BoothOrganizationTemplateConverter,
+        BoothTemplatePositionConverter,
     ],
     imports: [
         TypeOrmModule.forFeature(
