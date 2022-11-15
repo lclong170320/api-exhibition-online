@@ -443,7 +443,7 @@ paths:
               type: string
               example: 'position_booths'
           description:
-           " Searching on allow columns:['position_booths', 'booth_organizations']"
+           " Searching on allow columns:['booth_template_positions', 'booths']"
       responses:
         '200':
           description: OK

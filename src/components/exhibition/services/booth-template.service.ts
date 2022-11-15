@@ -41,7 +41,7 @@ export class BoothTemplateService {
     ) {}
 
     async findBoothTemplateById(id: string, populate: string[]) {
-        const allowPopulate = ['positionBooths', 'boothOrganizations'];
+        const allowPopulate = ['boothTemplatePositions', 'booths'];
 
         populate.forEach((value) => {
             if (!allowPopulate.includes(value)) {
