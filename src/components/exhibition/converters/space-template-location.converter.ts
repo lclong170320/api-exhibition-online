@@ -4,6 +4,17 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class SpaceTemplateLocationConverter {
+    toEntity(dto: SpaceTemplateLocationDto) {
+        const entity = new SpaceTemplateLocation();
+        entity.name = dto.name;
+        entity.positionX = dto.position_x;
+        entity.positionY = dto.position_y;
+        entity.positionZ = dto.position_z;
+        entity.rotationX = dto.rotation_x;
+        entity.rotationY = dto.rotation_y;
+        entity.rotationZ = dto.rotation_z;
+        return entity;
+    }
     toDto(entity: SpaceTemplateLocation) {
         const dto = {
             id: entity.id,

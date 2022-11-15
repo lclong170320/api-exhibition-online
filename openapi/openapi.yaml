@@ -830,6 +830,7 @@ paths:
               example: 'space_template_positions'
           description: |
             - space_template_positions
+            - space_template_locations
             - spaces
       responses:
         '200':
@@ -975,6 +976,50 @@ paths:
                     details: []
       tags:
         - Space
+    post:
+      tags:
+        - Space
+      summary: Add a space template
+      description: Add a space template
+      operationId: addSpaceTemplate
+      requestBody:
+        description: Create a space template
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SpaceTemplate'
+        required: true
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SpaceTemplate'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Bad Request
+                    details:
+                      - field: .params.id
+                        message: 'should match pattern "^[0-9]+$"'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Internal server error
+                    details: []
   '/spaces/{id}':
     get:
       summary: Get space by ID
@@ -2243,14 +2288,17 @@ components:
           type: number
           example: 1
         locations:
+          writeOnly: true
           type: array
           items:
             $ref: '#/components/schemas/Location'
         space_images:
+          writeOnly: true
           type: array
           items:
             $ref: '#/components/schemas/SpaceImage'
         space_videos:
+          writeOnly: true
           type: array
           items:
             $ref: '#/components/schemas/SpaceVideo'
@@ -2344,11 +2392,16 @@ components:
         space_template_location:
           $ref: '#/components/schemas/SpaceTemplateLocation'
     SpaceTemplateLocation:
-      readOnly: true
       type: object
       required:
         - id
         - name
+        - position_x
+        - position_y
+        - position_z
+        - rotation_x
+        - rotation_y
+        - rotation_z
       properties:
         id:
           type: integer
@@ -2453,10 +2506,16 @@ components:
       required:
         - id
         - name
-        - model_id
+        - model_data
+        - thumbnail_data
         - thumbnail_id
         - created_by
         - created_date
+        - model_id
+        - map_id
+        - map_data
+        - space_template_positions
+        - space_template_locations
       properties:
         id:
           type: integer
@@ -2465,6 +2524,7 @@ components:
           type: string
           minLength: 1
           maxLength: 255
+          example: "Mẫu không gian 01"
         created_by:
           type: number
           example: 1
@@ -2472,24 +2532,38 @@ components:
         model_id:
           type: integer
           readOnly: true
+        model_data:
+          type: string
+          writeOnly: true
+          example: 'base64 string'
         thumbnail_id:
           type: integer
           readOnly: true
+        thumbnail_data:
+          type: string
+          writeOnly: true
+          example: 'base64 string'
         map_id:
           type: integer
           readOnly: true
+        map_data:
+          type: string
+          writeOnly: true
+          example: 'base64 string'
         created_date:
           type: string
           pattern: '^[1-9]\d{3}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$'
           example: '2022-01-01T00:00:00.000Z'
         space_template_positions:
+          writeOnly: true
           type: array
           items:
             $ref: '#/components/schemas/SpaceTemplatePosition'
-        spaces:
+        space_template_locations:
+          writeOnly: true
           type: array
           items:
-            $ref: '#/components/schemas/Space'
+            $ref: '#/components/schemas/SpaceTemplateLocation'
     BoothOrganizationTemplate:
       type: object
       required:
@@ -2531,10 +2605,9 @@ components:
           writeOnly: true
     SpaceTemplatePosition:
       type: object
-      readOnly: true
       required:
        - id
-       - object_3d_id
+       - position
        - type
       properties:
         id:

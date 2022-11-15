@@ -26,7 +26,6 @@ import { Location } from '../entities/location.entity';
 import { Location as LocationDto } from '../dto/location.dto';
 import { SpaceTemplateLocation } from '../entities/space-template-location.entity';
 import { LocationConverter } from '../converters/location.converter';
-// import { BoothTemplate } from '../entities/booth-template.entity';
 
 @Injectable()
 export class SpaceService {

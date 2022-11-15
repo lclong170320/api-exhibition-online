@@ -16,6 +16,6 @@ export interface SpaceTemplatePosition {
     type: Type;
 }
 export enum Type {
-    Image = 'image',
-    Video = 'video',
+    IMAGE = 'image',
+    VIDEO = 'video',
 }

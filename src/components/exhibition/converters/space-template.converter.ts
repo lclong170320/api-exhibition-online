@@ -14,6 +14,7 @@ export class SpaceTemplateConverter {
         @Inject(forwardRef(() => SpaceConverter))
         private spaceConverter: SpaceConverter,
     ) {}
+
     toDto(entity: SpaceTemplate) {
         const dto = {
             id: entity.id,

@@ -9,7 +9,7 @@ import * as path from 'path';
 import { Repository } from 'typeorm';
 import { paginate, FilterOperator } from 'nestjs-paginate';
 import { PaginateQuery } from '@/decorators/paginate.decorator';
-import { uuid } from 'uuidv4';
+import { v4 as uuid } from 'uuid';
 import { MediaConverter } from './converters/media.converter';
 import { MediaResponse } from './dto/media-response.dto';
 import { Media as MediaDto } from './dto/media.dto';

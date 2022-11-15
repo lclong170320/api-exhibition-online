@@ -1003,7 +1003,6 @@ components:
         space_template_location:
           $ref: '#/components/schemas/SpaceTemplateLocation'
     SpaceTemplateLocation:
-      readOnly: true
       type: object
       required:
         - id
@@ -1039,6 +1038,22 @@ components:
         rotation_z:
           type: number
           example: 1
+    SpaceTemplatePosition:
+      type: object
+      required:
+       - id
+       - position
+       - type
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        position:
+          type: string
+          maxLength: 255
+        type:
+          type: string
+          enum: ['image','video']
     SpaceVideo:
       type: object
       required:
@@ -1047,7 +1062,7 @@ components:
         - space_template_position_id
         - video_id
       properties:
-        id: 
+        id:
           type: integer
           readOnly: true
           example: 1
@@ -1079,7 +1094,7 @@ components:
         - space_template_position_id
         - image_id
       properties:
-        id: 
+        id:
           type: integer
           readOnly: true
           example: 1
