@@ -16,7 +16,7 @@ export class SpaceImageConverter {
     toDto(entity: SpaceImage) {
         const dto = {
             id: entity.id,
-            image_id: entity.image?.id,
+            image_id: entity.image?.imageId,
             space_template_position: entity.spaceTemplatePosition
                 ? this.spaceTemplatePositionConverter.toDto(
                       entity.spaceTemplatePosition,

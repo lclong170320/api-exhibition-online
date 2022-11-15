@@ -16,7 +16,7 @@ export class SpaceVideoConverter {
     toDto(entity: SpaceVideo) {
         const dto = {
             id: entity.id,
-            video_id: entity.video?.id,
+            video_id: entity.video?.videoId,
             space_template_position: entity.spaceTemplatePosition
                 ? this.spaceTemplatePositionConverter.toDto(
                       entity.spaceTemplatePosition,

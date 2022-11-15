@@ -42,27 +42,14 @@ paths:
           description: |
             List of populatable columns:
             - booths
-            - booths.booth_projects
-            - booths.booth_products
-            - booths.booth_videos
-            - booths.booth_images
-            - booths.booth_projects.booth_template_position
-            - booths.booth_products.booth_template_position
-            - booths.booth_videos.booth_template_position
-            - booths.booth_images.booth_template_position
-            - booths.location
             - booths.booth_template
-            - booth_organization
-            - booth_organization.booth_organization_data
-            - booth_organization.booth_template
-            - booth_organization.booth_template.position_booths
-            - booth_templates
-            - booth_templates.position_booths
-            - category
+            - booths.location.space_template_location
             - space
             - space.space_template
-            - space.space_datas
-            - space.space_template.position_spaces
+            - space.space_images.image
+            - space.space_images.space_template_position
+            - space.space_videos.video
+            - space.space_videos.space_template_position
       responses:
         '200':
           description: OK
