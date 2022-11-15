@@ -12,41 +12,40 @@ import { Exhibition } from '@/components/exhibition/entities/exhibition.entity';
 import { Space } from '@/components/exhibition/entities/space.entity';
 import { DbConnection } from '@/database/config/db';
 
+import { ExhibitionListConverter } from '@/components/exhibition/converters/exhibition-list.converter';
 import { ExhibitionConverter } from '@/components/exhibition/converters/exhibition.converter';
 import { Exhibition as ExhibitionDto } from '@/components/exhibition/dto/exhibition.dto';
-import { ExhibitionListConverter } from '@/components/exhibition/converters/exhibition-list.converter';
 import { Booth } from '@/components/exhibition/entities/booth.entity';
 
+import { Booth as BoothDto } from '@/components/exhibition/dto/booth.dto';
 import { BoothTemplate } from '@/components/exhibition/entities/booth-template.entity';
 import { SpaceTemplate } from '@/components/exhibition/entities/space-template.entity';
 import { PaginateQuery } from '@/decorators/paginate.decorator';
 import { paginate } from '@/utils/pagination';
-import { ConfigService } from '@nestjs/config';
 import { HttpService } from '@nestjs/axios';
+import { ConfigService } from '@nestjs/config';
 import { BoothConverter } from '../converters/booth.converter';
 import { LiveStreamConverter } from '../converters/live-stream.converter';
-import { Booth as BoothDto } from '@/components/exhibition/dto/booth.dto';
 import { LiveStream } from '../entities/live-stream.entity';
 
-import { lastValueFrom, map } from 'rxjs';
-import { Location } from '../entities/location.entity';
 import { LiveStream as LiveStreamDto } from '@/components/exhibition/dto/live-stream.dto';
-import { BoothImage } from '../entities/booth-image.entity';
-import { BoothVideo } from '../entities/booth-video.entity';
-import { BoothProject } from '../entities/booth-project.entity';
-import { BoothProduct } from '../entities/booth-product.entity';
-import { BoothTemplatePosition } from '../entities/booth-template-position.entity';
+import { lastValueFrom, map } from 'rxjs';
 import { BoothImage as BoothImageDto } from '../dto/booth-image.dto';
-import { BoothVideo as BoothVideoDto } from '../dto/booth-video.dto';
-import { BoothProject as BoothProjectDto } from '../dto/booth-project.dto';
 import { BoothProduct as BoothProductDto } from '../dto/booth-product.dto';
-import { Image } from '../entities/image.entity';
-import { Video } from '../entities/video.entity';
-import { Project } from '../entities/project.entity';
-import { Product } from '../entities/product.entity';
+import { BoothProject as BoothProjectDto } from '../dto/booth-project.dto';
+import { BoothVideo as BoothVideoDto } from '../dto/booth-video.dto';
+import { BoothImage } from '../entities/booth-image.entity';
 import { BoothOrganizationTemplate } from '../entities/booth-organization-template.entity';
+import { BoothProduct } from '../entities/booth-product.entity';
+import { BoothProject } from '../entities/booth-project.entity';
+import { BoothTemplatePosition } from '../entities/booth-template-position.entity';
+import { BoothVideo } from '../entities/booth-video.entity';
+import { Image } from '../entities/image.entity';
+import { Location, Status } from '../entities/location.entity';
+import { Product } from '../entities/product.entity';
+import { Project } from '../entities/project.entity';
 import { SpaceTemplateLocation } from '../entities/space-template-location.entity';
-import { Status } from '../entities/location.entity';
+import { Video } from '../entities/video.entity';
 
 @Injectable()
 export class ExhibitionService {
@@ -109,7 +108,13 @@ export class ExhibitionService {
         id: string,
         populate: string[],
     ): Promise<ExhibitionDto> {
-        const allowPopulate = ['category', 'space', 'boothOrganization'];
+        const allowPopulate = [
+            'category',
+            'space',
+            'space.spaceTemplate',
+            'space.spaceTemplate.spaceTemplateLocations',
+            'boothOrganization',
+        ];
 
         populate.forEach((value) => {
             if (!allowPopulate.includes(value)) {

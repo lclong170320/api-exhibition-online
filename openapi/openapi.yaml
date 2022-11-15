@@ -180,9 +180,11 @@ paths:
               example: 'booth_organization'
           description: |
             List of populatable columns:
-              - category
-              - space
-              - booth_organization
+            - category
+            - space
+            - space.space_template
+            - space.space_template.space_template_locations
+            - booth_organization
       responses:
         '200':
           description: OK
