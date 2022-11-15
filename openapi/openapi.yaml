@@ -443,7 +443,7 @@ paths:
               type: string
               example: 'position_booths'
           description:
-           " Searching on allow columns:['booth_template_positions', 'booths']"
+           " Searching on allow columns:['booth_template_positions']"
       responses:
         '200':
           description: OK
@@ -585,16 +585,22 @@ paths:
         schema:
           type: string
           example: 'triễn lảm'
-        description:
-         " Searching on allow columns:['id', 'name', 'type', 'created_at']\n
-          example: http://localhost:3000/api/v1/name?search=triễn lảm"
+        description: |
+         Searching on allow columns:
+          - id,
+          - name,
+          - type,
+          - created_at
       - in: query
         name: sort_by
         allowReserved: true
         schema:
           type: string
           example: 'id:DESC'
-        description: "Sort on allow columns:[['id', 'type','name', 'created_at'],[DESC,ASC]]\n default column:['created_at', 'DESC']"
+        description: |
+          Sort on allow columns:
+            - [['id', 'type','name', 'created_at'], [DESC,ASC]]
+            - Default: [['createdAt', 'DESC']]
       - in: query
         name: filter.type
         allowReserved: true
@@ -602,6 +608,16 @@ paths:
           type: string
           example: $eq:product
         description: Filter on the `type` field.
+      - in: query
+        name: populate
+        schema:
+          type: array
+          items:
+            type: string
+            example: 'booth_template_positions'
+        description: |
+         Searching on allow columns:
+          - booth_template_positions
       responses:
         '200':
           description: OK

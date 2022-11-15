@@ -14,7 +14,7 @@ import { HttpService } from '@nestjs/axios';
 import { lastValueFrom, map } from 'rxjs';
 import { DataSource } from 'typeorm';
 import { PaginateQuery } from '@/decorators/paginate.decorator';
-import { paginate, FilterOperator } from 'nestjs-paginate';
+import { paginate } from '@/utils/pagination';
 import { BoothOrganizationTemplate } from '../entities/booth-organization-template.entity';
 import { BoothOrganizationTemplateConverter } from '../converters/booth-organization-template.converter';
 import { BoothTemplate as BoothTemplateDto } from '@/components/exhibition/dto/booth-template.dto';
@@ -25,8 +25,6 @@ import { BoothTemplatePositionConverter } from '../converters/booth-template-pos
 
 @Injectable()
 export class BoothTemplateService {
-    private readonly offsetDefault = 0;
-    private readonly limitDefault = 10;
     constructor(
         @InjectRepository(BoothTemplate, DbConnection.exhibitionCon)
         private readonly boothTemplateRepository: Repository<BoothTemplate>,
@@ -41,7 +39,7 @@ export class BoothTemplateService {
     ) {}
 
     async findBoothTemplateById(id: string, populate: string[]) {
-        const allowPopulate = ['boothTemplatePositions', 'booths'];
+        const allowPopulate = ['boothTemplatePositions'];
 
         populate.forEach((value) => {
             if (!allowPopulate.includes(value)) {
@@ -65,26 +63,30 @@ export class BoothTemplateService {
     }
 
     async findBoothTemplates(query: PaginateQuery) {
-        const boothTemplates = await paginate(
+        const sortableColumns = ['id', 'name', 'type', 'createdAt'];
+        const searchableColumns = ['name'];
+        const filterableColumns = ['type'];
+        const defaultSortBy = [['createdAt', 'DESC']];
+        const populatableColumns = ['boothTemplatePositions'];
+        const boothTemplateRepository =
+            this.dataSource.manager.getRepository(BoothTemplate);
+        const [boothTemplates, total] = await paginate(
             query,
-            this.boothTemplateRepository,
+            boothTemplateRepository,
             {
-                maxLimit: query.limit,
-                defaultLimit: this.limitDefault,
-                sortableColumns: ['id', 'name', 'type', 'createdAt'],
-                defaultSortBy: [['createdAt', 'DESC']],
-                searchableColumns: ['id', 'name', 'type', 'createdDate'],
-                filterableColumns: {
-                    type: [FilterOperator.EQ, FilterOperator.IN],
-                },
+                searchableColumns,
+                sortableColumns,
+                populatableColumns,
+                filterableColumns,
+                defaultSortBy,
             },
         );
 
         return this.boothTemplateListConverter.toDto(
-            boothTemplates.meta.currentPage,
-            boothTemplates.meta.itemsPerPage,
-            boothTemplates.meta.totalItems,
-            boothTemplates.data,
+            query.page,
+            query.limit,
+            total,
+            boothTemplates,
         );
     }
 

@@ -3,12 +3,10 @@ import {
     CreateDateColumn,
     DeleteDateColumn,
     Entity,
-    ManyToMany,
     OneToMany,
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from 'typeorm';
-import { Exhibition } from './exhibition.entity';
 import { Booth } from './booth.entity';
 import { BoothTemplatePosition } from './booth-template-position.entity';
 
@@ -63,9 +61,6 @@ export class BoothTemplate {
     // relation columns
     @OneToMany(() => Booth, (booth) => booth.boothTemplate)
     booths: Booth[];
-
-    @ManyToMany(() => Exhibition)
-    exhibitions: Exhibition[];
 
     @OneToMany(
         () => BoothTemplatePosition,
