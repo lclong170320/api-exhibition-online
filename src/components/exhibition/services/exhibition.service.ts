@@ -875,6 +875,17 @@ export class ExhibitionService {
                     boothDto.location_id,
                     locationRepository,
                 );
+                if (
+                    !firstLocation ||
+                    firstLocation.status !== Status.AVAILABLE
+                ) {
+                    throw new BadRequestException(
+                        'Invalid location_id: ' + boothDto.location_id,
+                    );
+                }
+                firstLocation.status = Status.RESERVED;
+                locationRepository.save(firstLocation);
+
                 const enterpriseId = await this.getEnterpriseById(
                     boothDto.enterprise_id,
                 );
