@@ -354,22 +354,22 @@ export class ExhibitionService {
                 `The 'exhibition_id' ${exhibitionId} not found`,
             );
         }
-        const allowPopulate = [
-            'boothImages.boothTemplatePosition',
-            'boothProjects.boothTemplatePosition',
-            'boothProducts.boothTemplatePosition',
-            'boothProducts.boothTemplatePosition',
-            'boothVideos.boothTemplatePosition',
-            'boothTemplate',
-            'location',
-        ];
-        populate.forEach((value) => {
-            if (!allowPopulate.includes(value)) {
-                throw new BadRequestException(
-                    'Query value is not allowed ' + value,
-                );
-            }
-        });
+        // const allowPopulate = [
+        //     'boothImages.boothTemplatePosition',
+        //     'boothProjects.boothTemplatePosition',
+        //     'boothProducts.boothTemplatePosition',
+        //     'boothProducts.boothTemplatePosition',
+        //     'boothVideos.boothTemplatePosition',
+        //     'boothTemplate',
+        //     'location',
+        // ];
+        // populate.forEach((value) => {
+        //     if (!allowPopulate.includes(value)) {
+        //         throw new BadRequestException(
+        //             'Query value is not allowed ' + value,
+        //         );
+        //     }
+        // });
         const boothRepository = this.dataSource.getRepository(Booth);
         const firstBooth = await boothRepository.findOne({
             where: {

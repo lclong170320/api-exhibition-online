@@ -370,15 +370,14 @@ paths:
               type: string
               example: 'booth_data.position_booth'
           description: |
-              List of populateTable columns
-                |      Populates     |
-                |--------------------|
-                | booth_images.booth_template_position |
-                | booth_projects.booth_template_position |
-                | booth_products.booth_template_position |
-                | booth_videos.booth_template_position |
-                | booth_template |
-                | location |
+            List of populable columns:
+            - booth_images.booth_template_position
+            - booth_projects.booth_template_position
+            - booth_products.booth_template_position
+            - booth_videos.booth_template_position
+            - booth_template
+            - location
+            - location.space_template_location
       responses:
         '200':
           description: OK
