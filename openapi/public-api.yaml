@@ -761,7 +761,6 @@ components:
       type: object
       required:
         - id
-        - name
         - enterprise_id
         - created_by
         - location_id
