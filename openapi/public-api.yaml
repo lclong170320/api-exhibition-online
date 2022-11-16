@@ -46,6 +46,7 @@ paths:
             - booths.location.space_template_location
             - space
             - space.space_template
+            - space.space_template.space_template_locations
             - space.space_images.image
             - space.space_images.space_template_position
             - space.space_videos.video

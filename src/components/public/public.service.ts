@@ -27,6 +27,7 @@ export class PublicService {
             'booths.location.spaceTemplateLocation',
             'space',
             'space.spaceTemplate',
+            'space.spaceTemplate.spaceTemplateLocations',
             'space.spaceImages.image',
             'space.spaceImages.spaceTemplatePosition',
             'space.spaceVideos.video',
