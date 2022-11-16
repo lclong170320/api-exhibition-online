@@ -182,6 +182,7 @@ paths:
             List of populatable columns:
             - category
             - space
+            - space.locations
             - space.space_template
             - space.space_template.space_template_locations
             - booth_organization

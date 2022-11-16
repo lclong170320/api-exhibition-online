@@ -108,21 +108,22 @@ export class ExhibitionService {
         id: string,
         populate: string[],
     ): Promise<ExhibitionDto> {
-        const allowPopulate = [
-            'category',
-            'space',
-            'space.spaceTemplate',
-            'space.spaceTemplate.spaceTemplateLocations',
-            'boothOrganization',
-        ];
+        // const allowPopulate = [
+        //     'category',
+        //     'space',
+        //     'space.locations',
+        //     'space.spaceTemplate',
+        //     'space.spaceTemplate.spaceTemplateLocations',
+        //     'boothOrganization',
+        // ];
 
-        populate.forEach((value) => {
-            if (!allowPopulate.includes(value)) {
-                throw new BadRequestException(
-                    'Query value is not allowed ' + value,
-                );
-            }
-        });
+        // populate.forEach((value) => {
+        //     if (!allowPopulate.includes(value)) {
+        //         throw new BadRequestException(
+        //             'Query value is not allowed ' + value,
+        //         );
+        //     }
+        // });
         const exhibitionRepository =
             this.dataSource.manager.getRepository(Exhibition);
         const exhibitionEntity = await exhibitionRepository.findOne({

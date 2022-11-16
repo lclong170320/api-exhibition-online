@@ -21,24 +21,24 @@ export class PublicService {
 
     async getExhibitionById(id: string, query: PaginateQuery) {
         const exhibitionId = parseInt(id);
-        const populatableColumns = [
-            'booths',
-            'booths.boothTemplate',
-            'booths.location.spaceTemplateLocation',
-            'space',
-            'space.spaceTemplate',
-            'space.spaceTemplate.spaceTemplateLocations',
-            'space.spaceImages.image',
-            'space.spaceImages.spaceTemplatePosition',
-            'space.spaceVideos.video',
-            'space.spaceVideos.spaceTemplatePosition',
-        ];
+        // const populatableColumns = [
+        //     'booths',
+        //     'booths.boothTemplate',
+        //     'booths.location.spaceTemplateLocation',
+        //     'space',
+        //     'space.spaceTemplate',
+        //     'space.spaceImages.image',
+        //     'space.spaceImages.spaceTemplatePosition',
+        //     'space.spaceVideos.video',
+        //     'space.spaceVideos.spaceTemplatePosition',
+        // ];
 
         const exhibitionEntity = await this.exhibitionRepository.findOne({
             where: {
                 id: exhibitionId,
             },
-            relations: this.parsePopulate(query.populate, populatableColumns),
+            // relations: this.parsePopulate(query.populate, populatableColumns),
+            relations: query.populate,
         });
 
         if (!exhibitionEntity) {
@@ -48,9 +48,9 @@ export class PublicService {
         return this.exhibitionConverter.toDto(exhibitionEntity);
     }
 
-    private parsePopulate(populate: string[], populatableColumns: string[]) {
-        return populate.filter((value) => populatableColumns.includes(value));
-    }
+    // private parsePopulate(populate: string[], populatableColumns: string[]) {
+    //     return populate.filter((value) => populatableColumns.includes(value));
+    // }
 
     async getMediaById(id: string) {
         const mediaId = parseInt(id);
