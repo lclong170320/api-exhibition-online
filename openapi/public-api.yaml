@@ -770,9 +770,6 @@ components:
           type: integer
           example: 1
           readOnly: true
-        name:
-          type: string
-          example: 'Tên gian hàng'
         enterprise_id:
           type: integer
           example: 1
