@@ -1,8 +1,17 @@
-import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import { LoginPayload } from '../dto/login-payload.dto';
+import { Paginate, PaginateQuery } from '@/decorators/paginate.decorator';
+import {
+    Body,
+    Controller,
+    Get,
+    Param,
+    Post,
+    UseGuards,
+    Req,
+} from '@nestjs/common';
 import { User as UserDto } from '../dto/user.dto';
 import { JWTAuthGuard } from '../guards/auth.guard';
 import { UserService } from '../services/user.service';
@@ -30,5 +39,10 @@ export class UserController {
             verifiedJwtAccessToken.user.role.name,
             user,
         );
+    }
+
+    @Get(':id')
+    getUserById(@Param('id') id: string, @Paginate() query: PaginateQuery) {
+        return this.userService.getUserById(id, query.populate);
     }
 }

@@ -826,6 +826,50 @@ paths:
                   value:
                     message: Internal server error
                     details: []
+  '/booths':
+    get:
+      summary: Show list booths
+      description: Show list booths
+      operationId: getBooths
+      parameters:
+      - in: query
+        name: populate
+        schema:
+          type: array
+          items:
+            type: string
+            example: 'booth_organization'
+        description: |
+           List of populateTable columns
+                |      Populates     |
+                |--------------------|
+                | booth_images.booth_template_position |
+                | booth_projects.booth_template_position |
+                | booth_products.booth_template_position |
+                | booth_videos.booth_template_position |
+                | booth_template |
+                | location |
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BoothList'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+      tags:
+        - Booth
   '/space-templates/{id}':
     get:
       summary: Get space template by ID
@@ -1921,6 +1965,74 @@ paths:
                   value:
                     message: Internal server error
                     details: []
+  '/users/{id}':
+    get:
+      summary: Get user  by ID
+      description: Return a single user
+      operationId: getUsersById
+      parameters:
+        - name: id
+          description: ID to get user
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^[0-9]+$'
+        - in: query
+          name: populate
+          schema:
+            type: array
+            items:
+              type: string
+              example: 'role'
+          description: |
+            - role
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Bad Request
+                    details:
+                      - field: .params.id
+                        message: 'should match pattern "^[0-9]+$"'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Not Found
+                    details:
+                      - field: .params.id
+                        message: 'The id not exist: "^[0-9]+$"'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Internal server error
+                    details: []
+      tags:
+        - User
   '/auth/login':
     post:
       tags:
@@ -3013,6 +3125,19 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/BoothProduct'
+    BoothList:
+      type: object
+      required:
+        - total
+        - booths
+      properties:
+        total:
+          type: integer
+          example: 1
+        booths:
+          type: array
+          items:
+            $ref: '#/components/schemas/Booth'
     User:
         type: object
         required:

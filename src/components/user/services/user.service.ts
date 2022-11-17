@@ -17,6 +17,29 @@ export class UserService {
         private readonly rolesRepository: Repository<Role>,
         private readonly userConverter: UserConverter,
     ) {}
+
+    async getUserById(id: string, populate: string[]): Promise<User> {
+        const allowPopulate = ['role'];
+
+        populate.forEach((value) => {
+            if (!allowPopulate.includes(value)) {
+                throw new BadRequestException(
+                    'Query value is not allowed ' + value,
+                );
+            }
+        });
+        const user = await this.usersRepository.findOne({
+            where: {
+                id: parseInt(id),
+            },
+            relations: populate,
+        });
+        if (!user) {
+            throw new BadRequestException("The 'user_id' is not found: " + id);
+        }
+        return user;
+    }
+
     private readonly ADMIN_ROLE = 'admin';
     async createUser(roleAuth: string, userDto: UserDto): Promise<UserDto> {
         const role = await this.rolesRepository.findOne({

@@ -65,6 +65,10 @@ import { BoothProduct } from './entities/booth-product.entity';
 import { BoothProject } from './entities/booth-project.entity';
 import { BoothVideo } from './entities/booth-video.entity';
 import { BoothTemplatePositionConverter } from './converters/booth-template-position.converter';
+import { JwtService } from '@nestjs/jwt';
+import { BoothListConverter } from './converters/booth-list.converter';
+import { BoothService } from './services/booth.service';
+import { BoothController } from './controllers/booth.controller';
 
 @Module({
     controllers: [
@@ -73,6 +77,7 @@ import { BoothTemplatePositionConverter } from './converters/booth-template-posi
         BoothOrganizationController,
         SpaceController,
         SpaceTemplateController,
+        BoothController,
     ],
     providers: [
         // service
@@ -81,6 +86,8 @@ import { BoothTemplatePositionConverter } from './converters/booth-template-posi
         BoothOrganizationService,
         SpaceService,
         SpaceTemplateService,
+        JwtService,
+        BoothService,
         // converter
         CategoryConverter,
         ExhibitionConverter,
@@ -109,6 +116,7 @@ import { BoothTemplatePositionConverter } from './converters/booth-template-posi
         BoothOrganizationProjectConverter,
         BoothOrganizationTemplateConverter,
         BoothTemplatePositionConverter,
+        BoothListConverter,
     ],
     imports: [
         TypeOrmModule.forFeature(
