@@ -1,5 +1,5 @@
 import { BoothOrganizationTemplateList as BoothOrganizationTemplateListDto } from '@/components/exhibition/dto/booth-organization-template-list.dto';
-import { BoothOrganizationTemplate } from '@/components/exhibition/entities/booth-Organization-template.entity';
+import { BoothOrganizationTemplate } from '@/components/exhibition/entities/booth-organization-template.entity';
 import { Injectable } from '@nestjs/common';
 import { BoothOrganizationTemplateConverter } from './booth-organization-template.converter';
 
