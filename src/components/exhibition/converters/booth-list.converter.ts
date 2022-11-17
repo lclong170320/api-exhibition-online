@@ -6,10 +6,12 @@ import { BoothConverter } from './booth.converter';
 @Injectable()
 export class BoothListConverter {
     constructor(private boothConverter: BoothConverter) {}
-    toDto(total: number, entity: Booth[]) {
+    toDto(page: number, limit: number, total: number, booth: Booth[]) {
         const dto = {
+            page: page,
+            limit: limit,
             total: total,
-            booth: entity.map((data) => this.boothConverter.toDto(data)),
+            booths: booth.map((data) => this.boothConverter.toDto(data)),
         } as BoothListDto;
 
         return dto;

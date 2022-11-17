@@ -65,10 +65,11 @@ import { BoothProduct } from './entities/booth-product.entity';
 import { BoothProject } from './entities/booth-project.entity';
 import { BoothVideo } from './entities/booth-video.entity';
 import { BoothTemplatePositionConverter } from './converters/booth-template-position.converter';
-import { JwtService } from '@nestjs/jwt';
-import { BoothListConverter } from './converters/booth-list.converter';
-import { BoothService } from './services/booth.service';
 import { BoothController } from './controllers/booth.controller';
+import { BoothListConverter } from './converters/booth-list.converter';
+import { JwtService } from '@nestjs/jwt';
+import { BoothService } from './services/booth.service';
+import { UtilService } from '@/utils/helper/util.service';
 import { BoothOrganizationTemplateListConverter } from './converters/booth-organization-template-list.converter';
 import { BoothOrganizationTemplateController } from './controllers/booth-organization-template.controller';
 import { BoothOrganizationTemplateService } from './services/booth-organization-template.service';
@@ -89,10 +90,12 @@ import { BoothOrganizationTemplateService } from './services/booth-organization-
         BoothTemplateService,
         BoothOrganizationService,
         SpaceService,
+        BoothService,
         SpaceTemplateService,
         JwtService,
         BoothService,
         BoothOrganizationTemplateService,
+        UtilService,
         // converter
         CategoryConverter,
         ExhibitionConverter,

@@ -31,6 +31,8 @@ servers:
 paths:
   '/exhibitions':
     get:
+      security:
+      - bearerAuth: []
       summary: Show list exhibitions
       description: Show list exhibitions
       operationId: getExhibitions
@@ -115,6 +117,8 @@ paths:
       tags:
         - Exhibition
     post:
+      security:
+      - bearerAuth: []
       tags:
         - Exhibition
       summary: Add a basic information of exhibition
@@ -160,6 +164,8 @@ paths:
                     details: []
   '/exhibitions/{id}':
     get:
+      security:
+      - bearerAuth: []
       summary: Get exhibition by ID
       description: Return a single exhibition
       operationId: getExhibitionById
@@ -221,6 +227,8 @@ paths:
         - Exhibition
   '/exhibitions/{exhibition_id}/booths':
     post:
+      security:
+      - bearerAuth: []
       tags:
         - Exhibition
       summary: Add a booth
@@ -274,6 +282,8 @@ paths:
                     details: []
   '/exhibitions/{exhibition_id}/booths/{booth_id}':
     put:
+      security:
+      - bearerAuth: []
       tags:
         - Exhibition
       summary: Update an existing booth
@@ -344,6 +354,8 @@ paths:
                     message: Internal server error
                     details: []
     get:
+      security:
+      - bearerAuth: []
       summary: Get booth by ID
       description: Return a single booth
       operationId: getBoothById
@@ -426,6 +438,8 @@ paths:
         - Exhibition
   '/booth-templates/{id}':
     get:
+      security:
+      - bearerAuth: []
       summary: Get booth template by ID
       description: Return a single booth template
       operationId: getBoothTemplateById
@@ -494,6 +508,8 @@ paths:
         - Booth
   '/booth-organization-templates/{id}':
     get:
+      security:
+      - bearerAuth: []
       summary: Get booth organization template by ID
       description: Return a single booth organization template
       operationId: getBoothOrganizationTemplateById
@@ -563,6 +579,8 @@ paths:
         - Booth
   '/booth-organization-templates':
     get:
+      security:
+      - bearerAuth: []
       summary: Show list booth organization templates
       description: Show list booth organization templates
       operationId: getBoothOrganizationTemplates
@@ -635,6 +653,8 @@ paths:
         - Booth
   '/booth-templates':
     get:
+      security:
+      - bearerAuth: []
       summary: Show list booth templates
       description: Show list booth-templates
       operationId: getBoothTemplates
@@ -714,6 +734,8 @@ paths:
       tags:
         - Booth
     post:
+      security:
+      - bearerAuth: []
       tags:
         - Booth
       summary: Add a boothTemplate
@@ -759,6 +781,8 @@ paths:
                     details: []
   '/booth-organizations/{id}':
      get:
+      security:
+      - bearerAuth: []
       summary: Get booth organization by ID
       description: Return a single booth organization
       operationId: getBoothOrganizationById
@@ -836,6 +860,8 @@ paths:
                     message: Internal server error
                     details: []
      put:
+      security:
+      - bearerAuth: []
       tags:
         - Booth
       summary: Update an existing booth organization
@@ -900,10 +926,26 @@ paths:
                     details: []
   '/booths':
     get:
+      security:
+      - bearerAuth: []
       summary: Show list booths
       description: Show list booths
       operationId: getBooths
       parameters:
+      - in: query
+        name: page
+        schema:
+          type: string
+          pattern: '^[0-9]+'
+          example: '1'
+        description: The number of items to skip before starting to collect the result set
+      - in: query
+        name: limit
+        schema:
+          type: string
+          pattern: '^[0-9]+'
+          example: '10'
+        description: The numbers of items to return
       - in: query
         name: populate
         schema:
@@ -912,15 +954,13 @@ paths:
             type: string
             example: 'booth_organization'
         description: |
-           List of populateTable columns
-                |      Populates     |
-                |--------------------|
-                | booth_images.booth_template_position |
-                | booth_projects.booth_template_position |
-                | booth_products.booth_template_position |
-                | booth_videos.booth_template_position |
-                | booth_template |
-                | location |
+           List of populatable columns:
+             - booth_images.booth_template_position
+             - booth_projects.booth_template_position
+             - booth_products.booth_template_position
+             - booth_videos.booth_template_position
+             - booth_template
+             - location
       responses:
         '200':
           description: OK
@@ -944,6 +984,8 @@ paths:
         - Booth
   '/space-templates/{id}':
     get:
+      security:
+      - bearerAuth: []
       summary: Get space template by ID
       description: Return a single space template
       operationId: getSpaceTemplateById
@@ -1014,6 +1056,8 @@ paths:
         - Space
   '/space-templates':
     get:
+      security:
+      - bearerAuth: []
       summary: Show list space templates
       description: Show list space templates
       operationId: getSpaceTemplates
@@ -1111,6 +1155,8 @@ paths:
       tags:
         - Space
     post:
+      security:
+      - bearerAuth: []
       tags:
         - Space
       summary: Add a space template
@@ -1156,6 +1202,8 @@ paths:
                     details: []
   '/spaces/{id}':
     get:
+      security:
+       - bearerAuth: []
       summary: Get space by ID
       description: Return a single space
       operationId: getSpaceById
@@ -1232,6 +1280,8 @@ paths:
                     message: Internal server error
                     details: []
     put:
+      security:
+      - bearerAuth: []
       tags:
         - Space
       summary: Update an existing space
@@ -2047,6 +2097,8 @@ paths:
     patch:
       tags:
         - User
+      security:
+      - bearerAuth: []
       summary: Update user
       description: Update user
       operationId: UserUpdate
@@ -2097,6 +2149,8 @@ paths:
                     message: Internal server error
                     details: []
     get:
+      security:
+      - bearerAuth: []
       tags:
         - User
       summary: Get user  by ID
@@ -3268,11 +3322,22 @@ components:
     BoothList:
       type: object
       required:
+        - page
+        - limit
         - total
         - booths
       properties:
+        page:
+          type: integer
+          readOnly: true
+          example: 1
+        limit:
+          type: integer
+          readOnly: true
+          example: 1
         total:
           type: integer
+          readOnly: true
           example: 1
         booths:
           type: array

@@ -1,7 +1,10 @@
-import { Body, Controller, Get, Param, Put } from '@nestjs/common';
+import { Body, Controller, Get, Param, Put, UseGuards } from '@nestjs/common';
 import { BoothOrganization as BoothOrganizationDto } from '@/components/exhibition/dto/booth-organization.dto';
 import { BoothOrganizationService } from '@/components/exhibition/services/booth-organization.service';
 import { PaginateQuery, Paginate } from '@/decorators/paginate.decorator';
+import { Role } from '@/components/exhibition/dto/role.dto';
+import { RolesGuard } from 'guards/roles.guard';
+import { Roles } from '@/decorators/roles.decorator';
 
 @Controller('booth-organizations')
 export class BoothOrganizationController {
@@ -9,6 +12,8 @@ export class BoothOrganizationController {
         private readonly boothOrganizationService: BoothOrganizationService,
     ) {}
 
+    @UseGuards(RolesGuard)
+    @Roles(Role.ADMIN)
     @Get(':id')
     getBoothOrganizationById(
         @Param('id') id: string,

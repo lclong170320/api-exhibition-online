@@ -12,6 +12,8 @@
 import { Booth } from './booth.dto';
 
 export interface BoothList {
+    page: number;
+    limit: number;
     total: number;
-    booth?: Array<Booth>;
+    booths: Array<Booth>;
 }
