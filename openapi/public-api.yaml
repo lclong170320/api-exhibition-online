@@ -43,8 +43,11 @@ paths:
             List of populatable columns:
             - booths
             - booths.booth_images.image
+            - booths.booth_images.booth_template_position
             - booths.booth_videos.video
+            - booths.booth_videos.booth_template_position
             - booths.booth_projects.project
+            - booths.booth_projects.booth_template_position
             - booths.booth_template
             - booths.location.space_template_location
             - space
