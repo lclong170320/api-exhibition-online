@@ -1,12 +1,16 @@
-import { Role as RoleDto } from '@/components/user/dto/role.dto';
+import {
+    Role as RoleDto,
+    RoleName as RoleNameDto,
+} from '@/components/user/dto/role.dto';
 import { Injectable } from '@nestjs/common';
-import { Role } from '../entities/role.entity';
+import { Role, RoleName as RoleName } from '../entities/role.entity';
 
 @Injectable()
 export class RoleConverter {
     toEntity(dto: RoleDto) {
         const entity = new Role();
-        entity.name = dto.name;
+        entity.name =
+            dto.name === RoleNameDto.ADMIN ? RoleName.ADMIN : RoleName.USER;
         return entity;
     }
 

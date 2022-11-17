@@ -13,18 +13,17 @@ import { Role } from './role.dto';
 
 export interface User {
     readonly id: number;
+    name: string;
     phone: string;
     email: string;
     password: string;
     role_id: number;
-    role?: Role;
-    status: User.StatusEnum;
+    status: Status;
+    enterprise_id: number;
+    role: Role;
 }
-// eslint-disable-next-line @typescript-eslint/no-namespace
-export namespace User {
-    export type StatusEnum = 'active' | 'inactive';
-    export const StatusEnum = {
-        Active: 'active' as StatusEnum,
-        Inactive: 'inactive' as StatusEnum,
-    };
+
+export enum Status {
+    ACTIVE = 'active',
+    INACTIVE = 'inactive',
 }

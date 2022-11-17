@@ -1,5 +1,9 @@
 import { DbConnection } from '@/database/config/db';
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+    BadRequestException,
+    ForbiddenException,
+    Injectable,
+} from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { DataSource } from 'typeorm';
@@ -7,6 +11,7 @@ import { UserConverter } from '../converters/user.converter';
 import { Role } from '../entities/role.entity';
 import { User } from '../entities/user.entity';
 import { User as UserDto } from '../dto/user.dto';
+import { UpdateUser } from '@/components/user/dto/user-update.dto';
 
 @Injectable()
 export class UserService {
@@ -15,7 +20,7 @@ export class UserService {
         @InjectDataSource(DbConnection.userCon)
         private readonly dataSource: DataSource,
     ) {}
-    async getUserById(id: string, populate: string[]): Promise<User> {
+    async getUserById(id: string, populate: string[]): Promise<UserDto> {
         const allowPopulate = ['role'];
         const userRepository = this.dataSource.manager.getRepository(User);
         populate.forEach((value) => {
@@ -34,7 +39,7 @@ export class UserService {
         if (!user) {
             throw new BadRequestException("The 'user_id' is not found: " + id);
         }
-        return user;
+        return this.userConverter.toDto(user);
     }
 
     async createUser(userDto: UserDto): Promise<UserDto> {
@@ -51,49 +56,45 @@ export class UserService {
             );
         }
         // TODO
-        const salt = await bcrypt.genSalt();
-        userDto.password = await bcrypt.hash(userDto.password, salt);
+        userDto.password = await this.hashPassword(userDto.password);
         const newUserEntity = this.userConverter.toEntity(userDto);
         newUserEntity.role = role;
         const savedUser = await userRepository.save(newUserEntity);
         return this.userConverter.toDto(savedUser);
     }
-    async findAccount(email: string): Promise<User> {
-        const userRepository = this.dataSource.manager.getRepository(User);
-        const user = await userRepository.findOne({
-            where: {
-                email: email,
-            },
-            relations: ['role'],
-        });
-        return user;
-    }
 
-    async findOneByEmail(email: string): Promise<User> {
+    async updateUser(id: string, userUpdateDto: UpdateUser) {
         const userRepository = this.dataSource.manager.getRepository(User);
-        const user = await userRepository.findOne({
-            where: {
-                email: email,
-            },
-        });
-        if (!user) {
-            throw new BadRequestException(`The ${email} is not found`);
-        }
-        return user;
-    }
-
-    async updateUser(id: string, userDto: UserDto) {
-        const userRepository = this.dataSource.manager.getRepository(User);
+        const roleRepository = this.dataSource.manager.getRepository(Role);
         const user = await userRepository.findOneBy({ id: parseInt(id) });
         if (!user) {
             throw new BadRequestException(`The user_id: ${id} is not found`);
         }
-        if (userDto.password) {
-            const salt = await bcrypt.genSalt();
-            userDto.password = await bcrypt.hash(userDto.password, salt);
+        const role = await roleRepository.findOne({
+            where: {
+                id: userUpdateDto.role_id,
+            },
+        });
+        if (!role) {
+            throw new ForbiddenException(
+                "The 'role_id' is not found: " + userUpdateDto.role_id,
+            );
         }
-        const userEntity = this.userConverter.toEntity(userDto);
-        const userNew = await userRepository.save({ ...user, ...userEntity });
+        if (userUpdateDto.password) {
+            user.password = await this.hashPassword(userUpdateDto.password);
+        }
+        user.email = userUpdateDto.email;
+        user.name = userUpdateDto.name;
+        user.phone = userUpdateDto.phone;
+        user.role = role;
+        user.status = userUpdateDto.status;
+        user.enterpriseId = userUpdateDto.enterprise_id;
+        const userNew = await userRepository.save({ ...user });
         return this.userConverter.toDto(userNew);
+    }
+
+    async hashPassword(password: string) {
+        const salt = await bcrypt.genSalt();
+        return await bcrypt.hash(password, salt);
     }
 }

@@ -8,13 +8,18 @@ import {
 } from 'typeorm';
 import { User } from './user.entity';
 
+export enum RoleName {
+    ADMIN = 'admin',
+    USER = 'user',
+}
+
 @Entity({ name: 'role' })
 export class Role {
     @PrimaryGeneratedColumn()
     id: number;
 
     @Column({ length: 255 })
-    name: string;
+    name: RoleName;
 
     @CreateDateColumn({
         type: 'timestamp',

@@ -2004,6 +2004,65 @@ paths:
         content:
           application/json:
             schema:
+              allOf:
+              - $ref: '#/components/schemas/User'
+              required:
+                - password
+        required: true
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/User'
+                required:
+                  - password
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Bad Request
+                    details:
+                      - field: .params.id
+                        message: 'should match pattern "^[0-9]+$"'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Internal server error
+                    details: []
+  '/users/{id}':
+    patch:
+      tags:
+        - User
+      summary: Update user
+      description: Update user
+      operationId: UserUpdate
+      parameters:
+      - name: id
+        description: ID to update user
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: '^[0-9]+$'
+      requestBody:
+        description: update user
+        content:
+          application/json:
+            schema:
               $ref: '#/components/schemas/User'
         required: true
       responses:
@@ -2037,8 +2096,9 @@ paths:
                   value:
                     message: Internal server error
                     details: []
-  '/users/{id}':
     get:
+      tags:
+        - User
       summary: Get user  by ID
       description: Return a single user
       operationId: getUsersById
@@ -2065,7 +2125,17 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/User'
+                allOf:
+                - $ref: '#/components/schemas/User'
+                required:
+                  - id
+                  - name
+                  - phone
+                  - email
+                  - password
+                  - role_id
+                  - status
+                  - enterprise_id
         '400':
           description: Validation error
           content:
@@ -2103,8 +2173,6 @@ paths:
                   value:
                     message: Internal server error
                     details: []
-      tags:
-        - User
   '/auth/login':
     post:
       tags:
@@ -3214,15 +3282,18 @@ components:
         type: object
         required:
           - id
+          - name
           - phone
           - email
-          - password
           - role_id
           - status
+          - enterprise_id
         properties:
           id:
             type: integer
             readOnly: true
+          name:
+            type: string
           phone:
             type: string
             pattern: '^(((\+|)84)|0)([0-9]{9})$'
@@ -3239,11 +3310,11 @@ components:
           role_id:
             type: number
             writeOnly: true
-          role:
-            $ref: '#/components/schemas/Role'
           status:
             type: string
             enum: [active, inactive]
+          enterprise_id:
+            type: number
     Role:
       readOnly: true
       required:
@@ -3253,7 +3324,6 @@ components:
           type: integer
         name:
           type: string
-          readOnly: true
     Login:
       required:
           - email

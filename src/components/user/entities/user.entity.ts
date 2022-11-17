@@ -17,6 +17,9 @@ export class User {
     @PrimaryGeneratedColumn()
     id: number;
 
+    @Column()
+    name: string;
+
     @Column({ length: 255, unique: true })
     phone: string;
 
@@ -28,6 +31,9 @@ export class User {
 
     @Column({ type: 'enum', enum: Status, default: Status.ACTIVE })
     status: Status;
+
+    @Column({ name: 'enterprise_id' })
+    enterpriseId: number;
 
     @CreateDateColumn({
         type: 'timestamp',

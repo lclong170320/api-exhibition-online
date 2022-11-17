@@ -22,11 +22,11 @@ import { JWTStrategy } from './strategies/jwt.strategy';
         UserService,
         UserConverter,
         RoleConverter,
-        JWTStrategy,
         JwtService,
         AuthService,
         UserConverter,
         RoleConverter,
+        JWTStrategy,
     ],
     imports: [
         TypeOrmModule.forFeature([User, Role, Blacklist], DbConnection.userCon),

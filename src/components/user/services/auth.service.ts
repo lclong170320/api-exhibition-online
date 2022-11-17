@@ -87,6 +87,6 @@ export class AuthService {
                 token: token,
             },
         });
-        if (!result) throw new UnauthorizedException('Expired token');
+        if (result) throw new UnauthorizedException('Expired token');
     }
 }

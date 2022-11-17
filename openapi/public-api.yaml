@@ -627,6 +627,8 @@ components:
         message:
           type: string
     Role:
+      type: object
+      readOnly: true
       required:
         - id
       properties:

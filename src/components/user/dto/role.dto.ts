@@ -12,5 +12,10 @@
 
 export interface Role {
     id: number;
-    name: string;
+    name: RoleName;
+}
+
+export enum RoleName {
+    ADMIN = 'admin',
+    USER = 'user',
 }
