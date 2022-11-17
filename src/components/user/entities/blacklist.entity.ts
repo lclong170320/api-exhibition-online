@@ -11,7 +11,7 @@ export class Blacklist {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column()
+    @Column('longtext')
     token: string;
 
     @CreateDateColumn({

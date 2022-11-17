@@ -25,7 +25,6 @@ import { JWTStrategy } from './strategies/jwt.strategy';
         JWTStrategy,
         JwtService,
         AuthService,
-        JWTStrategy,
         UserConverter,
         RoleConverter,
     ],
@@ -43,11 +42,7 @@ import { JWTStrategy } from './strategies/jwt.strategy';
                 publicKey: Buffer.from(
                     configService.get<string>('JWT_PUBLIC_KEY'),
                     'base64',
-                ).toString('ascii'),
-                signOptions: {
-                    expiresIn: configService.get<string>('JWT_EXPIRATION_TIME'),
-                    algorithm: 'RS256',
-                },
+                ).toString('utf8'),
             }),
             inject: [ConfigService],
         }),

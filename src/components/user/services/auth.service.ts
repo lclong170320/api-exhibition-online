@@ -1,5 +1,5 @@
 import { DbConnection } from '@/database/config/db';
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -10,7 +10,6 @@ import { LoginPayload } from '../dto/login-payload.dto';
 import { Login } from '../dto/login.dto';
 import { Blacklist } from '../entities/blacklist.entity';
 import { User } from '../entities/user.entity';
-
 @Injectable()
 export class AuthService {
     constructor(
@@ -26,10 +25,7 @@ export class AuthService {
         this.configService.get<string>('JWT_PRIVATE_KEY'),
         'base64',
     ).toString('ascii');
-    private readonly publicKey = Buffer.from(
-        this.configService.get<string>('JWT_PUBLIC_KEY'),
-        'base64',
-    ).toString('ascii');
+
     async validateUserCredentials(
         email: string,
         password: string,
@@ -41,11 +37,11 @@ export class AuthService {
             relations: ['role'],
         });
         if (!user) {
-            throw new BadRequestException('invalid user');
+            throw new UnauthorizedException('invalid user');
         }
         const passwordCompare = await bcrypt.compare(password, user.password);
         if (!passwordCompare) {
-            throw new BadRequestException('invalid password');
+            throw new UnauthorizedException('invalid password');
         }
         return user;
     }
@@ -57,6 +53,7 @@ export class AuthService {
                 {
                     privateKey: this.privateKey,
                     algorithm: 'RS256',
+                    expiresIn: '1h',
                 },
             ),
         } as Login;
@@ -83,10 +80,13 @@ export class AuthService {
                 : '';
         });
     }
-    verifiedToken(token: string) {
-        return this.jwtService.verify(token, {
-            publicKey: this.publicKey,
-            algorithms: ['RS256'],
-        }) as LoginPayload;
+
+    async checkToken(token: string) {
+        const result = await this.blacklistRepository.findOne({
+            where: {
+                token: token,
+            },
+        });
+        if (!result) throw new UnauthorizedException('Expired token');
     }
 }
