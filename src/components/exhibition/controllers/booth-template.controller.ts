@@ -23,17 +23,6 @@ export class BoothTemplateController {
         return this.boothTemplateService.findBoothTemplates(query);
     }
 
-    @Get('organization/:id')
-    getBoothOrganizationTemplateById(
-        @Param('id') id: string,
-        @Paginate() query: PaginateQuery,
-    ) {
-        return this.boothTemplateService.findBoothOrganizationTemplateById(
-            id,
-            query.populate,
-        );
-    }
-
     @Post()
     createBoothTemplate(@Body() boothTemplateDto: BoothTemplateDto) {
         return this.boothTemplateService.createBoothTemplate(boothTemplateDto);

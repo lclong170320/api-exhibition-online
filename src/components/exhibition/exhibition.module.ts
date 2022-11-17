@@ -69,6 +69,9 @@ import { JwtService } from '@nestjs/jwt';
 import { BoothListConverter } from './converters/booth-list.converter';
 import { BoothService } from './services/booth.service';
 import { BoothController } from './controllers/booth.controller';
+import { BoothOrganizationTemplateListConverter } from './converters/booth-organization-template-list.converter';
+import { BoothOrganizationTemplateController } from './controllers/booth-organization-template.controller';
+import { BoothOrganizationTemplateService } from './services/booth-organization-template.service';
 
 @Module({
     controllers: [
@@ -78,6 +81,7 @@ import { BoothController } from './controllers/booth.controller';
         SpaceController,
         SpaceTemplateController,
         BoothController,
+        BoothOrganizationTemplateController,
     ],
     providers: [
         // service
@@ -88,6 +92,7 @@ import { BoothController } from './controllers/booth.controller';
         SpaceTemplateService,
         JwtService,
         BoothService,
+        BoothOrganizationTemplateService,
         // converter
         CategoryConverter,
         ExhibitionConverter,
@@ -117,6 +122,7 @@ import { BoothController } from './controllers/booth.controller';
         BoothOrganizationTemplateConverter,
         BoothTemplatePositionConverter,
         BoothListConverter,
+        BoothOrganizationTemplateListConverter,
     ],
     imports: [
         TypeOrmModule.forFeature(

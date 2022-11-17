@@ -15,8 +15,7 @@ import { lastValueFrom, map } from 'rxjs';
 import { DataSource } from 'typeorm';
 import { PaginateQuery } from '@/decorators/paginate.decorator';
 import { paginate } from '@/utils/pagination';
-import { BoothOrganizationTemplate } from '../entities/booth-organization-template.entity';
-import { BoothOrganizationTemplateConverter } from '../converters/booth-organization-template.converter';
+
 import { BoothTemplate as BoothTemplateDto } from '@/components/exhibition/dto/booth-template.dto';
 import { BoothTemplatePosition as BoothTemplatePositionDto } from '@/components/exhibition/dto/booth-template-position.dto';
 
@@ -33,7 +32,6 @@ export class BoothTemplateService {
         private boothTemplateListConverter: BoothTemplateListConverter,
         private boothTemplateConverter: BoothTemplateConverter,
         private boothTemplatePositionConverter: BoothTemplatePositionConverter,
-        private boothOrganizationTemplateConverter: BoothOrganizationTemplateConverter,
         private readonly httpService: HttpService,
         private readonly configService: ConfigService,
     ) {}
@@ -176,34 +174,5 @@ export class BoothTemplateService {
             );
 
         return createdBoothTemplatePosition;
-    }
-
-    async findBoothOrganizationTemplateById(id: string, populate: string[]) {
-        const boothOrganizationTemplateRepository =
-            this.dataSource.manager.getRepository(BoothOrganizationTemplate);
-        const allowPopulate = ['boothOrganizationTemplatePositions'];
-
-        populate.forEach((value) => {
-            if (!allowPopulate.includes(value)) {
-                throw new BadRequestException(
-                    'Query value is not allowed ' + value,
-                );
-            }
-        });
-        const firstBoothOrganizationTemplate =
-            await boothOrganizationTemplateRepository.findOne({
-                where: {
-                    id: parseInt(id),
-                },
-                relations: populate,
-            });
-
-        if (!firstBoothOrganizationTemplate) {
-            throw new NotFoundException(`The 'booth_id' ${id} is not found`);
-        }
-
-        return this.boothOrganizationTemplateConverter.toDto(
-            firstBoothOrganizationTemplate,
-        );
     }
 }

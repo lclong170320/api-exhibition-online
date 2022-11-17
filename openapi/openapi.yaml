@@ -492,7 +492,7 @@ paths:
                     details: []
       tags:
         - Booth
-  '/booth-templates/organization/{id}':
+  '/booth-organization-templates/{id}':
     get:
       summary: Get booth organization template by ID
       description: Return a single booth organization template
@@ -559,6 +559,78 @@ paths:
                   value:
                     message: Internal server error
                     details: []
+      tags:
+        - Booth
+  '/booth-organization-templates':
+    get:
+      summary: Show list booth organization templates
+      description: Show list booth organization templates
+      operationId: getBoothOrganizationTemplates
+      parameters:
+      - in: query
+        name: page
+        schema:
+          type: string
+          pattern: '^[0-9]+'
+          example: '1'
+        description: The number of items to skip before starting to collect the result set
+      - in: query
+        name: limit
+        schema:
+          type: string
+          pattern: '^[0-9]+'
+          example: '10'
+        description: The numbers of items to return
+      - in: query
+        name: search
+        allowReserved: true
+        schema:
+          type: string
+          example: 'triễn lảm'
+        description: |
+         Searching on allow columns:
+          - id,
+          - name,
+          - created_at
+      - in: query
+        name: sort_by
+        allowReserved: true
+        schema:
+          type: string
+          example: 'id:DESC'
+        description: |
+          Sort on allow columns:
+            - [['id','name', 'created_at'], [DESC,ASC]]
+            - Default: [['createdAt', 'DESC']]
+      - in: query
+        name: populate
+        schema:
+          type: array
+          items:
+            type: string
+            example: 'booth_organization_template_positions'
+        description: |
+         Searching on allow columns:
+            - booth_organization_template_positions
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BoothOrganizationTemplateList'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
       tags:
         - Booth
   '/booth-templates':
@@ -3309,6 +3381,30 @@ components:
           type: integer
           writeOnly: true
           example: 1
+    BoothOrganizationTemplateList:
+      type: object
+      required:
+        - page
+        - limit
+        - total
+        - booth_organization_templates
+      properties:
+        page:
+          type: integer
+          example: 0
+          description: The number of items to skip before starting to collect the result set.
+        limit:
+          type: integer
+          example: 10
+          description: The number of items to return.
+        total:
+          type: integer
+          format: int64
+          example: 1
+        booth_organization_templates:
+          type: array
+          items:
+            $ref: '#/components/schemas/BoothOrganizationTemplate'
     BoothProduct:
       type: object
       required:
