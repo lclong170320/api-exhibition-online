@@ -118,7 +118,6 @@ export class SpaceService {
                     spaceEntity,
                     spaceImageRepository,
                     spaceVideoRepository,
-                    locationRepository,
                 );
                 await this.createSpaceData(
                     spaceDto,
@@ -140,7 +139,6 @@ export class SpaceService {
         space: Space,
         spaceImageRepository: Repository<SpaceImage>,
         spaceVideoRepository: Repository<SpaceVideo>,
-        locationRepository: Repository<Location>,
     ) {
         const spaceImages = await spaceImageRepository.find({
             where: {
@@ -159,14 +157,6 @@ export class SpaceService {
         });
 
         await spaceVideoRepository.remove(spaceVideos);
-        const spaceLocations = await locationRepository.find({
-            where: {
-                space: {
-                    id: space.id,
-                },
-            },
-        });
-        await locationRepository.remove(spaceLocations);
         return space;
     }
 
