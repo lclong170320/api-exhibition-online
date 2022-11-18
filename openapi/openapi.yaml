@@ -2063,6 +2063,72 @@ paths:
                   value:
                     message: Internal server error
                     details: []
+  '/auth/me':
+    get:
+      security:
+      - bearerAuth: []
+      tags:
+        - Auth
+      summary: Get info user from access token
+      description: Return a single user
+      operationId: getAuthMe
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                required:
+                  - user
+                  - iat
+                  - exp
+                type: object
+                properties:
+                  user:
+                    $ref: '#/components/schemas/User'
+                  iat:
+                    type: number
+                    example: 1668674152
+                  exp:
+                    type: number
+                    example: 1668674152
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Bad Request
+                    details:
+                      - field: .params.id
+                        message: 'should match pattern "^[0-9]+$"'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Not Found
+                    details:
+                      - field: .params.id
+                        message: 'The id not exist: "^[0-9]+$"'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Internal server error
+                    details: []
   '/auth/logout':
       get:
         tags:
@@ -3090,6 +3156,8 @@ components:
           role_id:
             type: number
             writeOnly: true
+          role:
+            $ref: '#/components/schemas/Role'
           status:
             type: string
             enum: [active, inactive]

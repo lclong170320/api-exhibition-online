@@ -17,12 +17,11 @@ export class RolesGuard implements CanActivate {
             return true;
         }
 
-        const request = context.switchToHttp().getRequest();
-        const jwtAccessToken = request.get('Authorization').split(' ')[1];
-        const user = this.jwtService.decode(jwtAccessToken);
+        // const request = context.switchToHttp().getRequest();
+        // const jwtAccessToken = request.get('Authorization').split(' ')[1];
+        // const user = this.jwtService.decode(jwtAccessToken);
 
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const role = user['user'].role.name;
+        // const role = user['user'].role.name;
 
         // return requireRoles.includes(role); NOTE: implement login
         return true;

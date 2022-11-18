@@ -21,6 +21,7 @@ export class AuthService {
         @InjectRepository(User, DbConnection.userCon)
         private readonly usersRepository: Repository<User>,
     ) {}
+
     private readonly privateKey = Buffer.from(
         this.configService.get<string>('JWT_PRIVATE_KEY'),
         'base64',
@@ -45,6 +46,7 @@ export class AuthService {
         }
         return user;
     }
+
     async issueAccessToken(user: User): Promise<Login> {
         const userDto = this.userConverter.toDto(user);
         return {
@@ -58,6 +60,7 @@ export class AuthService {
             ),
         } as Login;
     }
+
     async login(login: Login) {
         const user = await this.validateUserCredentials(
             login.email,
@@ -65,9 +68,11 @@ export class AuthService {
         );
         return await this.issueAccessToken(user);
     }
+
     async logout(token: string) {
         await this.blacklistRepository.save({ token: token });
     }
+
     async removeExpiredToken() {
         const blacklist = await this.blacklistRepository.find();
         blacklist?.map((data) => {
@@ -88,5 +93,9 @@ export class AuthService {
             },
         });
         if (result) throw new UnauthorizedException('Expired token');
+    }
+
+    getAuthMe(jwtAccessToken: string) {
+        return this.jwtService.decode(jwtAccessToken);
     }
 }

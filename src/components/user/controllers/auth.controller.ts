@@ -1,3 +1,4 @@
+import { JwtAccessToken } from '@/decorators/jwt-access-token.decorator';
 import { Body, Controller, Get, Post, Req } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { Request } from 'express';
@@ -17,6 +18,11 @@ export class AuthController {
     async async(@Req() req: Request) {
         const jwtAccessToken = req.get('Authorization').split(' ')[1];
         jwtAccessToken ? await this.authService.logout(jwtAccessToken) : '';
+    }
+
+    @Get('me')
+    getAuthMe(@JwtAccessToken() jwtAccessToken: string) {
+        return this.authService.getAuthMe(jwtAccessToken);
     }
 
     @Cron(CronExpression.EVERY_HOUR)
