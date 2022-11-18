@@ -18,4 +18,9 @@ export class PublicController {
     getMediaById(@Param('id') id: string) {
         return this.publicService.getMediaById(id);
     }
+
+    @Get('/enterprises/:id')
+    getEnterpriseById(@Param('id') id: string) {
+        return this.publicService.getEnterpriseById(id);
+    }
 }

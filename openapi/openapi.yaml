@@ -1344,79 +1344,6 @@ paths:
                   value:
                     message: Internal server error
                     details: []
-  '/enterprises/{id}/document/{document_id}':
-    put:
-      tags:
-        - Enterprise
-      summary: Update document by id enterprise
-      description: Update document by id enterprise
-      operationId: updateDocumentsEnterprise
-      parameters:
-        - in: path
-          schema:
-            type: string
-            pattern: '^[0-9]+$'
-          name: id
-          required: true
-          description: The enterprise's ID will be update documents
-        - in: path
-          name: document_id
-          required: true
-          schema:
-            type: string
-            pattern: '^[0-9]+$'
-          description: The document's ID will be update documents
-      requestBody:
-        description: Update document enterprise's
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/EnterpriseDocument'
-        required: true
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/EnterpriseDocument'
-        '400':
-          description: Validation error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponseBody'
-              examples:
-                example-1:
-                  value:
-                    message: Bad Request
-                    details:
-                      - field: .params.id
-                        message: 'should match pattern "^[0-9]+$"'
-        '404':
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponseBody'
-              examples:
-                example-1:
-                  value:
-                    message: Not Found
-                    details:
-                      - field: .params.id
-                        message: 'The id not exist: "^[0-9]+$"'
-        '500':
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponseBody'
-              examples:
-                example-1:
-                  value:
-                    message: Internal server error
-                    details: []
   '/enterprises':
     get:
       tags:
@@ -1446,7 +1373,7 @@ paths:
             type: string
             example: 'dalavina'
           description: |
-            Searching on allow columns:['abbreviation', createdBy]:
+            Searching on allow columns:['name']:
             ```
             http://localhost:3000/api/v1/exhibitions?search=dalavina
             ```
@@ -1457,20 +1384,8 @@ paths:
             type: array
             items:
               type: string
-          example: 'abbreviation:desc'
+          example: 'name:desc'
           description: column name for ordering and value [desc,asc]
-        - in: query
-          name: populate
-          schema:
-            type: array
-            items:
-              type: string
-              example: 'documents'
-          description: |
-            List of populatable columns
-            | Populates          |
-            |--------------------|
-            | documents          |
       responses:
         '200':
           description: OK
@@ -1511,129 +1426,6 @@ paths:
                     details:
                       - field: .params.id
                         message: 'should match pattern "^[0-9]+$"'
-        '500':
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponseBody'
-              examples:
-                example-1:
-                  value:
-                    message: Internal server error
-                    details: []
-  '/enterprises/{id}/documents':
-    post:
-      tags:
-        - Enterprise
-      summary: Add a new enterprise's document
-      description: Add a new enterprise's document
-      operationId: addEnterpriseDocument
-      parameters:
-        - schema:
-            type: string
-            pattern: '^[0-9]+$'
-          name: id
-          in: path
-          required: true
-          description: The enterprise's ID will be add new document
-      requestBody:
-        description: Create a new enterprise's document
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/EnterpriseDocument'
-        required: true
-      responses:
-        '201':
-          description: Created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/EnterpriseDocument'
-        '400':
-          description: Validation error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponseBody'
-              examples:
-                example-1:
-                  value:
-                    message: Bad Request
-                    details:
-                      - field: .params.id
-                        message: 'should match pattern "^[0-9]+$"'
-        '500':
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponseBody'
-              examples:
-                example-1:
-                  value:
-                    message: Internal server error
-                    details: []
-    get:
-      tags:
-        - Enterprise
-      summary: Get documents of enterprise
-      description: Return a documents
-      operationId: getDocument
-      parameters:
-        - name: id
-          description: ID of enterprises to get documents
-          in: path
-          required: true
-          schema:
-            type: string
-            pattern: '^[0-9]+$'
-        - in: query
-          name: offset
-          schema:
-            type: integer
-            default: 0
-          description: The number of items to skip before starting to collect the result set
-        - in: query
-          name: limit
-          schema:
-            type: integer
-            default: 10
-          description: The numbers of items to return
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/DocumentList'
-        '400':
-          description: Validation error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponseBody'
-              examples:
-                example-1:
-                  value:
-                    message: Bad Request
-                    details:
-                      - field: .params.id
-                        message: 'should match pattern "^[0-9]+$"'
-        '404':
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponseBody'
-              examples:
-                example-1:
-                  value:
-                    message: Not Found
-                    details:
-                      - field: .params.id
-                        message: 'The id not exist: "^[0-9]+$"'
         '500':
           description: Internal server error
           content:
@@ -2971,117 +2763,64 @@ components:
       type: object
       required:
         - id
-        - international_name
-        - abbreviation
-        - tax_code
-        - address
-        - ceo
+        - name
         - phone
-        - active_date
-        - status
+        - email
+        - address
+        - description
         - type_of_business
-        - manager_by
-        - created_by
-        - created_date
+        - image_id
       properties:
         id:
           type: integer
           readOnly: true
-        international_name:
+        name:
           type: string
           minLength: 1
           maxLength: 255
           example: DALAVINA TECHNOLOGY SOLUTION JOINT STOCK TECHNOLOGY
-        abbreviation:
+        phone:
           type: string
-          minLength: 1
-          maxLength: 255
-          example: DALAVINA JSC
-        tax_code:
+          pattern: '^(((\+|)84)|0)([0-9]{9})$'
+          example: 0707678777
+        email:
           type: string
-          minLength: 1
-          maxLength: 255
-          example: 0371278269
+          format: email
+          example: dalavina@dalavina.com
         address:
           type: string
           minLength: 1
           maxLength: 255
           example: 224, Phạm Thị Giây, ấp Tam Đông 2, Hóc Môn, Thành phố Hồ Chí Minh
-        ceo:
+        selected_media_id:
+          type: integer
+          writeOnly: true
+        image_id:
+          type: number
+          readOnly: true
+          example: 1
+        media_data:
+          type: string
+          writeOnly: true
+          example: 'base64 string'
+        description:
+          type: string
+          minLength: 1
+        link_website:
           type: string
           minLength: 1
           maxLength: 255
-          example: PHAN THANH TUNG
-        phone:
-          type: string
-          pattern: '^(((\+|)84)|0)([0-9]{9})$'
-          example: 0707678777
-        active_date:
+          example: https://dalavina.com/view_company_online
+        link_profile:
           type: string
           minLength: 1
-          pattern: '^[1-9]\d{3}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$'
-          example: '2022-01-01T00:00:00.000Z'
-        created_by:
-          type: number
-          readOnly: true
-          minLength: 1
-          example: 1
-        created_date:
-          type: string
-          readOnly: true
-          minLength: 1
-          pattern: '^[1-9]\d{3}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$'
-          example: '2022-01-01T00:00:00.000Z'
-        status:
-          type: string
-          enum: ['active', 'inactive']
-          example: 'active'
+          maxLength: 255
+          example: https://dalavina.com/view_company_online
         type_of_business:
           type: string
           minLength: 1
           maxLength: 255
           example: Công ty cổ phần ngoài NN
-        manager_by:
-          type: string
-          minLength: 1
-          maxLength: 255
-          example: Chi cục thuế Quận 1
-        view_company_online:
-          type: string
-          minLength: 1
-          maxLength: 255
-          example: 'https://dalavina.com/view_company_online'
-    EnterpriseDocument:
-      type: object
-      required:
-        - title
-        - content
-        - is_profile
-      properties:
-        id:
-          type: number
-          readOnly: true
-          example: 1
-        title:
-          type: string
-          example: Tiêu đề ....
-          maxLength: 255
-        content:
-          type: string
-          example: Nội dung...
-        is_profile:
-          type: boolean
-          example: false
-        media_id:
-          type: number
-          readOnly: true
-          example: 1
-        selected_media_id:
-          type: integer
-          writeOnly: true
-        media_data:
-          type: string
-          writeOnly: true
     MediaList:
       type: object
       required:
@@ -3191,30 +2930,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Enterprise'
-    DocumentList:
-      type: object
-      required:
-        - limit
-        - offset
-        - total
-        - documents
-      properties:
-        limit:
-          type: integer
-          format: int64
-          example: 10
-        offset:
-          type: integer
-          format: int64
-          example: 0
-        total:
-          type: integer
-          format: int64
-          example: 1
-        documents:
-          type: array
-          items:
-            $ref: '#/components/schemas/EnterpriseDocument'
     Category:
       type: object
       required:

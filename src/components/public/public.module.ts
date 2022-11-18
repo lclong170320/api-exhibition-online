@@ -54,6 +54,8 @@ import { BoothOrganizationProjectConverter } from '../exhibition/converters/boot
 import { BoothOrganizationTemplateConverter } from '../exhibition/converters/booth-organization-template.converter';
 import { SpaceTemplatePosition } from '../exhibition/entities/space-template-position.entity';
 import { ExhibitionConverter } from '../exhibition/converters/exhibition.converter';
+import { Enterprise } from '../enterprise/entities/enterprise.entity';
+import { EnterpriseConverter } from '../enterprise/converters/enterprise.converter';
 import { BoothTemplatePositionConverter } from '../exhibition/converters/booth-template-position.converter';
 
 @Module({
@@ -86,6 +88,7 @@ import { BoothTemplatePositionConverter } from '../exhibition/converters/booth-t
         BoothOrganizationProductConverter,
         BoothOrganizationProjectConverter,
         BoothOrganizationTemplateConverter,
+        EnterpriseConverter,
         BoothTemplatePositionConverter,
     ],
     imports: [
@@ -127,6 +130,7 @@ import { BoothTemplatePositionConverter } from '../exhibition/converters/booth-t
             DbConnection.exhibitionCon,
         ),
         TypeOrmModule.forFeature([Media], DbConnection.mediaCon),
+        TypeOrmModule.forFeature([Enterprise], DbConnection.enterpriseCon),
     ],
     exports: [TypeOrmModule],
 })

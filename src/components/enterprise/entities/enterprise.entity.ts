@@ -4,49 +4,40 @@ import {
     CreateDateColumn,
     UpdateDateColumn,
     Column,
-    OneToMany,
     DeleteDateColumn,
 } from 'typeorm';
-import { Document } from './document.entity';
-import { Enterprise as EnterpriseDto } from '../dto/enterprise.dto';
 
-@Entity({ name: 'enterprises' })
+@Entity({ name: 'enterprise' })
 export class Enterprise {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({ length: 255, name: 'international_name' })
-    internationalName: string;
+    @Column({ length: 255 })
+    name: string;
 
-    @Column({ length: 255, name: 'abbreviation' })
-    abbreviation: string;
-
-    @Column({ length: 255, name: 'tax_code' })
-    taxCode: string;
+    @Column({ name: 'image_id' })
+    imageId: number;
 
     @Column({ length: 255 })
     address: string;
 
     @Column({ length: 255 })
-    ceo: string;
-
-    @Column({ length: 255 })
     phone: string;
 
-    @Column({ type: 'datetime', name: 'active_date' })
-    activeDate: Date;
-
     @Column({ length: 255 })
-    status: EnterpriseDto.StatusEnum;
+    email: string;
+
+    @Column('longtext')
+    description: string;
 
     @Column({ length: 255, name: 'type_of_business' })
     typeOfBusiness: string;
 
-    @Column({ length: 255, name: 'manager_by' })
-    managerBy: string;
+    @Column({ length: 255, name: 'link_website', nullable: true })
+    linkWebsite: string;
 
-    @Column({ length: 255, name: 'view_company_online', nullable: true })
-    viewCompanyOnline: string;
+    @Column({ length: 255, name: 'link_profile', nullable: true })
+    linkProfile: string;
 
     @Column({ type: 'datetime', name: 'created_date' })
     createdDate: Date;
@@ -62,12 +53,6 @@ export class Enterprise {
         name: 'updated_at',
     })
     updatedAt: Date;
-
-    @OneToMany(() => Document, (document) => document.enterprise)
-    documents: Document[];
-
-    @Column({ name: 'created_by' })
-    createdBy: number;
 
     @DeleteDateColumn({
         type: 'timestamp',

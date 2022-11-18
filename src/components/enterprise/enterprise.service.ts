@@ -2,56 +2,40 @@ import { DbConnection } from '@/database/config/db';
 import { HttpService } from '@nestjs/axios';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectDataSource } from '@nestjs/typeorm';
 import { paginate } from '@/utils/pagination';
 import { PaginateQuery } from '@/decorators/paginate.decorator';
-import { toDataURL } from 'qrcode';
 import { lastValueFrom, map } from 'rxjs';
-import { Repository } from 'typeorm';
-import { DocumentListConverter } from './converters/document-list.converter';
-import { DocumentConverter } from './converters/enterprise-document.converter';
+import { DataSource } from 'typeorm';
 import { EnterpriseListConverter } from './converters/enterprise-list.converter';
 import { EnterpriseConverter } from './converters/enterprise.converter';
-import { EnterpriseDocument as NewDocumentDto } from './dto/enterprise-document.dto';
 import { Enterprise as EnterpriseDto } from './dto/enterprise.dto';
-
-import { Document } from './entities/document.entity';
+import { toDataURL } from 'qrcode';
 import { Enterprise } from './entities/enterprise.entity';
 
 @Injectable()
 export class EnterpriseService {
-    private readonly offsetDefault = 0;
-    private readonly limitDefault = 10;
     constructor(
-        @InjectRepository(Enterprise, DbConnection.enterpriseCon)
-        private readonly enterpriseRepository: Repository<Enterprise>,
-        @InjectRepository(Document, DbConnection.enterpriseCon)
-        private readonly documentRepository: Repository<Document>,
-        private readonly documentConverter: DocumentConverter,
+        @InjectDataSource(DbConnection.enterpriseCon)
+        private readonly dataSource: DataSource,
         private readonly enterpriseConverter: EnterpriseConverter,
         private readonly enterpriseListConverter: EnterpriseListConverter,
-        private readonly documentListConverter: DocumentListConverter,
         private readonly httpService: HttpService,
         private readonly configService: ConfigService,
     ) {}
 
     async getEnterprises(query: PaginateQuery) {
-        const sortableColumns = [
-            'abbreviation',
-            'createdBy',
-            'createdAt',
-            'internationalName',
-        ];
-        const searchableColumns = ['abbreviation', 'createdBy'];
+        const enterpriseRepository =
+            this.dataSource.manager.getRepository(Enterprise);
+        const sortableColumns = ['createdDate'];
+        const searchableColumns = ['name'];
         const defaultSortBy = [['createdAt', 'DESC']];
-        const populatableColumns = ['documents'];
         const [enterprises, total] = await paginate(
             query,
-            this.enterpriseRepository,
+            enterpriseRepository,
             {
                 searchableColumns,
                 sortableColumns,
-                populatableColumns,
                 defaultSortBy,
             },
         );
@@ -68,44 +52,22 @@ export class EnterpriseService {
         return this.enterpriseConverter.toDto(enterpriseEntity);
     }
 
-    async getEnterprisesDocuments(id: string, offset: string, limit: string) {
-        const enterpriseId = parseInt(id);
-        const offsetQuery = parseInt(offset)
-            ? parseInt(offset)
-            : this.offsetDefault;
-        const limitQuery = parseInt(limit)
-            ? parseInt(limit)
-            : this.limitDefault;
-        const [enterprisesDocumentEntity, count] =
-            await this.documentRepository.findAndCount({
-                where: {
-                    enterpriseId: enterpriseId,
-                },
-                order: {
-                    createdAt: 'DESC',
-                },
-                skip: offsetQuery,
-                take: limitQuery,
-            });
-        return this.documentListConverter.toDto(
-            enterprisesDocumentEntity,
-            limitQuery,
-            offsetQuery,
-            count,
-        );
-    }
-
     async createEnterprise(
         enterpriseDto: EnterpriseDto,
     ): Promise<EnterpriseDto> {
-        //TODO
-        const user_id = 1;
+        const enterpriseRepository =
+            this.dataSource.manager.getRepository(Enterprise);
         const newEnterpriseEntity =
             this.enterpriseConverter.toEntity(enterpriseDto);
         newEnterpriseEntity.createdDate = new Date();
+        newEnterpriseEntity.imageId = enterpriseDto.selected_media_id;
 
-        newEnterpriseEntity.createdBy = user_id;
-        const createdEnterprise = await this.enterpriseRepository.save(
+        if (enterpriseDto.media_data) {
+            newEnterpriseEntity.imageId = await this.createUrlMedias(
+                enterpriseDto.media_data,
+            );
+        }
+        const createdEnterprise = await enterpriseRepository.save(
             newEnterpriseEntity,
         );
 
@@ -132,32 +94,6 @@ export class EnterpriseService {
         return result.id;
     }
 
-    async createDocument(
-        id: string,
-        newDocumentDto: NewDocumentDto,
-    ): Promise<object> {
-        const newDocumentEntity =
-            this.documentConverter.toEntity(newDocumentDto);
-
-        newDocumentEntity.mediaId = newDocumentDto.selected_media_id;
-
-        if (newDocumentDto.media_data) {
-            newDocumentEntity.mediaId = await this.createUrlMedias(
-                newDocumentDto.media_data,
-            );
-        }
-        newDocumentEntity.enterpriseId = parseInt(id);
-
-        const documentToCreate =
-            this.documentRepository.create(newDocumentEntity);
-
-        const documentToSave = await this.documentRepository.save(
-            documentToCreate,
-        );
-
-        return this.documentConverter.toDto(documentToSave);
-    }
-
     async generateQR(text: string): Promise<string> {
         return await toDataURL(text);
     }
@@ -169,57 +105,24 @@ export class EnterpriseService {
     }
 
     private async findEnterpriseById(id: string) {
-        const enterpriseId = parseInt(id);
-        const enterpriseEntity = await this.enterpriseRepository.findOneBy({
-            id: enterpriseId,
+        const enterpriseRepository =
+            this.dataSource.manager.getRepository(Enterprise);
+        const enterpriseEntity = await enterpriseRepository.findOneBy({
+            id: parseInt(id),
         });
         if (!enterpriseEntity) {
-            throw new NotFoundException(
-                'The id enterprise not exist: ' + enterpriseId,
-            );
+            throw new NotFoundException('The id enterprise not exist: ' + id);
         }
         return enterpriseEntity;
     }
 
-    private async findDocumentById(documentId: string, enterpriseId: string) {
-        const documentEntity = await this.documentRepository.findOneBy({
-            id: parseInt(documentId),
-            enterpriseId: parseInt(enterpriseId),
-        });
-        if (!documentEntity) {
-            throw new NotFoundException(
-                `The document is not found: enterprise_id: ${enterpriseId} and document_id: ${documentId}`,
-            );
-        }
-        return documentEntity;
-    }
-
-    async updateDocuments(
-        enterpriseId: string,
-        documentId: string,
-        enterpriseDocumentDto: NewDocumentDto,
-    ): Promise<object> {
-        await this.findEnterpriseById(enterpriseId);
-        const firstDocumentEntity = await this.findDocumentById(
-            documentId,
-            enterpriseId,
-        );
-        const updateDocumentEntity = this.documentConverter.toEntity(
-            enterpriseDocumentDto,
-        );
-        const updateDocument = await this.documentRepository.save({
-            ...firstDocumentEntity,
-            ...updateDocumentEntity,
-        });
-
-        return this.documentConverter.toDto(updateDocument);
-    }
-
     async updateEnterprise(id: string, newEnterpriseDto: EnterpriseDto) {
+        const enterpriseRepository =
+            this.dataSource.manager.getRepository(Enterprise);
         const enterpriseEntity = await this.findEnterpriseById(id);
         const newEnterpriseEntity =
             this.enterpriseConverter.toEntity(newEnterpriseDto);
-        const newEnterprise = await this.enterpriseRepository.save({
+        const newEnterprise = await enterpriseRepository.save({
             ...enterpriseEntity,
             ...newEnterpriseEntity,
         });
@@ -227,9 +130,10 @@ export class EnterpriseService {
     }
 
     async deleteEnterprise(id: string) {
-        const enterpriseId = parseInt(id);
-        const deleteResponse = await this.enterpriseRepository.softDelete(
-            enterpriseId,
+        const enterpriseRepository =
+            this.dataSource.manager.getRepository(Enterprise);
+        const deleteResponse = await enterpriseRepository.softDelete(
+            parseInt(id),
         );
         if (!deleteResponse.affected) {
             throw new NotFoundException('The id not exist: ');
