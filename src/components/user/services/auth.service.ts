@@ -97,8 +97,11 @@ export class AuthService {
 
     async getAuthMe(jwtAccessToken: string) {
         const payload = this.jwtService.decode(jwtAccessToken) as LoginPayload;
-        const user = await this.usersRepository.findOneBy({
-            id: payload.user.id,
+        const user = await this.usersRepository.findOne({
+            where: {
+                id: payload.user.id,
+            },
+            relations: ['role'],
         });
 
         return this.userConverter.toDto(user);
