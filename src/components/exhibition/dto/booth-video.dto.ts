@@ -14,6 +14,7 @@ export interface BoothVideo {
     readonly id: number;
     selected_media_id?: number;
     readonly video_id: number;
+    readonly video_url?: string;
     media_data?: string;
     booth_template_position_id?: number;
 }

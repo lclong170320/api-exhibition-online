@@ -14,6 +14,7 @@ export interface BoothImage {
     readonly id: number;
     selected_media_id?: number;
     readonly image_id: number;
+    readonly image_url?: string;
     media_data?: string;
     booth_template_position_id?: number;
 }

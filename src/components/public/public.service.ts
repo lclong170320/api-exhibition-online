@@ -3,12 +3,12 @@ import { PaginateQuery } from '@/decorators/paginate.decorator';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
-import { ExhibitionConverter } from '../exhibition/converters/exhibition.converter';
+import { ExhibitionConverter } from '@/components/public/converters/exhibition/exhibition.converter';
 import { Exhibition } from '../exhibition/entities/exhibition.entity';
-import { MediaConverter } from '@/components/media/converters/media.converter';
+import { MediaConverter } from '@/components/public/converters/media/media.converter';
 import { Media } from '@/components/media/entities/media.entity';
 import { Enterprise } from '@/components/enterprise/entities/enterprise.entity';
-import { EnterpriseConverter } from '@/components/enterprise/converters/enterprise.converter';
+import { EnterpriseConverter } from '@/components/public/converters/enterprise/enterprise.converter';
 
 @Injectable()
 export class PublicService {
@@ -59,9 +59,10 @@ export class PublicService {
 
         return this.mediaConverter.toDto(mediaEntity);
     }
+
     async getEnterpriseById(id: string) {
         const enterpriseRepository =
-            await this.enterpriseDataSource.manager.getRepository(Enterprise);
+            this.enterpriseDataSource.manager.getRepository(Enterprise);
         const enterprise = await enterpriseRepository.findOne({
             where: {
                 id: parseInt(id),
