@@ -176,18 +176,15 @@ export class SpaceService {
     ) {
         const videoRepository = this.dataSource.getRepository(Video);
         const spaceVideoEntity = this.spaceVideoConverter.toEntity(data);
-        const video = await videoRepository.findOneBy({
-            id: data.select_media_id,
-        });
-        spaceVideoEntity.video = video;
+        const newVideo = new Video();
+        newVideo.videoId = data.select_media_id;
 
         if (data.media_data) {
             const newVideoId = await this.createUrlMedias(data.media_data);
-            const newVideo = await videoRepository.findOneBy({
-                id: newVideoId,
-            });
-            spaceVideoEntity.video = newVideo;
+            newVideo.videoId = newVideoId;
         }
+        const createdVideo = await videoRepository.save(newVideo);
+        spaceVideoEntity.video = createdVideo;
         spaceVideoEntity.space = space;
         const spaceTemplatePosition =
             await spaceTemplatePositionRepository.findOneBy({
@@ -218,18 +215,16 @@ export class SpaceService {
     ) {
         const imageRepository = this.dataSource.getRepository(Image);
         const spaceImageEntity = this.spaceImageConverter.toEntity(data);
-        const image = await imageRepository.findOneBy({
-            id: data.select_media_id,
-        });
-        spaceImageEntity.image = image;
+        const imageEntity = new Image();
+        imageEntity.imageId = data.select_media_id;
 
         if (data.media_data) {
             const newImageId = await this.createUrlMedias(data.media_data);
-            const newImage = await imageRepository.findOneBy({
-                id: newImageId,
-            });
-            spaceImageEntity.image = newImage;
+            imageEntity.imageId = newImageId;
         }
+
+        const createdImage = await imageRepository.save(imageEntity);
+        spaceImageEntity.image = createdImage;
         spaceImageEntity.space = space;
         const spaceTemplatePosition =
             await spaceTemplatePositionRepository.findOneBy({
