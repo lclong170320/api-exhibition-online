@@ -22,10 +22,6 @@ import { SpaceVideoConverter } from '../converters/space-video.converter';
 import { SpaceImageConverter } from '../converters/space-image.converter';
 import { Video } from '../entities/video.entity';
 import { Image } from '../entities/image.entity';
-import { Location } from '../entities/location.entity';
-import { Location as LocationDto } from '../dto/location.dto';
-import { SpaceTemplateLocation } from '../entities/space-template-location.entity';
-import { LocationConverter } from '../converters/location.converter';
 
 @Injectable()
 export class SpaceService {
@@ -37,7 +33,6 @@ export class SpaceService {
         private readonly spaceConverter: SpaceConverter,
         private readonly spaceVideoConverter: SpaceVideoConverter,
         private readonly spaceImageConverter: SpaceImageConverter,
-        private readonly locationConverter: LocationConverter,
     ) {}
 
     async getSpaceById(spaceId: string, populate: string[]) {
@@ -85,12 +80,8 @@ export class SpaceService {
                 const spaceTemplatePositionRepository = manager.getRepository(
                     SpaceTemplatePosition,
                 );
-                const spaceTemplateLocationRepository = manager.getRepository(
-                    SpaceTemplateLocation,
-                );
                 const spaceTemplateRepository =
                     manager.getRepository(SpaceTemplate);
-                const locationRepository = manager.getRepository(Location);
                 let spaceEntity = await spaceRepository.findOne({
                     where: {
                         id: parseInt(spaceId),
@@ -125,8 +116,6 @@ export class SpaceService {
                     spaceImageRepository,
                     spaceVideoRepository,
                     spaceTemplatePositionRepository,
-                    spaceTemplateLocationRepository,
-                    locationRepository,
                 );
                 return spaceEntity;
             },
@@ -262,32 +251,6 @@ export class SpaceService {
 
         return createSpaceImage;
     }
-    private async createLocation(
-        data: LocationDto,
-        space: Space,
-        LocationRepository: Repository<Location>,
-        spaceTemplateLocationRepository: Repository<SpaceTemplateLocation>,
-    ) {
-        const locationEntity = this.locationConverter.toEntity(data);
-
-        locationEntity.space = space;
-        const spaceTemplateLocation =
-            await spaceTemplateLocationRepository.findOneBy({
-                id: data.space_template_location_id,
-            });
-
-        if (!spaceTemplateLocation) {
-            throw new BadRequestException(
-                'The "space_template_location_id" not found: ' +
-                    data.space_template_location_id,
-            );
-        }
-
-        locationEntity.spaceTemplateLocation = spaceTemplateLocation;
-        const createLocation = await LocationRepository.save(locationEntity);
-
-        return createLocation;
-    }
 
     private async createSpaceData(
         spaceDto: SpaceDto,
@@ -295,8 +258,6 @@ export class SpaceService {
         spaceImageRepository: Repository<SpaceImage>,
         spaceVideoRepository: Repository<SpaceVideo>,
         spaceTemplatePositionRepository: Repository<SpaceTemplatePosition>,
-        spaceTemplateLocationRepository: Repository<SpaceTemplateLocation>,
-        locationRepository: Repository<Location>,
     ) {
         await Promise.all(
             spaceDto.space_images?.map(async (data) => {
@@ -320,17 +281,7 @@ export class SpaceService {
                 return newSpaceVideo;
             }),
         );
-        await Promise.all(
-            spaceDto.locations?.map(async (data) => {
-                const newSpaceVideo = await this.createLocation(
-                    data,
-                    space,
-                    locationRepository,
-                    spaceTemplateLocationRepository,
-                );
-                return newSpaceVideo;
-            }),
-        );
+
         return space;
     }
 }
