@@ -95,7 +95,12 @@ export class AuthService {
         if (result) throw new UnauthorizedException('Expired token');
     }
 
-    getAuthMe(jwtAccessToken: string) {
-        return this.jwtService.decode(jwtAccessToken);
+    async getAuthMe(jwtAccessToken: string) {
+        const payload = this.jwtService.decode(jwtAccessToken) as LoginPayload;
+        const user = await this.usersRepository.findOneBy({
+            id: payload.user.id,
+        });
+
+        return this.userConverter.toDto(user);
     }
 }
