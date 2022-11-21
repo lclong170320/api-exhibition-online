@@ -35,6 +35,7 @@ export class BoothService {
         const decodedJwtAccessToken = this.jwtService.decode(jwtAccessToken);
 
         const enterpriseId = await this.utilService.getEnterpriseIdFromToken(
+            jwtAccessToken,
             decodedJwtAccessToken['user'].id,
         );
 

@@ -14,9 +14,18 @@ export class UtilService {
         private readonly httpService: HttpService,
     ) {}
 
-    async getEnterpriseIdFromToken(id: number): Promise<number> {
+    async getEnterpriseIdFromToken(
+        jwtAccessToken: string,
+        id: number,
+    ): Promise<number> {
+        const config = {
+            headers: { Authorization: `Bearer ${jwtAccessToken}` },
+        };
         const url = this.configService.get('GETTING_USER_URL');
-        const firstUser = this.httpService.get(`${url}/${id}?populate=role`);
+        const firstUser = this.httpService.get(
+            `${url}/${id}?populate=role`,
+            config,
+        );
         const response = firstUser.pipe(
             map((res) => {
                 return res.data;

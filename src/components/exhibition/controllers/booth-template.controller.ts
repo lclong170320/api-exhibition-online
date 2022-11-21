@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import {
+    Body,
+    Controller,
+    Delete,
+    Get,
+    Param,
+    Post,
+    HttpCode,
+    UseGuards,
+} from '@nestjs/common';
 import { BoothTemplateService } from '@/components/exhibition/services/booth-template.service';
 import { Paginate, PaginateQuery } from '@/decorators/paginate.decorator';
 import { BoothTemplate as BoothTemplateDto } from '@/components/exhibition/dto/booth-template.dto';
@@ -30,8 +39,18 @@ export class BoothTemplateController {
         return this.boothTemplateService.findBoothTemplates(query);
     }
 
+    @UseGuards(RolesGuard)
+    @Roles(Role.ADMIN)
     @Post()
     createBoothTemplate(@Body() boothTemplateDto: BoothTemplateDto) {
         return this.boothTemplateService.createBoothTemplate(boothTemplateDto);
+    }
+
+    @UseGuards(RolesGuard)
+    @Roles(Role.ADMIN)
+    @Delete(':id')
+    @HttpCode(204)
+    deleteBoothTemplate(@Param('id') id: string) {
+        return this.boothTemplateService.deleteBoothTemplate(id);
     }
 }

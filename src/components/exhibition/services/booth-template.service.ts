@@ -4,7 +4,7 @@ import {
     Injectable,
     BadRequestException,
 } from '@nestjs/common';
-import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
+import { InjectDataSource } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { BoothTemplate } from '@/components/exhibition/entities/booth-template.entity';
 import { BoothTemplateListConverter } from '@/components/exhibition/converters/booth-template-list.converter';
@@ -25,8 +25,6 @@ import { BoothTemplatePositionConverter } from '../converters/booth-template-pos
 @Injectable()
 export class BoothTemplateService {
     constructor(
-        @InjectRepository(BoothTemplate, DbConnection.exhibitionCon)
-        private readonly boothTemplateRepository: Repository<BoothTemplate>,
         @InjectDataSource(DbConnection.exhibitionCon)
         private readonly dataSource: DataSource,
         private boothTemplateListConverter: BoothTemplateListConverter,
@@ -37,6 +35,9 @@ export class BoothTemplateService {
     ) {}
 
     async findBoothTemplateById(id: string, populate: string[]) {
+        const boothTemplateRepository =
+            this.dataSource.getRepository(BoothTemplate);
+
         const allowPopulate = ['boothTemplatePositions'];
 
         populate.forEach((value) => {
@@ -46,7 +47,7 @@ export class BoothTemplateService {
                 );
             }
         });
-        const firstBoothTemplate = await this.boothTemplateRepository.findOne({
+        const firstBoothTemplate = await boothTemplateRepository.findOne({
             where: {
                 id: parseInt(id),
             },
@@ -174,5 +175,22 @@ export class BoothTemplateService {
             );
 
         return createdBoothTemplatePosition;
+    }
+
+    async deleteBoothTemplate(id: string) {
+        await this.dataSource.transaction(async (manager) => {
+            const boothTemplateRepository =
+                manager.getRepository(BoothTemplate);
+
+            const firstBoothTemplate = await boothTemplateRepository.findOneBy({
+                id: parseInt(id),
+            });
+
+            if (!firstBoothTemplate) {
+                throw new NotFoundException('Not found');
+            }
+
+            await boothTemplateRepository.softRemove(firstBoothTemplate);
+        });
     }
 }
