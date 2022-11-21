@@ -1,7 +1,9 @@
 import {
     Body,
     Controller,
+    Delete,
     Get,
+    HttpCode,
     Param,
     Post,
     Put,
@@ -84,5 +86,13 @@ export class ExhibitionController {
             boothId,
             boothDto,
         );
+    }
+
+    @UseGuards(RolesGuard)
+    @Roles(Role.ADMIN)
+    @Delete(':id')
+    @HttpCode(204)
+    deleteExhibition(@Param('id') id: string) {
+        return this.exhibitionService.deleteExhibition(id);
     }
 }

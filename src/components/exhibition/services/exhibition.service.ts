@@ -1107,4 +1107,20 @@ export class ExhibitionService {
 
         return this.boothConverter.toDto(updatedBooth);
     }
+
+    async deleteExhibition(id: string) {
+        await this.dataSource.transaction(async (manager) => {
+            const exhibitionRepository = manager.getRepository(Exhibition);
+
+            const firstExhibition = await exhibitionRepository.findOneBy({
+                id: parseInt(id),
+            });
+
+            if (!firstExhibition) {
+                throw new NotFoundException('Not found');
+            }
+
+            await exhibitionRepository.softRemove(firstExhibition);
+        });
+    }
 }
