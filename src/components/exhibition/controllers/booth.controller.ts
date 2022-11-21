@@ -1,4 +1,11 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import {
+    Controller,
+    Delete,
+    Get,
+    HttpCode,
+    Param,
+    UseGuards,
+} from '@nestjs/common';
 import { BoothService } from '@/components/exhibition/services/booth.service';
 import { Paginate, PaginateQuery } from '@/decorators/paginate.decorator';
 
@@ -19,5 +26,13 @@ export class BoothController {
         @Paginate() query: PaginateQuery,
     ) {
         return this.boothService.findBooths(jwtAccessToken, query);
+    }
+
+    @UseGuards(RolesGuard)
+    @Roles(Role.ADMIN)
+    @Delete(':id')
+    @HttpCode(204)
+    deleteBooth(@Param('id') id: string) {
+        return this.boothService.deleteBooth(id);
     }
 }

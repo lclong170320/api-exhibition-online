@@ -1,8 +1,16 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+    Injectable,
+    NotFoundException,
+    UnauthorizedException,
+} from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { DbConnection } from '@/database/config/db';
 import { Booth } from '@/components/exhibition/entities/booth.entity';
+import {
+    Location,
+    Status,
+} from '@/components/exhibition/entities/location.entity';
 import { JwtService } from '@nestjs/jwt';
 import { BoothListConverter } from '../converters/booth-list.converter';
 import { PaginateQuery } from '@/decorators/paginate.decorator';
@@ -63,5 +71,33 @@ export class BoothService {
             total,
             booths,
         );
+    }
+
+    async deleteBooth(id: string) {
+        await this.dataSource.transaction(async (manager) => {
+            const boothRepository = manager.getRepository(Booth);
+            const locationRepository = this.dataSource.getRepository(Location);
+
+            const firstBooth = await boothRepository.findOne({
+                where: {
+                    id: parseInt(id),
+                },
+                relations: ['location'],
+            });
+
+            if (!firstBooth) {
+                throw new NotFoundException(`The 'booth_id' not found`);
+            }
+
+            const location = await locationRepository.findOneBy({
+                id: firstBooth.location.id,
+            });
+
+            location.status = Status.AVAILABLE;
+
+            await locationRepository.save(location);
+
+            await boothRepository.softRemove(firstBooth);
+        });
     }
 }
