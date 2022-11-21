@@ -129,7 +129,37 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Exhibition'
+              allOf:
+              - $ref: '#/components/schemas/Exhibition'
+              - properties:
+                  booth_number:
+                    type: number
+                    example: 100
+                  space_template_id:
+                    type: integer
+                    writeOnly: true
+                    example: 1
+                  booth_organization_template_id:
+                    type: integer
+                    writeOnly: true
+                    example: 1
+                  category_id:
+                    type: integer
+                    writeOnly: true
+                    example: 1
+                  status:
+                    default: new
+              required:
+              - name
+              - exhibition_code
+              - date_exhibition_start
+              - date_exhibition_end
+              - introduction
+              - agenda
+              - booth_number
+              - category_id
+              - space_template_id
+              - booth_organization_template_id
         required: true
       responses:
         '201':
@@ -137,7 +167,22 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Exhibition'
+                allOf:
+                - $ref: '#/components/schemas/Exhibition'
+                - properties:
+                    booth_number:
+                      type: number
+                      example: 100
+                required:
+                - id
+                - name
+                - exhibition_code
+                - date_exhibition_start
+                - date_exhibition_end
+                - introduction
+                - agenda
+                - status
+                - booth_number
         '400':
           description: Validation error
           content:
@@ -198,7 +243,88 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Exhibition'
+                allOf:
+                - $ref: '#/components/schemas/Exhibition'
+                - properties:
+                    booth_number:
+                      type: number
+                      example: 100
+                required:
+                  - id
+                  - name
+                  - exhibition_code
+                  - date_exhibition_start
+                  - date_exhibition_end
+                  - introduction
+                  - agenda
+                  - status
+                  - booth_number
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Bad Request
+                    details:
+                      - field: .params.id
+                        message: 'should match pattern "^[0-9]+$"'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Internal server error
+                    details: []
+      tags:
+        - Exhibition
+    patch:
+      summary: Update exhibition by ID
+      description: Update exhibition
+      operationId: updateExhibitionById
+      parameters:
+        - name: id
+          description: ID of exhibition
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^[0-9]+$'
+      requestBody:
+        description: Update exhibition
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Exhibition'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/Exhibition'
+                - properties:
+                    booth_number:
+                      type: number
+                      example: 100
+                required:
+                  - id
+                  - name
+                  - exhibition_code
+                  - date_exhibition_start
+                  - date_exhibition_end
+                  - introduction
+                  - agenda
+                  - booth_number
+                  - status
         '400':
           description: Validation error
           content:
@@ -2274,19 +2400,9 @@ paths:
 components:
   schemas:
     Exhibition:
+      required: 
+      - id
       type: object
-      required:
-        - id
-        - name
-        - booth_number
-        - exhibition_code
-        - date_exhibition_start
-        - date_exhibition_end
-        - introduction
-        - agenda
-        - category_id
-        - space_template_id
-        - booth_organization_template_id
       properties:
         id:
           type: integer
@@ -2297,9 +2413,6 @@ components:
           minLength: 1
           maxLength: 255
           example: Triển lãm xúc tiến đầu tư thương mại
-        booth_number:
-          type: integer
-          example: 100
         exhibition_code:
           type: string
           minLength: 1
@@ -2326,10 +2439,9 @@ components:
           minLength: 1
           maxLength: 20000
           example: '07h45 - 08h20: Đón tiếp đại biểu, 08h20 - 08h40: Ca nhạc chào mừng'
-        category_id:
-          type: integer
-          writeOnly: true
-          example: 1
+        status:
+          type: string
+          enum: ['new','listing','finished']
         booth_organization_id:
           type: integer
           readOnly: true
@@ -2337,14 +2449,6 @@ components:
         space_id:
           type: integer
           readOnly: true
-          example: 1
-        space_template_id:
-          type: integer
-          writeOnly: true
-          example: 1
-        booth_organization_template_id:
-          type: integer
-          writeOnly: true
           example: 1
     BoothOrganization:
       type: object
@@ -3141,7 +3245,22 @@ components:
         exhibitions:
           type: array
           items:
-            $ref: '#/components/schemas/Exhibition'
+            allOf:
+            - $ref: '#/components/schemas/Exhibition'
+            - properties:
+                booth_number:
+                  type: number
+                  example: 100
+              required:
+                - id
+                - name
+                - exhibition_code
+                - date_exhibition_start
+                - date_exhibition_end
+                - introduction
+                - agenda
+                - booth_number
+                - status
     BoothTemplatePosition:
       type: object
       required:

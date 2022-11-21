@@ -28,8 +28,8 @@ paths:
           type: string
           pattern: '^[0-9]+$'
     get:
-      summary: Get exhibition by ID
-      description: Return a single exhibition
+      summary: Get exhibition by ID is listing
+      description: Return a single exhibition is listing
       operationId: getExhibitionById
       parameters:
         - in: query
@@ -195,6 +195,10 @@ components:
         - date_exhibition_end
         - introduction
         - agenda
+        - status
+        - category_id
+        - space_template_id
+        - booth_organization_template_id
       properties:
         id:
           type: integer
@@ -238,18 +242,50 @@ components:
           type: string
           enum: ['new', 'listing', 'finished']
           example: 'new'
-        category:
-          $ref: '#/components/schemas/Category'
-        space:
-          $ref: '#/components/schemas/Space'
-        booth_templates:
+        booth_organization_template_id:
+          type: integer
+          writeOnly: true
+          example: 1
+        space_template_id:
+          type: integer
+          writeOnly: true
+          example: 1
+        booth_organization_id:
+          type: integer
+          readOnly: true
+          example: 1
+        space_id:
+          type: integer
+          readOnly: true
+          example: 1
+        category_id:
+          type: number
+          writeOnly: true
+          example: 1
+    ExhibitionList:
+      type: object
+      required:
+        - page
+        - limit
+        - total
+        - exhibitions
+      properties:
+        page:
+          type: integer
+          example: 0
+          description: The number of items to skip before starting to collect the result set.
+        limit:
+          type: integer
+          example: 10
+          description: The number of items to return.
+        total:
+          type: integer
+          format: int64
+          example: 1
+        exhibitions:
           type: array
           items:
-            $ref: '#/components/schemas/BoothTemplate'
-        space_template:
-          $ref: '#/components/schemas/SpaceTemplate'
-        booth_organization:
-          $ref: '#/components/schemas/BoothOrganization'
+            $ref: '#/components/schemas/Exhibition'
     Category:
       type: object
       required:

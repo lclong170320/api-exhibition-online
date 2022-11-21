@@ -7,15 +7,17 @@ import {
     Param,
     Post,
     Put,
+    Patch,
     UseGuards,
 } from '@nestjs/common';
 import { ExhibitionService } from '@/components/exhibition/services/exhibition.service';
 import { Exhibition as ExhibitionDto } from '@/components/exhibition/dto/exhibition.dto';
 import { Paginate, PaginateQuery } from '@/decorators/paginate.decorator';
 import { Booth as BoothDto } from '@/components/exhibition/dto/booth.dto';
-import { Role } from '@/components/exhibition/dto/role.dto';
 import { RolesGuard } from 'guards/roles.guard';
 import { Roles } from '@/decorators/roles.decorator';
+import { Role } from '../dto/role.dto';
+import { UpdateExhibition } from '../dto/exhibition-update.dto';
 
 @Controller('exhibitions')
 export class ExhibitionController {
@@ -43,6 +45,16 @@ export class ExhibitionController {
     @Post()
     createExhibition(@Body() exhibition: ExhibitionDto) {
         return this.exhibitionService.createExhibition(exhibition);
+    }
+
+    @UseGuards(RolesGuard)
+    @Roles(Role.ADMIN)
+    @Patch(':id')
+    async updateExhibition(
+        @Param('id') id: string,
+        @Body() exhibition: UpdateExhibition,
+    ) {
+        return await this.exhibitionService.updateExhibition(id, exhibition);
     }
 
     @UseGuards(RolesGuard)

@@ -1,11 +1,11 @@
 import { DbConnection } from '@/database/config/db';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { MediaConverter } from '@/components/public/converters/media/media.converter';
 import { PublicController } from './public.controller';
 import { PublicService } from './public.service';
 import { UtilService } from '@/utils/helper/util.service';
 import { HttpModule } from '@nestjs/axios';
+import { JwtService } from '@nestjs/jwt';
 
 // entities
 import { SpaceTemplateLocation } from '@/components/exhibition/entities/space-template-location.entity';
@@ -38,6 +38,7 @@ import { SpaceTemplatePosition } from '../exhibition/entities/space-template-pos
 import { Enterprise } from '@/components/enterprise/entities/enterprise.entity';
 
 // converter
+import { ExhibitionListConverter } from '@/components/public/converters/exhibition/exhibition-list.converter';
 import { BoothTemplateConverter } from '@/components/public/converters/exhibition/booth-template.converter';
 import { BoothConverter } from '@/components/public/converters/exhibition/booth.converter';
 import CategoryConverter from '@/components/public/converters/exhibition/category.converter';
@@ -53,7 +54,6 @@ import { BoothImageConverter } from '@/components/public/converters/exhibition/b
 import { BoothVideoConverter } from '@/components/public/converters/exhibition/booth-video.converter';
 import { BoothProjectConverter } from '@/components/public/converters/exhibition/booth-project.converter';
 import { BoothProductConverter } from '@/components/public/converters/exhibition/booth-product.converter';
-import { ExhibitionConverter } from '@/components/public/converters/exhibition/exhibition.converter';
 import { BoothTemplatePositionConverter } from '@/components/public/converters/exhibition/booth-template-position.converter';
 import { BoothOrganizationTemplatePositionConverter } from '@/components/public/converters/exhibition/booth-organization-template-position.converter';
 import { BoothOrganizationConverter } from '@/components/public/converters/exhibition/booth-organization.converter';
@@ -64,6 +64,8 @@ import { BoothOrganizationProjectConverter } from '@/components/public/converter
 import { BoothOrganizationTemplateConverter } from '@/components/public/converters/exhibition/booth-organization-template.converter';
 import { EnterpriseConverter } from '@/components/public/converters/enterprise/enterprise.converter';
 import { EnterpriseListConverter } from '@/components/public/converters/enterprise/enterprise-list.converter';
+import { MediaConverter } from '@/components/public/converters/media/media.converter';
+import { ExhibitionConverter } from '@/components/public/converters/exhibition/exhibition.converter';
 
 @Module({
     controllers: [PublicController],
@@ -96,9 +98,11 @@ import { EnterpriseListConverter } from '@/components/public/converters/enterpri
         BoothOrganizationProductConverter,
         BoothOrganizationProjectConverter,
         BoothOrganizationTemplateConverter,
+        ExhibitionListConverter,
         EnterpriseConverter,
         EnterpriseListConverter,
         BoothTemplatePositionConverter,
+        JwtService,
         MediaConverter,
     ],
     imports: [

@@ -1,6 +1,6 @@
 import { Paginate, PaginateQuery } from '@/decorators/paginate.decorator';
 import { Controller, Get, Param } from '@nestjs/common';
-import { PublicService } from '../public/public.service';
+import { PublicService } from '@/components/public/public.service';
 
 @Controller()
 export class PublicController {

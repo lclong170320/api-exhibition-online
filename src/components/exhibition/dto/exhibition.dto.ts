@@ -31,8 +31,8 @@ export interface Exhibition {
     readonly space_id?: number;
     space_template_id: number;
     booth_organization_template_id: number;
-    category?: Category;
-    space?: Space;
-    booth_organization?: BoothOrganization;
-    booths?: Array<Booth>;
+    readonly category?: Category;
+    readonly space?: Space;
+    readonly booth_organization?: BoothOrganization;
+    readonly booths?: Array<Booth>;
 }

@@ -4,7 +4,10 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { ExhibitionConverter } from '@/components/public/converters/exhibition/exhibition.converter';
-import { Exhibition } from '../exhibition/entities/exhibition.entity';
+import {
+    Exhibition,
+    Status as StatusExhibition,
+} from '@/components/exhibition/entities/exhibition.entity';
 import { MediaConverter } from '@/components/public/converters/media/media.converter';
 import { Media } from '@/components/media/entities/media.entity';
 import { Enterprise } from '@/components/enterprise/entities/enterprise.entity';
@@ -30,6 +33,7 @@ export class PublicService {
         const exhibitionEntity = await exhibitionRepository.findOne({
             where: {
                 id: parseInt(id),
+                status: StatusExhibition.LISTING,
             },
             relations: query.populate,
         });
@@ -37,7 +41,6 @@ export class PublicService {
         if (!exhibitionEntity) {
             throw new NotFoundException(`The 'id' not found: ${id}`);
         }
-
         return this.exhibitionConverter.toDto(exhibitionEntity);
     }
 

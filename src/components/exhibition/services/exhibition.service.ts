@@ -46,6 +46,7 @@ import { Product } from '../entities/product.entity';
 import { Project } from '../entities/project.entity';
 import { SpaceTemplateLocation } from '../entities/space-template-location.entity';
 import { Video } from '../entities/video.entity';
+import { UpdateExhibition } from '../dto/exhibition-update.dto';
 
 @Injectable()
 export class ExhibitionService {
@@ -1108,6 +1109,54 @@ export class ExhibitionService {
         return this.boothConverter.toDto(updatedBooth);
     }
 
+    private readonly statusAllow = {
+        NEW: ['listing'],
+        LISTING: ['finished'],
+        FINISHED: [],
+    };
+
+    async updateExhibition(id: string, exhibitionDto: UpdateExhibition) {
+        const exhibitionRepository =
+            this.dataSource.manager.getRepository(Exhibition);
+        const exhibition = await exhibitionRepository.findOne({
+            where: {
+                id: parseInt(id),
+            },
+        });
+        if (!exhibition) {
+            throw new NotFoundException(
+                `The exhibition_id: '${id}' is not found`,
+            );
+        }
+        if (exhibitionDto.status) {
+            const exhibitionStatus = exhibition.status.toLocaleUpperCase();
+            const isAllow = this.statusAllow[`${exhibitionStatus}`].includes(
+                exhibitionDto.status,
+            );
+            if (!isAllow) {
+                throw new BadRequestException(
+                    `The status: ${exhibitionDto.status} is not allowed`,
+                );
+            }
+            exhibition.status = exhibitionDto.status;
+        }
+        exhibition.name = exhibitionDto.name ?? exhibition.name;
+        exhibition.dateExhibitionStart =
+            new Date(exhibitionDto.date_exhibition_start) ??
+            exhibition.dateExhibitionStart;
+        exhibition.exhibitionCode =
+            exhibitionDto.exhibition_code ?? exhibition.exhibitionCode;
+        exhibition.dateExhibitionEnd =
+            new Date(exhibitionDto.date_exhibition_end) ??
+            exhibition.dateExhibitionEnd;
+        exhibition.introduction =
+            exhibitionDto.introduction ?? exhibition.introduction;
+        exhibition.agenda = exhibitionDto.agenda ?? exhibition.agenda;
+        const newExhibition = await exhibitionRepository.save({
+            ...exhibition,
+        });
+        return this.exhibitionConverter.toDto(newExhibition);
+    }
     async deleteExhibition(id: string) {
         await this.dataSource.transaction(async (manager) => {
             const exhibitionRepository = manager.getRepository(Exhibition);
