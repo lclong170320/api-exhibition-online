@@ -73,6 +73,7 @@ import { UtilService } from '@/utils/helper/util.service';
 import { BoothOrganizationTemplateListConverter } from './converters/booth-organization-template-list.converter';
 import { BoothOrganizationTemplateController } from './controllers/booth-organization-template.controller';
 import { BoothOrganizationTemplateService } from './services/booth-organization-template.service';
+import { BookingConverter } from './converters/booking.converter';
 
 @Module({
     controllers: [
@@ -126,6 +127,7 @@ import { BoothOrganizationTemplateService } from './services/booth-organization-
         BoothTemplatePositionConverter,
         BoothListConverter,
         BoothOrganizationTemplateListConverter,
+        BookingConverter,
     ],
     imports: [
         TypeOrmModule.forFeature(

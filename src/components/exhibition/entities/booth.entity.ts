@@ -10,6 +10,7 @@ import {
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from 'typeorm';
+import { Booking } from './booking.entity';
 import { BoothImage } from './booth-image.entity';
 import { BoothProduct } from './booth-product.entity';
 import { BoothProject } from './booth-project.entity';
@@ -87,4 +88,7 @@ export class Booth {
 
     @OneToMany(() => LiveStream, (liveStream) => liveStream.booth)
     liveStreams: LiveStream[];
+
+    @OneToMany(() => Booking, (booking) => booking.booth)
+    booking: Booking[];
 }

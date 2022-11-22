@@ -12,10 +12,13 @@ import {
     Status,
 } from '@/components/exhibition/entities/location.entity';
 import { JwtService } from '@nestjs/jwt';
-import { BoothListConverter } from '../converters/booth-list.converter';
+import { BoothListConverter } from '@/components/exhibition/converters/booth-list.converter';
 import { PaginateQuery } from '@/decorators/paginate.decorator';
 import { UtilService } from '@/utils/helper/util.service';
 import { paginate } from '@/utils/pagination';
+import { Booking } from '@/components/exhibition/entities/booking.entity';
+import { BookingConverter } from '@/components/exhibition/converters/booking.converter';
+import { Booking as BookingDto } from '@/components/exhibition/dto/booking.dto';
 
 @Injectable()
 export class BoothService {
@@ -23,6 +26,7 @@ export class BoothService {
         @InjectDataSource(DbConnection.exhibitionCon)
         private readonly dataSource: DataSource,
         private readonly boothListConverter: BoothListConverter,
+        private readonly bookingConverter: BookingConverter,
         private readonly jwtService: JwtService,
         private readonly utilService: UtilService,
     ) {}
@@ -38,6 +42,7 @@ export class BoothService {
             'boothVideos.boothTemplatePosition',
             'boothTemplate',
             'location',
+            'booking',
         ];
 
         const decodedJwtAccessToken = this.jwtService.decode(jwtAccessToken);
@@ -99,5 +104,26 @@ export class BoothService {
 
             await boothRepository.softRemove(firstBooth);
         });
+    }
+
+    async createBooking(id: string, bookingDto: BookingDto) {
+        const boothRepository = this.dataSource.getRepository(Booth);
+        const bookingRepository = this.dataSource.getRepository(Booking);
+
+        const firstBooth = await boothRepository.findOneBy({
+            id: parseInt(id),
+        });
+
+        if (!firstBooth) {
+            throw new NotFoundException(`The booth_id ${id} not found`);
+        }
+
+        const bookingEntity = this.bookingConverter.toEntity(bookingDto);
+
+        bookingEntity.booth = firstBooth;
+
+        const createdBooking = await bookingRepository.save(bookingEntity);
+
+        return this.bookingConverter.toDto(createdBooking);
     }
 }
