@@ -14,6 +14,7 @@ import { BoothVideo } from './booth-video.dto';
 import { BoothImage } from './booth-image.dto';
 import { LiveStream } from './live-stream.dto';
 import { BoothProduct } from './booth-product.dto';
+import { Exhibition } from './exhibition.dto';
 
 export interface Booth {
     readonly id: number;
@@ -26,4 +27,5 @@ export interface Booth {
     booth_videos?: Array<BoothVideo>;
     booth_projects?: Array<BoothProject>;
     booth_products?: Array<BoothProduct>;
+    exhibition?: Exhibition;
 }

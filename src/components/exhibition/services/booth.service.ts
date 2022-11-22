@@ -34,16 +34,7 @@ export class BoothService {
     async findBooths(jwtAccessToken: string, query: PaginateQuery) {
         const filterableColumns = ['enterpriseId'];
         const defaultSortBy = [['createdAt', 'DESC']];
-        const populatableColumns = [
-            'boothImages.boothTemplatePosition',
-            'boothProjects.boothTemplatePosition',
-            'boothProducts.boothTemplatePosition',
-            'boothProducts.boothTemplatePosition',
-            'boothVideos.boothTemplatePosition',
-            'boothTemplate',
-            'location',
-            'booking',
-        ];
+        const populatableColumns = query.populate;
 
         const decodedJwtAccessToken = this.jwtService.decode(jwtAccessToken);
 
@@ -56,14 +47,21 @@ export class BoothService {
             enterpriseId,
         );
 
-        query.filter = { enterpriseId: enterpriseId.toString() };
-
         if (!firstEnterprise) {
             throw new UnauthorizedException('Do not have access');
         }
+        if (decodedJwtAccessToken['user'].role['name'] === 'user') {
+            query.filter = { enterpriseId: enterpriseId.toString() };
+        }
+
+        if (
+            decodedJwtAccessToken['user'].role['name'] === 'admin' &&
+            !query.filter
+        ) {
+            query.filter = {};
+        }
 
         const boothRepository = this.dataSource.getRepository(Booth);
-
         const [booths, total] = await paginate(query, boothRepository, {
             filterableColumns,
             populatableColumns,

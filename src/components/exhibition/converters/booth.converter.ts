@@ -1,6 +1,6 @@
 import { Booth as BoothDto } from '@/components/exhibition/dto/booth.dto';
 import { Booth } from '@/components/exhibition/entities/booth.entity';
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { BoothTemplateConverter } from './booth-template.converter';
 import { LiveStreamConverter } from './live-stream.converter';
 import { LocationConverter } from './location.converter';
@@ -8,6 +8,7 @@ import { BoothImageConverter } from './booth-image.converter';
 import { BoothVideoConverter } from './booth-video.converter';
 import { BoothProjectConverter } from './booth-project.converter';
 import { BoothProductConverter } from './booth-product.converter';
+import { ExhibitionConverter } from './exhibition.converter';
 
 @Injectable()
 export class BoothConverter {
@@ -19,6 +20,8 @@ export class BoothConverter {
         private readonly boothVideoConverter: BoothVideoConverter,
         private readonly boothProjectConverter: BoothProjectConverter,
         private readonly boothProductConverter: BoothProductConverter,
+        @Inject(forwardRef(() => ExhibitionConverter))
+        private readonly exhibitionConverter: ExhibitionConverter,
     ) {}
     toDto(entity: Booth) {
         const dto = {
@@ -55,6 +58,9 @@ export class BoothConverter {
                 ? entity.boothProducts.map((data) =>
                       this.boothProductConverter.toDto(data),
                   )
+                : undefined,
+            exhibition: entity.exhibition
+                ? this.exhibitionConverter.toDto(entity.exhibition)
                 : undefined,
         } as BoothDto;
 

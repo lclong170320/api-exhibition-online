@@ -1181,6 +1181,13 @@ paths:
           example: '10'
         description: The numbers of items to return
       - in: query
+        name: filter.enterpriseId
+        allowReserved: true
+        schema:
+          type: string
+          example: $eq:1
+        description: Filter on the `enterpriseId` field.
+      - in: query
         name: populate
         schema:
           type: array
@@ -1195,6 +1202,7 @@ paths:
              - booth_videos.booth_template_position
              - booth_template
              - location
+             - exhibition
       responses:
         '200':
           description: OK
