@@ -29,4 +29,9 @@ export class PublicController {
     createMeeting(@Body() meeting: Meeting) {
         return this.publicService.createMeeting(meeting);
     }
+
+    @Get('/meetings')
+    getMeetings(@Paginate() query: PaginateQuery) {
+        return this.publicService.getMeetings(query);
+    }
 }

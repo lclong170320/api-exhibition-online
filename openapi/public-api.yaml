@@ -227,7 +227,96 @@ paths:
                     details: []
       tags:
         - Meeting
-    
+    get:
+      summary: Get list of meeting
+      description: Return list of meeting
+      operationId: getMeetings
+      parameters:
+      - in: query
+        name: page
+        schema:
+          type: string
+          pattern: '^[0-9]+'
+          example: '1'
+        description: The number of items to skip before starting to collect the result set
+      - in: query
+        name: limit
+        schema:
+          type: string
+          pattern: '^[0-9]+'
+          example: '10'
+        description: The numbers of items to return
+      - in: query
+        name: search
+        allowReserved: true
+        schema:
+          type: string
+          example: 'test@compaon.com'
+        description: |
+         Searching on allow columns:
+          - customer_name,
+          - email,
+          - phone
+      - in: query
+        name: sort_by
+        allowReserved: true
+        schema:
+          type: string
+          example: 'id:DESC'
+        description: |
+          Sort on allow columns:
+            - [['id', 'start_time','end_time', 'created_at'], [DESC,ASC]]
+            - Default: [['created_at', 'DESC']]
+      - in: query
+        name: filter.booth.id
+        allowReserved: true
+        schema:
+          type: string
+          example: $eq:30
+        description: Filter on the `booth.id` field.
+      - in: query
+        name: populate
+        schema:
+          type: array
+          items:
+            type: string
+            example: 'booth'
+        description: |
+         Searching on allow columns:
+          - booth
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Meeting'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Bad Request
+                    details:
+                      - field: .params.id
+                        message: 'should match pattern "^[0-9]+$"'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Internal server error
+                    details: []
+      tags:
+        - Enterprise
 components:
   schemas:
     Exhibition:
@@ -1300,6 +1389,30 @@ components:
           minLength: 1
           maxLength: 255
           example: Công ty cổ phần ngoài NN
+    MeetingList:
+      type: object
+      required:
+        - page
+        - limit
+        - total
+        - meetings
+      properties:
+        page:
+          type: integer
+          readOnly: true
+          example: 1
+        limit:
+          type: integer
+          readOnly: true
+          example: 1
+        total:
+          type: integer
+          readOnly: true
+          example: 1
+        meetings:
+          type: array
+          items:
+            $ref: '#/components/schemas/Meeting'
     Meeting:
       type: object
       required:

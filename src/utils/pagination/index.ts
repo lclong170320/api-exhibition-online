@@ -1,5 +1,5 @@
 import { PaginateQuery } from '@/decorators/paginate.decorator';
-import { isEmpty, isNumber, isString } from 'lodash';
+import { isEmpty, isNumber, isString, reduceRight } from 'lodash';
 import {
     Equal,
     FindManyOptions,
@@ -105,6 +105,7 @@ function parseFilter<T>(
     const result: FindOptionsWhere<T> = {};
     if (filter && filterableColumns) {
         for (const column in filter) {
+            const columns = column.split('.');
             if (isString(filter[column])) {
                 const valueFilter = filter[column] as string;
                 if (valueFilter.includes(':')) {
@@ -116,29 +117,74 @@ function parseFilter<T>(
                     ) {
                         switch (operator) {
                             case '$eq':
-                                Object.assign(result, {
-                                    [column]: Equal(value),
-                                });
+                                Object.assign(
+                                    result,
+                                    reduceRight(
+                                        columns,
+                                        (memo, arrayValue) => {
+                                            const obj = {};
+                                            obj[arrayValue] = memo;
+                                            return obj;
+                                        },
+                                        Equal(value),
+                                    ),
+                                );
                                 break;
                             case '$lt':
-                                Object.assign(result, {
-                                    [column]: LessThan(value),
-                                });
+                                Object.assign(
+                                    result,
+                                    reduceRight(
+                                        columns,
+                                        (memo, arrayValue) => {
+                                            const obj = {};
+                                            obj[arrayValue] = memo;
+                                            return obj;
+                                        },
+                                        LessThan(value),
+                                    ),
+                                );
                                 break;
                             case '$lte':
-                                Object.assign(result, {
-                                    [column]: LessThanOrEqual(value),
-                                });
+                                Object.assign(
+                                    result,
+                                    reduceRight(
+                                        columns,
+                                        (memo, arrayValue) => {
+                                            const obj = {};
+                                            obj[arrayValue] = memo;
+                                            return obj;
+                                        },
+                                        LessThanOrEqual(value),
+                                    ),
+                                );
                                 break;
                             case '$gt':
-                                Object.assign(result, {
-                                    [column]: MoreThan(value),
-                                });
+                                Object.assign(
+                                    result,
+                                    reduceRight(
+                                        columns,
+                                        (memo, arrayValue) => {
+                                            const obj = {};
+                                            obj[arrayValue] = memo;
+                                            return obj;
+                                        },
+                                        MoreThan(value),
+                                    ),
+                                );
                                 break;
                             case '$gte':
-                                Object.assign(result, {
-                                    [column]: MoreThanOrEqual(value),
-                                });
+                                Object.assign(
+                                    result,
+                                    reduceRight(
+                                        columns,
+                                        (memo, arrayValue) => {
+                                            const obj = {};
+                                            obj[arrayValue] = memo;
+                                            return obj;
+                                        },
+                                        MoreThanOrEqual(value),
+                                    ),
+                                );
                                 break;
                             default:
                                 break;
@@ -146,9 +192,18 @@ function parseFilter<T>(
                     }
                 } else {
                     if (filterableColumns.includes(column) && valueFilter) {
-                        Object.assign(result, {
-                            [column]: valueFilter,
-                        });
+                        Object.assign(
+                            result,
+                            reduceRight(
+                                columns,
+                                (memo, arrayValue) => {
+                                    const obj = {};
+                                    obj[arrayValue] = memo;
+                                    return obj;
+                                },
+                                Equal(valueFilter),
+                            ),
+                        );
                     }
                 }
             }

@@ -94,7 +94,14 @@ export const Paginate = createParamDecorator(
                         (Array.isArray(param) &&
                             (param as any[]).every((p) => isString(p)))),
             ) as Dictionary<string | string[]>,
-            (_param, name) => camelCase(name.replace('filter.', '')),
+            (_param, name) => {
+                const columnName = name.replace('filter.', '');
+                const columnSplit = columnName.split('.');
+                const columnCamelCase = columnSplit.map((value) =>
+                    camelCase(value),
+                );
+                return columnCamelCase.join('.');
+            },
         );
 
         return {

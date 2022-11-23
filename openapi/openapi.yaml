@@ -3661,6 +3661,30 @@ components:
           type: integer
           writeOnly: true
           example: 1
+    MeetingList:
+      type: object
+      required:
+        - page
+        - limit
+        - total
+        - meetings
+      properties:
+        page:
+          type: integer
+          readOnly: true
+          example: 1
+        limit:
+          type: integer
+          readOnly: true
+          example: 1
+        total:
+          type: integer
+          readOnly: true
+          example: 1
+        meetings:
+          type: array
+          items:
+            $ref: '#/components/schemas/Meeting'
     Meeting:
       type: object
       required:
@@ -3702,7 +3726,6 @@ components:
           type: string
           minLength: 1
           maxLength: 255
-
   securitySchemes:
     bearerAuth:
       type: http

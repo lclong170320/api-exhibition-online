@@ -9,6 +9,7 @@ import { ExhibitionConverter } from '@/components/public/converters/exhibition/e
 import { MediaConverter } from '@/components/public/converters/media/media.converter';
 import { DbConnection } from '@/database/config/db';
 import { PaginateQuery } from '@/decorators/paginate.decorator';
+import { paginate } from '@/utils/pagination';
 import {
     BadRequestException,
     Injectable,
@@ -19,6 +20,7 @@ import { DataSource } from 'typeorm';
 import { Meeting as MeetingDto } from '../exhibition/dto/meeting.dto';
 import { Booth } from '../exhibition/entities/booth.entity';
 import { Meeting } from '../exhibition/entities/meeting.entity';
+import { MeetingListConverter } from './converters/exhibition/meeting-list.converter';
 import { MeetingConverter } from './converters/exhibition/meeting.converter';
 
 @Injectable()
@@ -34,6 +36,7 @@ export class PublicService {
         private readonly mediaConverter: MediaConverter,
         private readonly enterpriseConverter: EnterpriseConverter,
         private readonly meetingConverter: MeetingConverter,
+        private readonly meetingListConverter: MeetingListConverter,
     ) {}
 
     async getExhibitionById(id: string, query: PaginateQuery) {
@@ -104,5 +107,26 @@ export class PublicService {
         meeting = await meetingRepository.save(meeting);
 
         return this.meetingConverter.toDto(meeting);
+    }
+
+    async getMeetings(query: PaginateQuery) {
+        const sortableColumns = ['id', 'startTime', 'endTime', 'createdAt'];
+        const searchableColumns = ['customerName', 'email', 'phone'];
+        const filterableColumns = ['booth.id', 'id'];
+        const defaultSortBy = [['createdAt', 'DESC']];
+        const meetingRepository =
+            this.exhibitionDataSource.manager.getRepository(Meeting);
+        const [meetings, total] = await paginate(query, meetingRepository, {
+            searchableColumns,
+            sortableColumns,
+            filterableColumns,
+            defaultSortBy,
+        });
+        return this.meetingListConverter.toDto(
+            query.page,
+            query.limit,
+            total,
+            meetings,
+        );
     }
 }
