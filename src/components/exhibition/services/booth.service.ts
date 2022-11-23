@@ -50,8 +50,24 @@ export class BoothService {
         if (!firstEnterprise) {
             throw new UnauthorizedException('Do not have access');
         }
-        if (decodedJwtAccessToken['user'].role['name'] === 'user') {
-            query.filter = { enterpriseId: enterpriseId.toString() };
+
+        if (
+            query.filter &&
+            query.filter.enterpriseId === enterpriseId.toString() &&
+            decodedJwtAccessToken['user'].role['name'] === 'user'
+        ) {
+            query.filter = {
+                enterpriseId: query.filter.enterpriseId,
+            };
+        }
+
+        if (
+            !query.filter &&
+            decodedJwtAccessToken['user'].role['name'] === 'user'
+        ) {
+            query.filter = {
+                enterpriseId: enterpriseId.toString(),
+            };
         }
 
         if (
