@@ -1,24 +1,26 @@
-import {
-    Injectable,
-    NotFoundException,
-    UnauthorizedException,
-} from '@nestjs/common';
-import { InjectDataSource } from '@nestjs/typeorm';
-import { DataSource } from 'typeorm';
-import { DbConnection } from '@/database/config/db';
+import { BookingConverter } from '@/components/exhibition/converters/booking.converter';
+import { BoothListConverter } from '@/components/exhibition/converters/booth-list.converter';
+import { Booking as BookingDto } from '@/components/exhibition/dto/booking.dto';
+import { Booking } from '@/components/exhibition/entities/booking.entity';
 import { Booth } from '@/components/exhibition/entities/booth.entity';
 import {
     Location,
     Status,
 } from '@/components/exhibition/entities/location.entity';
-import { JwtService } from '@nestjs/jwt';
-import { BoothListConverter } from '@/components/exhibition/converters/booth-list.converter';
+import { LoginPayload } from '@/components/user/dto/login-payload.dto';
+import { RoleName } from '@/components/user/dto/role.dto';
+import { DbConnection } from '@/database/config/db';
 import { PaginateQuery } from '@/decorators/paginate.decorator';
 import { UtilService } from '@/utils/helper/util.service';
 import { paginate } from '@/utils/pagination';
-import { Booking } from '@/components/exhibition/entities/booking.entity';
-import { BookingConverter } from '@/components/exhibition/converters/booking.converter';
-import { Booking as BookingDto } from '@/components/exhibition/dto/booking.dto';
+import {
+    Injectable,
+    NotFoundException,
+    UnauthorizedException,
+} from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { InjectDataSource } from '@nestjs/typeorm';
+import { DataSource } from 'typeorm';
 
 @Injectable()
 export class BoothService {
@@ -36,7 +38,9 @@ export class BoothService {
         const defaultSortBy = [['createdAt', 'DESC']];
         const populatableColumns = query.populate;
 
-        const decodedJwtAccessToken = this.jwtService.decode(jwtAccessToken);
+        const decodedJwtAccessToken = this.jwtService.decode(
+            jwtAccessToken,
+        ) as LoginPayload;
 
         const enterpriseId = await this.utilService.getEnterpriseIdFromToken(
             jwtAccessToken,
@@ -51,30 +55,13 @@ export class BoothService {
             throw new UnauthorizedException('Do not have access');
         }
 
-        if (
-            query.filter &&
-            query.filter.enterpriseId === enterpriseId.toString() &&
-            decodedJwtAccessToken['user'].role['name'] === 'user'
-        ) {
-            query.filter = {
-                enterpriseId: query.filter.enterpriseId,
-            };
-        }
+        const roleName = decodedJwtAccessToken.user.role.name;
 
-        if (
-            !query.filter &&
-            decodedJwtAccessToken['user'].role['name'] === 'user'
-        ) {
+        query.filter = {};
+        if (roleName === RoleName.USER) {
             query.filter = {
                 enterpriseId: enterpriseId.toString(),
             };
-        }
-
-        if (
-            decodedJwtAccessToken['user'].role['name'] === 'admin' &&
-            !query.filter
-        ) {
-            query.filter = {};
         }
 
         const boothRepository = this.dataSource.getRepository(Booth);
