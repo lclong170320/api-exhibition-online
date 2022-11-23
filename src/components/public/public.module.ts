@@ -66,6 +66,7 @@ import { EnterpriseConverter } from '@/components/public/converters/enterprise/e
 import { EnterpriseListConverter } from '@/components/public/converters/enterprise/enterprise-list.converter';
 import { MediaConverter } from '@/components/public/converters/media/media.converter';
 import { ExhibitionConverter } from '@/components/public/converters/exhibition/exhibition.converter';
+import { MeetingConverter } from './converters/exhibition/meeting.converter';
 
 @Module({
     controllers: [PublicController],
@@ -104,6 +105,7 @@ import { ExhibitionConverter } from '@/components/public/converters/exhibition/e
         BoothTemplatePositionConverter,
         JwtService,
         MediaConverter,
+        MeetingConverter,
     ],
     imports: [
         TypeOrmModule.forFeature(

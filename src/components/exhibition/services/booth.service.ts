@@ -1,7 +1,4 @@
-import { BookingConverter } from '@/components/exhibition/converters/booking.converter';
 import { BoothListConverter } from '@/components/exhibition/converters/booth-list.converter';
-import { Booking as BookingDto } from '@/components/exhibition/dto/booking.dto';
-import { Booking } from '@/components/exhibition/entities/booking.entity';
 import { Booth } from '@/components/exhibition/entities/booth.entity';
 import {
     Location,
@@ -28,7 +25,6 @@ export class BoothService {
         @InjectDataSource(DbConnection.exhibitionCon)
         private readonly dataSource: DataSource,
         private readonly boothListConverter: BoothListConverter,
-        private readonly bookingConverter: BookingConverter,
         private readonly jwtService: JwtService,
         private readonly utilService: UtilService,
     ) {}
@@ -105,26 +101,5 @@ export class BoothService {
 
             await boothRepository.softRemove(firstBooth);
         });
-    }
-
-    async createBooking(id: string, bookingDto: BookingDto) {
-        const boothRepository = this.dataSource.getRepository(Booth);
-        const bookingRepository = this.dataSource.getRepository(Booking);
-
-        const firstBooth = await boothRepository.findOneBy({
-            id: parseInt(id),
-        });
-
-        if (!firstBooth) {
-            throw new NotFoundException(`The booth_id ${id} not found`);
-        }
-
-        const bookingEntity = this.bookingConverter.toEntity(bookingDto);
-
-        bookingEntity.booth = firstBooth;
-
-        const createdBooking = await bookingRepository.save(bookingEntity);
-
-        return this.bookingConverter.toDto(createdBooking);
     }
 }

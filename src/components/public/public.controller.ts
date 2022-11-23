@@ -1,6 +1,7 @@
 import { Paginate, PaginateQuery } from '@/decorators/paginate.decorator';
-import { Controller, Get, Param } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { PublicService } from '@/components/public/public.service';
+import { Meeting } from '../exhibition/dto/meeting.dto';
 
 @Controller()
 export class PublicController {
@@ -22,5 +23,10 @@ export class PublicController {
     @Get('/enterprises/:id')
     getEnterpriseById(@Param('id') id: string) {
         return this.publicService.getEnterpriseById(id);
+    }
+
+    @Post('/meetings')
+    createMeeting(@Body() meeting: Meeting) {
+        return this.publicService.createMeeting(meeting);
     }
 }

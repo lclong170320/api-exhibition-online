@@ -1,17 +1,25 @@
-import { DbConnection } from '@/database/config/db';
-import { PaginateQuery } from '@/decorators/paginate.decorator';
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectDataSource } from '@nestjs/typeorm';
-import { DataSource } from 'typeorm';
-import { ExhibitionConverter } from '@/components/public/converters/exhibition/exhibition.converter';
+import { Enterprise } from '@/components/enterprise/entities/enterprise.entity';
 import {
     Exhibition,
     Status as StatusExhibition,
 } from '@/components/exhibition/entities/exhibition.entity';
-import { MediaConverter } from '@/components/public/converters/media/media.converter';
 import { Media } from '@/components/media/entities/media.entity';
-import { Enterprise } from '@/components/enterprise/entities/enterprise.entity';
 import { EnterpriseConverter } from '@/components/public/converters/enterprise/enterprise.converter';
+import { ExhibitionConverter } from '@/components/public/converters/exhibition/exhibition.converter';
+import { MediaConverter } from '@/components/public/converters/media/media.converter';
+import { DbConnection } from '@/database/config/db';
+import { PaginateQuery } from '@/decorators/paginate.decorator';
+import {
+    BadRequestException,
+    Injectable,
+    NotFoundException,
+} from '@nestjs/common';
+import { InjectDataSource } from '@nestjs/typeorm';
+import { DataSource } from 'typeorm';
+import { Meeting as MeetingDto } from '../exhibition/dto/meeting.dto';
+import { Booth } from '../exhibition/entities/booth.entity';
+import { Meeting } from '../exhibition/entities/meeting.entity';
+import { MeetingConverter } from './converters/exhibition/meeting.converter';
 
 @Injectable()
 export class PublicService {
@@ -25,6 +33,7 @@ export class PublicService {
         private readonly exhibitionConverter: ExhibitionConverter,
         private readonly mediaConverter: MediaConverter,
         private readonly enterpriseConverter: EnterpriseConverter,
+        private readonly meetingConverter: MeetingConverter,
     ) {}
 
     async getExhibitionById(id: string, query: PaginateQuery) {
@@ -72,5 +81,28 @@ export class PublicService {
             },
         });
         return this.enterpriseConverter.toDto(enterprise);
+    }
+
+    async createMeeting(meetingDto: MeetingDto) {
+        const meetingRepository =
+            this.exhibitionDataSource.manager.getRepository(Meeting);
+        const boothRepository =
+            this.exhibitionDataSource.manager.getRepository(Booth);
+
+        const booth = await boothRepository.findOneBy({
+            id: meetingDto.booth_id,
+        });
+        if (!booth) {
+            throw new BadRequestException(
+                `The booth not exist: ${meetingDto.booth_id}`,
+            );
+        }
+
+        let meeting = this.meetingConverter.toEntity(meetingDto);
+        meeting.booth = booth;
+
+        meeting = await meetingRepository.save(meeting);
+
+        return this.meetingConverter.toDto(meeting);
     }
 }

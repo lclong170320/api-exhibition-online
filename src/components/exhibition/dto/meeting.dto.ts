@@ -1,5 +1,5 @@
 /**
- * COMPAON API
+ * COMPAON PUBLIC API
  * API definition for COMPAON
  *
  * The version of the OpenAPI document: 1.0.0
@@ -10,10 +10,13 @@
  * Do not edit the class manually.
  */
 
-export interface Booking {
+export interface Meeting {
     readonly id: number;
-    time: string;
-    name: string;
+    booth_id: number;
+    customer_name: string;
     phone: string;
-    notes: string;
+    email: string;
+    start_time: string;
+    end_time: string;
+    note?: string;
 }

@@ -10,23 +10,34 @@ import {
 } from 'typeorm';
 import { Booth } from './booth.entity';
 
-@Entity({ name: 'booking' })
-export class Booking {
+@Entity({ name: 'meeting' })
+export class Meeting {
     // table columns
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({ length: 255 })
-    name: string;
+    @Column({ name: 'customer_name', length: 255 })
+    customerName: string;
 
-    @Column({ length: 255 })
+    @Column()
     phone: string;
 
-    @Column({ type: 'datetime' })
-    time: Date;
+    @Column()
+    email: string;
+
+    @Column({
+        type: 'timestamp',
+        name: 'start_time',
+    })
+    startTime: Date;
+    @Column({
+        type: 'timestamp',
+        name: 'end_time',
+    })
+    endTime: Date;
 
     @Column({ length: 255 })
-    notes: string;
+    note: string;
 
     @CreateDateColumn({
         type: 'timestamp',
@@ -47,10 +58,8 @@ export class Booking {
     })
     deletedAt: Date;
 
-    // relations columns
-    @ManyToOne(() => Booth, (booth) => booth.booking)
-    @JoinColumn({
-        name: 'booth_id',
-    })
+    // relation columns
+    @ManyToOne(() => Booth, (booth) => booth.meetings)
+    @JoinColumn({ name: 'booth_id' })
     booth: Booth;
 }

@@ -182,6 +182,52 @@ paths:
                     details: []
       tags:
         - Enterprise
+  '/meetings':
+    post:
+      summary: Create a meeting
+      description: Create a enterprise
+      operationId: createMeeting
+      requestBody:
+        description: Create a booth
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Meeting'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Meeting'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Bad Request
+                    details:
+                      - field: .params.id
+                        message: 'should match pattern "^[0-9]+$"'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Internal server error
+                    details: []
+      tags:
+        - Meeting
+    
 components:
   schemas:
     Exhibition:
@@ -1254,3 +1300,49 @@ components:
           minLength: 1
           maxLength: 255
           example: Công ty cổ phần ngoài NN
+    Meeting:
+      type: object
+      required:
+        - 'id'
+        - 'booth_id'
+        - 'customer_name'
+        - 'phone'
+        - 'email'
+        - 'start_time'
+        - 'end_time'
+      properties:
+        id:
+          type: integer
+          readOnly: true
+          example: 1
+        booth_id:
+          type: integer
+          writeOnly: true
+          example: 1
+        customer_name:
+          type: string
+          minLength: 1
+          maxLength: 255
+          example: John
+        phone:
+          type: string
+          minLength: 1
+          maxLength: 255
+          example: '0970000000'
+        email:
+          type: string
+          format: email
+        start_time:
+          type: string
+          minLength: 1
+          pattern: '^[1-9]\d{3}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$'
+          example: '2022-12-01T00:00:00.000Z'
+        end_time:
+          type: string
+          minLength: 1
+          pattern: '^[1-9]\d{3}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$'
+          example: '2022-12-01T00:00:00.000Z'
+        note:
+          type: string
+          minLength: 1
+          maxLength: 255
