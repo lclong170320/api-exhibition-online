@@ -68,6 +68,7 @@ import { MediaConverter } from '@/components/public/converters/media/media.conve
 import { ExhibitionConverter } from '@/components/public/converters/exhibition/exhibition.converter';
 import { MeetingConverter } from './converters/exhibition/meeting.converter';
 import { MeetingListConverter } from './converters/exhibition/meeting-list.converter';
+import { BoothTemplateListConverter } from '@/components/public/converters/exhibition/booth-template-list.converter';
 
 @Module({
     controllers: [PublicController],
@@ -108,6 +109,7 @@ import { MeetingListConverter } from './converters/exhibition/meeting-list.conve
         MediaConverter,
         MeetingConverter,
         MeetingListConverter,
+        BoothTemplateListConverter,
     ],
     imports: [
         TypeOrmModule.forFeature(

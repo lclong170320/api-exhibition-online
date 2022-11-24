@@ -22,7 +22,8 @@ import { Booth } from '../exhibition/entities/booth.entity';
 import { Meeting } from '../exhibition/entities/meeting.entity';
 import { MeetingListConverter } from './converters/exhibition/meeting-list.converter';
 import { MeetingConverter } from './converters/exhibition/meeting.converter';
-
+import { BoothTemplate } from '../exhibition/entities/booth-template.entity';
+import { BoothTemplateListConverter } from './converters/exhibition/booth-template-list.converter';
 @Injectable()
 export class PublicService {
     constructor(
@@ -37,6 +38,7 @@ export class PublicService {
         private readonly enterpriseConverter: EnterpriseConverter,
         private readonly meetingConverter: MeetingConverter,
         private readonly meetingListConverter: MeetingListConverter,
+        private readonly boothTemplateListConverter: BoothTemplateListConverter,
     ) {}
 
     async getExhibitionById(id: string, query: PaginateQuery) {
@@ -127,6 +129,34 @@ export class PublicService {
             query.limit,
             total,
             meetings,
+        );
+    }
+
+    async findBoothTemplates(query: PaginateQuery) {
+        const sortableColumns = ['id', 'name', 'type', 'createdAt'];
+        const searchableColumns = ['name'];
+        const filterableColumns = ['type'];
+        const defaultSortBy = [['createdAt', 'DESC']];
+        const populatableColumns = query.populate;
+        const boothTemplateRepository =
+            this.exhibitionDataSource.manager.getRepository(BoothTemplate);
+        const [boothTemplates, total] = await paginate(
+            query,
+            boothTemplateRepository,
+            {
+                searchableColumns,
+                sortableColumns,
+                populatableColumns,
+                filterableColumns,
+                defaultSortBy,
+            },
+        );
+
+        return this.boothTemplateListConverter.toDto(
+            query.page,
+            query.limit,
+            total,
+            boothTemplates,
         );
     }
 }

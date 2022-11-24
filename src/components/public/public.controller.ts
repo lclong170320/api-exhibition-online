@@ -34,4 +34,9 @@ export class PublicController {
     getMeetings(@Paginate() query: PaginateQuery) {
         return this.publicService.getMeetings(query);
     }
+
+    @Get('/booth-templates')
+    getBoothTemplates(@Paginate() query: PaginateQuery) {
+        return this.publicService.findBoothTemplates(query);
+    }
 }
