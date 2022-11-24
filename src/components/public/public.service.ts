@@ -111,27 +111,6 @@ export class PublicService {
         return this.meetingConverter.toDto(meeting);
     }
 
-    async getMeetings(query: PaginateQuery) {
-        const sortableColumns = ['id', 'startTime', 'endTime', 'createdAt'];
-        const searchableColumns = ['customerName', 'email', 'phone'];
-        const filterableColumns = ['booth.id', 'id'];
-        const defaultSortBy = [['createdAt', 'DESC']];
-        const meetingRepository =
-            this.exhibitionDataSource.manager.getRepository(Meeting);
-        const [meetings, total] = await paginate(query, meetingRepository, {
-            searchableColumns,
-            sortableColumns,
-            filterableColumns,
-            defaultSortBy,
-        });
-        return this.meetingListConverter.toDto(
-            query.page,
-            query.limit,
-            total,
-            meetings,
-        );
-    }
-
     async findBoothTemplates(query: PaginateQuery) {
         const sortableColumns = ['id', 'name', 'type', 'createdAt'];
         const searchableColumns = ['name'];

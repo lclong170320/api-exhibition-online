@@ -73,6 +73,10 @@ import { UtilService } from '@/utils/helper/util.service';
 import { BoothOrganizationTemplateListConverter } from './converters/booth-organization-template-list.converter';
 import { BoothOrganizationTemplateController } from './controllers/booth-organization-template.controller';
 import { BoothOrganizationTemplateService } from './services/booth-organization-template.service';
+import { MeetingController } from './controllers/meeting.controller';
+import { MeetingService } from './services/meeting.service';
+import { MeetingConverter } from './converters/meeting.converter';
+import { MeetingListConverter } from './converters/meeting-list.converter';
 import { ConferenceTemplateController } from './controllers/conference-template.controller';
 import { ConferenceTemplateService } from './services/conference-template.service';
 import { ConferenceTemplateConverter } from './converters/conference-template.converter';
@@ -87,6 +91,7 @@ import { ConferenceTemplatePositionConverter } from './converters/conference-tem
         SpaceTemplateController,
         BoothController,
         BoothOrganizationTemplateController,
+        MeetingController,
         ConferenceTemplateController,
     ],
     providers: [
@@ -101,6 +106,7 @@ import { ConferenceTemplatePositionConverter } from './converters/conference-tem
         BoothService,
         BoothOrganizationTemplateService,
         UtilService,
+        MeetingService,
         ConferenceTemplateService,
         // converter
         CategoryConverter,
@@ -132,6 +138,8 @@ import { ConferenceTemplatePositionConverter } from './converters/conference-tem
         BoothTemplatePositionConverter,
         BoothListConverter,
         BoothOrganizationTemplateListConverter,
+        MeetingConverter,
+        MeetingListConverter,
         ConferenceTemplateConverter,
         ConferenceTemplatePositionConverter,
     ],

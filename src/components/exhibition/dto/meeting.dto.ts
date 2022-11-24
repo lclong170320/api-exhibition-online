@@ -10,6 +10,8 @@
  * Do not edit the class manually.
  */
 
+import { Booth } from './booth.dto';
+
 export interface Meeting {
     readonly id: number;
     booth_id: number;
@@ -19,4 +21,5 @@ export interface Meeting {
     start_time: string;
     end_time: string;
     note?: string;
+    booth?: Booth;
 }
