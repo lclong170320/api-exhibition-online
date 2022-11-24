@@ -8,6 +8,7 @@ export interface PaginateQuery {
     sortBy?: [string, string][];
     searchBy?: string[];
     search?: string;
+    field?: string[];
     filter?: { [column: string]: string | string[] };
     populate?: string[];
     path: string;
@@ -36,6 +37,7 @@ export const Paginate = createParamDecorator(
         const sortBy: [string, string][] = [];
         const searchBy: string[] = [];
         const populate: string[] = [];
+        const field: string[] = [];
 
         if (query.sort_by) {
             const params = !Array.isArray(query.sort_by)
@@ -85,6 +87,27 @@ export const Paginate = createParamDecorator(
             }
         }
 
+        if (query.field) {
+            const params = !Array.isArray(query.field)
+                ? [query.field]
+                : query.field;
+
+            for (const param of params) {
+                if (isString(param)) {
+                    if (param.includes('.')) {
+                        const subParam = param.split('.');
+                        const subParamConvert = subParam.map((value) =>
+                            camelCase(value),
+                        );
+
+                        field.push(subParamConvert.join('.'));
+                    } else {
+                        field.push(camelCase(param));
+                    }
+                }
+            }
+        }
+
         const filter = mapKeys(
             pickBy(
                 query,
@@ -112,6 +135,7 @@ export const Paginate = createParamDecorator(
             searchBy: searchBy.length ? searchBy : undefined,
             filter: Object.keys(filter).length ? filter : undefined,
             populate: populate.length ? populate : [],
+            field: field.length ? field : [],
             path,
         };
     },

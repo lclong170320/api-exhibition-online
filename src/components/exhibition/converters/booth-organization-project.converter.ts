@@ -12,8 +12,8 @@ export class BoothOrganizationProjectConverter {
         const dto = {
             id: entity.id,
             image_id: entity.project.imageId ?? undefined,
-            title: entity.project.title,
-            description: entity.project.description,
+            title: entity.project.title ?? undefined,
+            description: entity.project.description ?? undefined,
             booth_organization_template_position:
                 entity.boothOrganizationTemplatePosition
                     ? this.boothOrganizationTemplatePositionConverter.toDto(

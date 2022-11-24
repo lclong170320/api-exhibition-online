@@ -76,13 +76,7 @@ export class ExhibitionService {
         const searchableColumns = ['name'];
         const filterableColumns = ['status'];
         const defaultSortBy = [['createdAt', 'DESC']];
-        const populatableColumns = [
-            'category',
-            'space',
-            'boothOrganization',
-            'boothTemplates',
-            'spaceTemplate',
-        ];
+        const populatableColumns = query.populate;
         const exhibitionRepository =
             this.dataSource.manager.getRepository(Exhibition);
         const [exhibitions, total] = await paginate(
@@ -105,10 +99,7 @@ export class ExhibitionService {
         );
     }
 
-    async findExhibitionById(
-        id: string,
-        populate: string[],
-    ): Promise<ExhibitionDto> {
+    async findExhibitionById(id: string, populate: string[]) {
         // const allowPopulate = [
         //     'category',
         //     'space',

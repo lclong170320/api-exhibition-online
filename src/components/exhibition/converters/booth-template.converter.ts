@@ -19,12 +19,14 @@ export class BoothTemplateConverter {
     toDto(entity: BoothTemplate) {
         const dto = {
             id: entity.id,
-            created_by: entity.createdBy,
-            name: entity.name,
-            type: entity.type,
-            created_date: entity.createdDate.toISOString(),
-            model_id: entity.modelId,
-            thumbnail_id: entity.thumbnailId,
+            created_by: entity.createdBy ?? undefined,
+            name: entity.name ?? undefined,
+            type: entity.type ?? undefined,
+            created_date: entity.createdDate
+                ? entity.createdDate.toISOString()
+                : undefined,
+            model_id: entity.modelId ?? undefined,
+            thumbnail_id: entity.thumbnailId ?? undefined,
             booth_template_positions: entity.boothTemplatePositions
                 ? entity.boothTemplatePositions.map((data) =>
                       this.boothTemplatePositionConverter.toDto(data),

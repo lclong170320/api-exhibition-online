@@ -5,7 +5,7 @@ export default class CategoryConverter {
     toDto(entity: Category) {
         const dto = {
             id: entity.id,
-            name: entity.name,
+            name: entity.name ?? undefined,
         } as CategoryDto;
 
         return dto;

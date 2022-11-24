@@ -31,12 +31,12 @@ export class BoothOrganizationConverter {
     toDto(entity: BoothOrganization) {
         const dto = {
             id: entity.id,
-            position_x: entity.positionX,
-            position_y: entity.positionY,
-            position_z: entity.positionZ,
-            rotation_x: entity.rotationX,
-            rotation_y: entity.rotationY,
-            rotation_z: entity.rotationZ,
+            position_x: entity.positionX ?? undefined,
+            position_y: entity.positionY ?? undefined,
+            position_z: entity.positionZ ?? undefined,
+            rotation_x: entity.rotationX ?? undefined,
+            rotation_y: entity.rotationY ?? undefined,
+            rotation_z: entity.rotationZ ?? undefined,
             booth_organization_template: entity.boothOrganizationTemplate
                 ? this.boothOrganizationTemplateConverter.toDto(
                       entity.boothOrganizationTemplate,

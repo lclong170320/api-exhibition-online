@@ -7,8 +7,8 @@ export class BoothOrganizationTemplatePositionConverter {
     toDto(entity: BoothOrganizationTemplatePosition) {
         const dto = {
             id: entity.id,
-            position: entity.position,
-            type: entity.type,
+            position: entity.position ?? undefined,
+            type: entity.type ?? undefined,
         } as BoothOrganizationTemplatePositionDto;
 
         return dto;

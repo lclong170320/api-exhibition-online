@@ -18,12 +18,14 @@ export class SpaceTemplateConverter {
     toDto(entity: SpaceTemplate) {
         const dto = {
             id: entity.id,
-            name: entity.name,
-            model_id: entity.modelId,
-            thumbnail_id: entity.thumbnailId,
-            created_by: entity.createdBy,
-            map_id: entity.mapId,
-            created_date: entity.createdDate.toISOString(),
+            name: entity.name ?? undefined,
+            model_id: entity.modelId ?? undefined,
+            thumbnail_id: entity.thumbnailId ?? undefined,
+            created_by: entity.createdBy ?? undefined,
+            map_id: entity.mapId ?? undefined,
+            created_date: entity.createdDate
+                ? entity.createdDate.toISOString()
+                : undefined,
             space_template_positions: entity.spaceTemplatePositions
                 ? entity.spaceTemplatePositions.map((data) =>
                       this.spaceTemplatePositionConverter.toDto(data),

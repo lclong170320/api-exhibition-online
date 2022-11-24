@@ -5,6 +5,7 @@ import {
     FindManyOptions,
     FindOptionsOrder,
     FindOptionsWhere,
+    FindOptionsSelect,
     LessThan,
     LessThanOrEqual,
     Like,
@@ -32,6 +33,7 @@ export async function paginate<T>(
         isNumber(query.page) && isNumber(query.limit)
             ? (query.page - 1) * query.limit
             : 1;
+    findOptions.select = parseFiled(query.field);
     findOptions.order = parseDefaultSortBy(option.defaultSortBy);
     findOptions.relations = parsePopulate(
         query.populate,
@@ -235,6 +237,67 @@ function parsePopulate(populate: string[], populatableColumns: string[]) {
             }
         });
     }
+    return result;
+}
+
+function parseFiled<T>(field: string[]) {
+    const result: FindOptionsSelect<T> = {};
+    field.forEach((column) => {
+        if (column.includes('.')) {
+            const subColumn = column.split('.');
+            const lastField = {
+                id: true,
+                createdAt: true,
+                updatedAt: true,
+                [subColumn[subColumn.length - 1]]: true,
+            };
+            const subColumnPop = subColumn.slice(0, subColumn.length - 1);
+            if (subColumnPop.length === 1) {
+                Object.assign(result, {
+                    id: true,
+                    createdAt: true,
+                    updatedAt: true,
+                    [subColumnPop[0]]: lastField,
+                });
+            } else {
+                const res = lastField;
+                const subColumnShift = subColumn
+                    .slice(1, subColumn.length)
+                    .reverse();
+                subColumnShift.forEach((column, index) => {
+                    if (index === 0) {
+                        Object.assign(res, {
+                            id: true,
+                            createdAt: true,
+                            updatedAt: true,
+                            [column]: { ...lastField },
+                        });
+                    } else {
+                        Object.assign(res, {
+                            id: true,
+                            createdAt: true,
+                            updatedAt: true,
+                            [column]: { ...res },
+                        });
+                        delete res[subColumnShift[index - 1]];
+                    }
+                });
+                Object.assign(result, {
+                    id: true,
+                    createdAt: true,
+                    updatedAt: true,
+                    [subColumn[0]]: res,
+                });
+            }
+        } else {
+            Object.assign(result, {
+                id: true,
+                createdAt: true,
+                updatedAt: true,
+                [column]: true,
+            });
+        }
+    });
     return result;
 }
 

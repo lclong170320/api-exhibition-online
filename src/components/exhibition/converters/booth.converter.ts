@@ -26,8 +26,8 @@ export class BoothConverter {
     toDto(entity: Booth) {
         const dto = {
             id: entity.id,
-            created_by: entity.createdBy,
-            enterprise_id: entity.enterpriseId,
+            created_by: entity.createdBy ?? undefined,
+            enterprise_id: entity.enterpriseId ?? undefined,
             booth_template: entity.boothTemplate
                 ? this.boothTemplateConverter.toDto(entity.boothTemplate)
                 : undefined,

@@ -7,8 +7,12 @@ export class SpaceTemplatePositionConverter {
     toDto(entity: SpaceTemplatePosition) {
         const dto = {
             id: entity.id,
-            position: entity.position,
-            type: entity.type === 'image' ? 'image' : 'video',
+            position: entity.position ?? undefined,
+            type: entity.type
+                ? entity.type === 'image'
+                    ? 'image'
+                    : 'video'
+                : undefined,
         } as SpaceTemplatePositionDto;
 
         return dto;

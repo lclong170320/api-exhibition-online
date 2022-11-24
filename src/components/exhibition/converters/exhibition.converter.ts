@@ -28,14 +28,18 @@ export class ExhibitionConverter {
     toDto(entity: Exhibition) {
         const dto = {
             id: entity.id,
-            name: entity.name,
-            exhibition_code: entity.exhibitionCode,
-            booth_number: entity.boothNumber,
-            date_exhibition_start: entity.dateExhibitionStart.toISOString(),
-            date_exhibition_end: entity.dateExhibitionEnd.toISOString(),
-            introduction: entity.introduction,
-            agenda: entity.agenda,
-            status: entity.status,
+            name: entity.name ?? undefined,
+            exhibition_code: entity.exhibitionCode ?? undefined,
+            booth_number: entity.boothNumber ?? undefined,
+            date_exhibition_start: entity.dateExhibitionStart
+                ? entity.dateExhibitionStart.toISOString()
+                : undefined,
+            date_exhibition_end: entity.dateExhibitionEnd
+                ? entity.dateExhibitionEnd.toISOString()
+                : undefined,
+            introduction: entity.introduction ?? undefined,
+            agenda: entity.agenda ?? undefined,
+            status: entity.status ?? undefined,
             category: entity.category
                 ? this.categoryConverter.toDto(entity.category)
                 : undefined,

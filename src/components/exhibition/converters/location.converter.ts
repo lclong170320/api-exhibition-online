@@ -23,10 +23,11 @@ export class LocationConverter {
     toDto(entity: Location) {
         const dto = {
             id: entity.id,
-            status:
-                entity.status === Status.AVAILABLE
+            status: entity.status
+                ? entity.status === Status.AVAILABLE
                     ? Status.AVAILABLE
-                    : Status.RESERVED,
+                    : Status.RESERVED
+                : undefined,
             space_template_location: entity.spaceTemplateLocation
                 ? this.spaceTemplateLocationConverter.toDto(
                       entity.spaceTemplateLocation,

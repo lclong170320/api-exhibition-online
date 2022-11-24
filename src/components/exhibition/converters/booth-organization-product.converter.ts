@@ -11,11 +11,11 @@ export class BoothOrganizationProductConverter {
     toDto(entity: BoothOrganizationProduct) {
         const dto = {
             id: entity.id,
-            name: entity.product.name,
+            name: entity.product.name ?? undefined,
             image_id: entity.product.imageId ?? undefined,
-            price: entity.product.price,
-            purchase_link: entity.product.purchaseLink,
-            description: entity.product.description,
+            price: entity.product.price ?? undefined,
+            purchase_link: entity.product.purchaseLink ?? undefined,
+            description: entity.product.description ?? undefined,
             booth_organization_template_position:
                 entity.boothOrganizationTemplatePosition
                     ? this.boothOrganizationTemplatePositionConverter.toDto(

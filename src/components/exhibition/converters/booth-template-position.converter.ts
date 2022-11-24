@@ -16,8 +16,8 @@ export class BoothTemplatePositionConverter {
 
     toEntity(dto: BoothTemplatePositionDto) {
         const entity = new BoothTemplatePosition();
-        entity.type = dto.type;
-        entity.position = dto.position;
+        entity.type = dto.type ?? undefined;
+        entity.position = dto.position ?? undefined;
         return entity;
     }
 }

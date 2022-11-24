@@ -13,9 +13,9 @@ export class LiveStreamConverter {
 
     toDto(entity: LiveStream) {
         const dto = {
-            id: entity.id,
-            link: entity.link,
-            time: entity.time.toISOString(),
+            id: entity.id ?? undefined,
+            link: entity.link ?? undefined,
+            time: entity.time ? entity.time.toISOString() : undefined,
         } as LiveStreamDto;
 
         return dto;
