@@ -10,11 +10,6 @@ info:
     name: EULA
     url: 'https://en.wikipedia.org/wiki/End-user_license_agreement'
   description: API definition for COMPAON
-tags:
-  - name: Exhibition
-    description: API to interact with the Exhibition
-  - name: Media
-    description: API to interact with the Media
 servers:
   - url: 'http://52.74.156.150:3000/public/api/v1'
 paths:
@@ -316,7 +311,7 @@ paths:
                     message: Internal server error
                     details: []
       tags:
-        - Enterprise
+        - Meeting
 components:
   schemas:
     Exhibition:

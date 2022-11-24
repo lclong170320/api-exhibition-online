@@ -10,23 +10,6 @@ info:
     name: EULA
     url: 'https://en.wikipedia.org/wiki/End-user_license_agreement'
   description: API definition for COMPAON
-tags:
-  - name: Booth
-    description: API to interact with the Booth
-  - name: Exhibition
-    description: API to interact with the Exhibition
-  - name: Media
-    description: API to interact with the Media
-  - name: Enterprise
-    description: API to interact with the Enterprise
-  - name: Space
-    description: API to interact with the Space
-  - name: User
-    description: API to interact with the User
-  - name: Auth
-    description: API to interact with the Authorization
-  - name: Conference
-    description: API to interact with the Conference
 servers:
   - url: 'http://localhost:3000/api/v1'
   - url: 'http://52.74.156.150:3000/api/v1'
@@ -687,10 +670,12 @@ paths:
                     message: Internal server error
                     details: []
       tags:
-        - Booth
+        - Booth Template
     delete:
       tags:
-        - Booth
+        - Booth Template
+      security:
+      - bearerAuth: []
       summary: Delete an existing booth template
       description: Delete an existing booth template by Id
       operationId: deleteBoothTemplate
@@ -812,7 +797,7 @@ paths:
                     message: Internal server error
                     details: []
       tags:
-        - Booth
+        - Booth Organization Template
   '/booth-organization-templates':
     get:
       security:
@@ -886,7 +871,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponseBody'
       tags:
-        - Booth
+        - Booth Organization Template
   '/booth-templates':
     get:
       security:
@@ -968,12 +953,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponseBody'
       tags:
-        - Booth
+        - Booth Template
     post:
       security:
       - bearerAuth: []
       tags:
-        - Booth
+        - Booth Template
       summary: Add a boothTemplate
       description: Add a boothTemplate
       operationId: addBoothTemplate
@@ -1050,7 +1035,7 @@ paths:
             - booth_organization_videos.booth_organization_template_position
             - booth_organization_images.booth_organization_template_position
       tags:
-        - Booth
+        - Booth Organization
       responses:
         '200':
           description: OK
@@ -1099,7 +1084,7 @@ paths:
       security:
       - bearerAuth: []
       tags:
-        - Booth
+        - Booth Organization
       summary: Update an existing booth organization
       description: Update an existing booth organization by Id
       operationId: updateBoothOrganization
@@ -1204,6 +1189,7 @@ paths:
              - booth_videos.booth_template_position
              - booth_template
              - location
+             - location.space_template_location
              - exhibition
       responses:
         '200':
@@ -1352,7 +1338,7 @@ paths:
                     message: Internal server error
                     details: []
       tags:
-        - Space
+        - Space Template
   '/space-templates':
     get:
       security:
@@ -1452,12 +1438,12 @@ paths:
                     message: Internal server error
                     details: []
       tags:
-        - Space
+        - Space Template
     post:
       security:
       - bearerAuth: []
       tags:
-        - Space
+        - Space Template
       summary: Add a space template
       description: Add a space template
       operationId: addSpaceTemplate
