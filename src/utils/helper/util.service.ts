@@ -73,4 +73,23 @@ export class UtilService {
 
         return result.url;
     }
+
+    async createUrlMedias(data: string): Promise<number> {
+        const requestConfig = {
+            maxBodyLength: Infinity,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        };
+        const url = this.configService.get('CREATING_MEDIA_URL');
+        const media = this.httpService.post(url, { data }, requestConfig);
+        const response = media.pipe(
+            map((res) => {
+                return res.data;
+            }),
+        );
+        const result = await lastValueFrom(response);
+
+        return result.id;
+    }
 }

@@ -1459,3 +1459,66 @@ components:
           type: string
           minLength: 1
           maxLength: 255
+    ConferenceTemplate:
+      type: object
+      required:
+        - id
+        - model_data
+        - thumbnail_data
+        - name
+        - created_by
+        - created_date
+        - model_id
+        - thumbnail_id
+        - conference_template_positions
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        created_by:
+          type: integer
+          readOnly: true
+        created_date:
+          type: string
+          readOnly: true
+        model_data:
+          type: string
+          description: 'input base64 string /n example: iVBORw0KGgoAAAANSUhEUgAABuIAAASxCAYAAADF8I...'
+          writeOnly: true
+        thumbnail_data:
+          type: string
+          description: "input base64 string example: iVBORw0KGgoAAAANSUhEUgAABuIAAASxCAYAAADF8I..."
+          writeOnly: true
+        name:
+          type: string
+          minLength: 1
+          maxLength: 255
+        model_id:
+          type: integer
+          readOnly: true
+        thumbnail_id:
+          type: integer
+          readOnly: true
+        conference_template_positions:
+          writeOnly: true
+          type: array
+          items:
+            $ref: '#/components/schemas/ConferenceTemplatePosition'
+    ConferenceTemplatePosition:
+      type: object
+      required:
+        - id
+        - type
+        - position
+      properties:
+        id:
+          type: number
+          readOnly: true
+          example: 1
+        type:
+          type: string
+          enum: ['image', 'video']
+          example: 'image'
+        position:
+          type: string
+          maxLength: 255

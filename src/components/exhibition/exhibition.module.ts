@@ -73,6 +73,10 @@ import { UtilService } from '@/utils/helper/util.service';
 import { BoothOrganizationTemplateListConverter } from './converters/booth-organization-template-list.converter';
 import { BoothOrganizationTemplateController } from './controllers/booth-organization-template.controller';
 import { BoothOrganizationTemplateService } from './services/booth-organization-template.service';
+import { ConferenceTemplateController } from './controllers/conference-template.controller';
+import { ConferenceTemplateService } from './services/conference-template.service';
+import { ConferenceTemplateConverter } from './converters/conference-template.converter';
+import { ConferenceTemplatePositionConverter } from './converters/conference-template-position.converter';
 
 @Module({
     controllers: [
@@ -83,6 +87,7 @@ import { BoothOrganizationTemplateService } from './services/booth-organization-
         SpaceTemplateController,
         BoothController,
         BoothOrganizationTemplateController,
+        ConferenceTemplateController,
     ],
     providers: [
         // service
@@ -96,6 +101,7 @@ import { BoothOrganizationTemplateService } from './services/booth-organization-
         BoothService,
         BoothOrganizationTemplateService,
         UtilService,
+        ConferenceTemplateService,
         // converter
         CategoryConverter,
         ExhibitionConverter,
@@ -126,6 +132,8 @@ import { BoothOrganizationTemplateService } from './services/booth-organization-
         BoothTemplatePositionConverter,
         BoothListConverter,
         BoothOrganizationTemplateListConverter,
+        ConferenceTemplateConverter,
+        ConferenceTemplatePositionConverter,
     ],
     imports: [
         TypeOrmModule.forFeature(
