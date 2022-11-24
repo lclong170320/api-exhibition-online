@@ -18,6 +18,7 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
+import { keys } from 'lodash';
 
 @Injectable()
 export class BoothService {
@@ -30,7 +31,7 @@ export class BoothService {
     ) {}
 
     async findBooths(jwtAccessToken: string, query: PaginateQuery) {
-        const filterableColumns = ['enterpriseId'];
+        const filterableColumns = keys(query.filter);
         const defaultSortBy = [['createdAt', 'DESC']];
         const populatableColumns = query.populate;
 
@@ -52,11 +53,11 @@ export class BoothService {
         }
 
         const roleName = decodedJwtAccessToken.user.role.name;
-
-        query.filter = {};
         if (roleName === RoleName.USER) {
+            filterableColumns.push('enterpriseId');
             query.filter = {
                 enterpriseId: enterpriseId.toString(),
+                ...query.filter,
             };
         }
 
