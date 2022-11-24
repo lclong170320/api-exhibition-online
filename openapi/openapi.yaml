@@ -1268,6 +1268,8 @@ paths:
                     details: []
   '/meetings':
     get:
+      security:
+      - bearerAuth: []
       summary: Get list of meeting
       description: Return list of meeting
       operationId: getMeetings
