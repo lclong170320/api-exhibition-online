@@ -1,9 +1,9 @@
 version: "3.8"
 services:
-  main:
+  service:
     build:
       context: ./
-    container_name: compaon.main
+    container_name: compaon.service
     volumes:
       - ./:/app
       # Exclude container directory overwritten by host.
