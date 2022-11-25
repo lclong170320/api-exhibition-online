@@ -10,6 +10,7 @@
  * Do not edit the class manually.
  */
 
+import { Conference } from '../entities/conference.entity';
 import { Status } from '../entities/exhibition.entity';
 import { BoothOrganization } from './booth-organization.dto';
 import { Booth } from './booth.dto';
@@ -30,9 +31,12 @@ export interface Exhibition {
     readonly booth_organization_id?: number;
     readonly space_id?: number;
     space_template_id: number;
+    readonly conference_id?: number;
+    conference_template_id: number;
     booth_organization_template_id: number;
     readonly category?: Category;
     readonly space?: Space;
+    readonly conference?: Conference;
     readonly booth_organization?: BoothOrganization;
     readonly booths?: Array<Booth>;
 }

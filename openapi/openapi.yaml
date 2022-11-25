@@ -123,6 +123,10 @@ paths:
                     type: integer
                     writeOnly: true
                     example: 1
+                  conference_template_id:
+                    type: integer
+                    writeOnly: true
+                    example: 1
                   booth_organization_template_id:
                     type: integer
                     writeOnly: true
@@ -143,6 +147,7 @@ paths:
               - booth_number
               - category_id
               - space_template_id
+              - conference_template_id
               - booth_organization_template_id
         required: true
       responses:
@@ -2721,6 +2726,10 @@ components:
           readOnly: true
           example: 1
         space_id:
+          type: integer
+          readOnly: true
+          example: 1
+        conference_id:
           type: integer
           readOnly: true
           example: 1

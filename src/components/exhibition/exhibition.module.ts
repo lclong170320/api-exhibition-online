@@ -84,6 +84,9 @@ import { ConferenceTemplatePositionConverter } from './converters/conference-tem
 import { Conference } from './entities/conference.entity';
 import { ConferenceTemplate } from './entities/conference-template.entity';
 import { ConferenceTemplatePosition } from './entities/conference-template-position.entity';
+import { ConferenceConverter } from './converters/conference.converter';
+import { ConferenceImageConverter } from './converters/conference-image.converter';
+import { ConferenceVideoConverter } from './converters/conference-video.converter';
 
 @Module({
     controllers: [
@@ -145,6 +148,9 @@ import { ConferenceTemplatePosition } from './entities/conference-template-posit
         MeetingListConverter,
         ConferenceTemplateConverter,
         ConferenceTemplatePositionConverter,
+        ConferenceConverter,
+        ConferenceImageConverter,
+        ConferenceVideoConverter,
     ],
     imports: [
         TypeOrmModule.forFeature(

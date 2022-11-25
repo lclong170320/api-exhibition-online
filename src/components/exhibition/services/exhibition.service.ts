@@ -47,6 +47,8 @@ import { Project } from '../entities/project.entity';
 import { SpaceTemplateLocation } from '../entities/space-template-location.entity';
 import { Video } from '../entities/video.entity';
 import { UpdateExhibition } from '../dto/exhibition-update.dto';
+import { Conference } from '../entities/conference.entity';
+import { ConferenceTemplate } from '../entities/conference-template.entity';
 
 @Injectable()
 export class ExhibitionService {
@@ -176,6 +178,23 @@ export class ExhibitionService {
         return spaceTemplateLocation;
     }
 
+    private async findConferenceTemplateById(
+        id: number,
+        conferenceTemplateRepository: Repository<ConferenceTemplate>,
+    ): Promise<ConferenceTemplate> {
+        const conferenceTemplate = await conferenceTemplateRepository.findOneBy(
+            {
+                id: id,
+            },
+        );
+        if (!conferenceTemplate) {
+            throw new BadRequestException(
+                `The conference template id '${id}' is not found`,
+            );
+        }
+        return conferenceTemplate;
+    }
+
     private async createSpace(
         spaceTemplateId: number,
         spaceRepository: Repository<Space>,
@@ -238,6 +257,27 @@ export class ExhibitionService {
         return createdBoothOrganization;
     }
 
+    private async createConference(
+        conferenceTemplateId: number,
+        conferenceRepository: Repository<Conference>,
+        conferenceTemplateRepository: Repository<ConferenceTemplate>,
+    ): Promise<Conference> {
+        const firstConferenceTemplate = await this.findConferenceTemplateById(
+            conferenceTemplateId,
+            conferenceTemplateRepository,
+        );
+
+        const conferenceEntity = new Conference();
+        conferenceEntity.name = 'Phòng hội nghị mặc định';
+        conferenceEntity.conferenceTemplate = firstConferenceTemplate;
+
+        const createdConferences = await conferenceRepository.save(
+            conferenceEntity,
+        );
+
+        return createdConferences;
+    }
+
     async createExhibition(exhibitionDto: ExhibitionDto) {
         if (!this.checkDateExhibition(exhibitionDto)) {
             throw new BadRequestException('The exhibition time is not correct');
@@ -257,6 +297,10 @@ export class ExhibitionService {
                     SpaceTemplateLocation,
                 );
                 const locationRepository = manager.getRepository(Location);
+
+                const conferenceTemplateRepository =
+                    manager.getRepository(ConferenceTemplate);
+                const conferenceRepository = manager.getRepository(Conference);
 
                 const firstCategory = await this.findCategoryById(
                     exhibitionDto.category_id,
@@ -282,6 +326,11 @@ export class ExhibitionService {
                         spaceTemplateLocationRepository,
                     );
 
+                const createdConference = await this.createConference(
+                    exhibitionDto.conference_template_id,
+                    conferenceRepository,
+                    conferenceTemplateRepository,
+                );
                 await Promise.all(
                     spaceTemplateLocations.map(
                         async (spaceTemplateLocation) => {
@@ -301,6 +350,7 @@ export class ExhibitionService {
                 exhibitionEntity.category = firstCategory;
                 exhibitionEntity.space = createdSpace;
                 exhibitionEntity.boothOrganization = createdBoothOrganization;
+                exhibitionEntity.conference = createdConference;
                 const createdExhibition = await exhibitionRepository.save(
                     exhibitionEntity,
                 );

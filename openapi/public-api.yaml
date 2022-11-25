@@ -485,6 +485,7 @@ components:
         - status
         - category_id
         - space_template_id
+        - conference_template_id
         - booth_organization_template_id
       properties:
         id:
@@ -534,6 +535,10 @@ components:
           writeOnly: true
           example: 1
         space_template_id:
+          type: integer
+          writeOnly: true
+          example: 1
+        conference_template_id:
           type: integer
           writeOnly: true
           example: 1
