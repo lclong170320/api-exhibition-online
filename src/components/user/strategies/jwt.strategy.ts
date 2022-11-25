@@ -23,7 +23,7 @@ export class JWTStrategy extends PassportStrategy(Strategy) {
     }
     async validate(req: Request, payload: LoginPayload) {
         const token = req.get('Authorization').split(' ')[1];
-        await this.authService.checkToken(token);
+        await this.authService.checkToken(token, payload);
         return payload;
     }
 }

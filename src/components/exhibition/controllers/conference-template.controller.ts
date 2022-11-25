@@ -1,6 +1,7 @@
 import { ConferenceTemplate as ConferenceTemplateDto } from '@/components/exhibition/dto/conference-template.dto';
 import { Role } from '@/components/exhibition/dto/role.dto';
 import { User } from '@/components/user/dto/user.dto';
+import { JWTAuthGuard } from '@/components/user/guards/auth.guard';
 import { CurrentUser } from '@/decorators/current-user';
 import { Roles } from '@/decorators/roles.decorator';
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
@@ -13,7 +14,7 @@ export class ConferenceTemplateController {
         private readonly conferenceTemplateService: ConferenceTemplateService,
     ) {}
 
-    @UseGuards(RolesGuard)
+    @UseGuards(JWTAuthGuard, RolesGuard)
     @Roles(Role.ADMIN)
     @Post()
     createConferenceTemplate(

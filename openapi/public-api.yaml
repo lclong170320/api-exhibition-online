@@ -1623,3 +1623,42 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/BoothTemplate'
+    User:
+        type: object
+        required:
+          - id
+          - name
+          - phone
+          - email
+          - role_id
+          - status
+          - enterprise_id
+        properties:
+          id:
+            type: integer
+            readOnly: true
+          name:
+            type: string
+          phone:
+            type: string
+            pattern: '^(((\+|)84)|0)([0-9]{9})$'
+            example: 0707060142
+          email:
+              type: string
+              format: email
+          password:
+            type: string
+            format: password
+            writeOnly: true
+            minLength: 6
+            maxLength: 255
+          role_id:
+            type: number
+            writeOnly: true
+          role:
+            $ref: '#/components/schemas/Role'
+          status:
+            type: string
+            enum: [active, inactive]
+          enterprise_id:
+            type: number

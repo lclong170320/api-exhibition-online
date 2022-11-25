@@ -14,12 +14,13 @@ import { BoothTemplate as BoothTemplateDto } from '@/components/exhibition/dto/b
 import { Roles } from '@/decorators/roles.decorator';
 import { Role } from '@/components/exhibition/dto/role.dto';
 import { RolesGuard } from 'guards/roles.guard';
+import { JWTAuthGuard } from '@/components/user/guards/auth.guard';
 
 @Controller('booth-templates')
 export class BoothTemplateController {
     constructor(private readonly boothTemplateService: BoothTemplateService) {}
 
-    @UseGuards(RolesGuard)
+    @UseGuards(JWTAuthGuard, RolesGuard)
     @Roles(Role.ADMIN)
     @Get(':id')
     getBoothTemplateById(
@@ -32,21 +33,21 @@ export class BoothTemplateController {
         );
     }
 
-    @UseGuards(RolesGuard)
+    @UseGuards(JWTAuthGuard, RolesGuard)
     @Roles(Role.ADMIN)
     @Get()
     getBoothTemplates(@Paginate() query: PaginateQuery) {
         return this.boothTemplateService.findBoothTemplates(query);
     }
 
-    @UseGuards(RolesGuard)
+    @UseGuards(JWTAuthGuard, RolesGuard)
     @Roles(Role.ADMIN)
     @Post()
     createBoothTemplate(@Body() boothTemplateDto: BoothTemplateDto) {
         return this.boothTemplateService.createBoothTemplate(boothTemplateDto);
     }
 
-    @UseGuards(RolesGuard)
+    @UseGuards(JWTAuthGuard, RolesGuard)
     @Roles(Role.ADMIN)
     @Delete(':id')
     @HttpCode(204)

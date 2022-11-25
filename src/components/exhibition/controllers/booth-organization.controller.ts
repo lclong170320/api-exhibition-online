@@ -5,6 +5,7 @@ import { PaginateQuery, Paginate } from '@/decorators/paginate.decorator';
 import { Role } from '@/components/exhibition/dto/role.dto';
 import { RolesGuard } from 'guards/roles.guard';
 import { Roles } from '@/decorators/roles.decorator';
+import { JWTAuthGuard } from '@/components/user/guards/auth.guard';
 
 @Controller('booth-organizations')
 export class BoothOrganizationController {
@@ -12,7 +13,7 @@ export class BoothOrganizationController {
         private readonly boothOrganizationService: BoothOrganizationService,
     ) {}
 
-    @UseGuards(RolesGuard)
+    @UseGuards(JWTAuthGuard, RolesGuard)
     @Roles(Role.ADMIN)
     @Get(':id')
     getBoothOrganizationById(

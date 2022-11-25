@@ -36,7 +36,6 @@ export class BoothService {
         const filterableColumns = keys(query.filter);
         const defaultSortBy = [['createdAt', 'DESC']];
         const populatableColumns = query.populate;
-
         const decodedJwtAccessToken = this.jwtService.decode(
             jwtAccessToken,
         ) as LoginPayload;

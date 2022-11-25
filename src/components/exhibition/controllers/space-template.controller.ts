@@ -5,19 +5,20 @@ import { SpaceTemplate as SpaceTemplateDto } from '@/components/exhibition/dto/s
 import { Role } from '@/components/exhibition/dto/role.dto';
 import { RolesGuard } from 'guards/roles.guard';
 import { Roles } from '@/decorators/roles.decorator';
+import { JWTAuthGuard } from '@/components/user/guards/auth.guard';
 
 @Controller('space-templates')
 export class SpaceTemplateController {
     constructor(private readonly spaceTemplateService: SpaceTemplateService) {}
 
-    @UseGuards(RolesGuard)
+    @UseGuards(JWTAuthGuard, RolesGuard)
     @Roles(Role.ADMIN)
     @Get()
     getSpaceTemplates(@Paginate() query: PaginateQuery) {
         return this.spaceTemplateService.getSpaceTemplates(query);
     }
 
-    @UseGuards(RolesGuard)
+    @UseGuards(JWTAuthGuard, RolesGuard)
     @Roles(Role.ADMIN)
     @Get(':id')
     getSpaceTemplateById(
@@ -30,7 +31,7 @@ export class SpaceTemplateController {
         );
     }
 
-    @UseGuards(RolesGuard)
+    @UseGuards(JWTAuthGuard, RolesGuard)
     @Roles(Role.ADMIN)
     @Post()
     createSpaceTemplate(@Body() spaceTemplateDto: SpaceTemplateDto) {

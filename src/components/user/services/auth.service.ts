@@ -2,9 +2,9 @@ import { DbConnection } from '@/database/config/db';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectDataSource } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
-import { Repository } from 'typeorm';
+import { DataSource } from 'typeorm';
 import { UserConverter } from '../converters/user.converter';
 import { LoginPayload } from '../dto/login-payload.dto';
 import { Login } from '../dto/login.dto';
@@ -16,10 +16,8 @@ export class AuthService {
         private readonly userConverter: UserConverter,
         private readonly jwtService: JwtService,
         private readonly configService: ConfigService,
-        @InjectRepository(Blacklist, DbConnection.userCon)
-        private readonly blacklistRepository: Repository<Blacklist>,
-        @InjectRepository(User, DbConnection.userCon)
-        private readonly usersRepository: Repository<User>,
+        @InjectDataSource(DbConnection.userCon)
+        private readonly dataSource: DataSource,
     ) {}
 
     private readonly privateKey = Buffer.from(
@@ -31,7 +29,8 @@ export class AuthService {
         email: string,
         password: string,
     ): Promise<User> {
-        const user = await this.usersRepository.findOne({
+        const userRepository = this.dataSource.manager.getRepository(User);
+        const user = await userRepository.findOne({
             where: {
                 email: email,
             },
@@ -70,34 +69,48 @@ export class AuthService {
     }
 
     async logout(token: string) {
-        await this.blacklistRepository.save({ token: token });
+        const blacklistRepository =
+            this.dataSource.manager.getRepository(Blacklist);
+        await blacklistRepository.save({ token: token });
     }
 
     async removeExpiredToken() {
-        const blacklist = await this.blacklistRepository.find();
+        const blacklistRepository =
+            this.dataSource.manager.getRepository(Blacklist);
+        const blacklist = await blacklistRepository.find();
         blacklist?.map((data) => {
             const decodedJwtAccessToken = this.jwtService.decode(
                 data.token,
             ) as LoginPayload;
             new Date().valueOf() >=
             new Date(decodedJwtAccessToken.exp).valueOf() * 1000
-                ? this.blacklistRepository.delete(data.id)
+                ? blacklistRepository.delete(data.id)
                 : '';
         });
     }
 
-    async checkToken(token: string) {
-        const result = await this.blacklistRepository.findOne({
+    async checkToken(token: string, payload: LoginPayload) {
+        const blacklistRepository =
+            this.dataSource.manager.getRepository(Blacklist);
+        const result = await blacklistRepository.findOne({
             where: {
                 token: token,
             },
         });
+        const userRepository = this.dataSource.manager.getRepository(User);
+        const firstUser = await userRepository.findOneBy({
+            id: payload.user.id,
+        });
+        if (!firstUser) {
+            throw new UnauthorizedException('invalid user');
+        }
         if (result) throw new UnauthorizedException('Expired token');
     }
 
     async getAuthMe(jwtAccessToken: string) {
+        const userRepository = this.dataSource.manager.getRepository(User);
         const payload = this.jwtService.decode(jwtAccessToken) as LoginPayload;
-        const user = await this.usersRepository.findOne({
+        const user = await userRepository.findOne({
             where: {
                 id: payload.user.id,
             },
