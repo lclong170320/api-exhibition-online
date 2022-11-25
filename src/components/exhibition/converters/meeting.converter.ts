@@ -1,11 +1,14 @@
 import { Meeting as MeetingDto } from '@/components/exhibition/dto/meeting.dto';
 import { Meeting } from '@/components/exhibition/entities/meeting.entity';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject, forwardRef } from '@nestjs/common';
 import { BoothConverter } from './booth.converter';
 
 @Injectable()
 export class MeetingConverter {
-    constructor(private readonly boothConverter: BoothConverter) {}
+    constructor(
+        @Inject(forwardRef(() => BoothConverter))
+        private readonly boothConverter: BoothConverter,
+    ) {}
     toEntity(dto: MeetingDto) {
         const entity = new Meeting();
         entity.customerName = dto.customer_name;

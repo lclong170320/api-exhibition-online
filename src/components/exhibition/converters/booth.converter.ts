@@ -9,6 +9,7 @@ import { BoothVideoConverter } from './booth-video.converter';
 import { BoothProjectConverter } from './booth-project.converter';
 import { BoothProductConverter } from './booth-product.converter';
 import { ExhibitionConverter } from './exhibition.converter';
+import { MeetingConverter } from './meeting.converter';
 
 @Injectable()
 export class BoothConverter {
@@ -22,6 +23,8 @@ export class BoothConverter {
         private readonly boothProductConverter: BoothProductConverter,
         @Inject(forwardRef(() => ExhibitionConverter))
         private readonly exhibitionConverter: ExhibitionConverter,
+        @Inject(forwardRef(() => MeetingConverter))
+        private readonly meetingConverter: MeetingConverter,
     ) {}
     toDto(entity: Booth) {
         const dto = {
@@ -61,6 +64,11 @@ export class BoothConverter {
                 : undefined,
             exhibition: entity.exhibition
                 ? this.exhibitionConverter.toDto(entity.exhibition)
+                : undefined,
+            meetings: entity.meetings?.length
+                ? entity.meetings.map((data) =>
+                      this.meetingConverter.toDto(data),
+                  )
                 : undefined,
         } as BoothDto;
 

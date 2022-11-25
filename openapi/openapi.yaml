@@ -1245,6 +1245,7 @@ paths:
               - location
               - location.space_template_location
               - exhibition
+              - meetings
       responses:
         '200':
           description: OK
