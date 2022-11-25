@@ -898,7 +898,7 @@ export class ExhibitionService {
                 boothEntity.boothTemplate = firstBoothTemplate;
                 boothEntity.location = firstLocation;
                 boothEntity.enterpriseId = enterpriseId;
-
+                boothEntity.createdDate = new Date();
                 const createdBooth = await boothRepository.save(boothEntity);
 
                 const createdLiveStreams = await this.createLiveStream(

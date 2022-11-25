@@ -31,6 +31,7 @@ export class BoothConverter {
             id: entity.id,
             created_by: entity.createdBy ?? undefined,
             enterprise_id: entity.enterpriseId ?? undefined,
+            created_date: entity.createdDate.toISOString() ?? undefined,
             booth_template: entity.boothTemplate
                 ? this.boothTemplateConverter.toDto(entity.boothTemplate)
                 : undefined,

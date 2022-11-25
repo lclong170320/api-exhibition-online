@@ -20,6 +20,7 @@ export interface Booth {
     readonly id: number;
     readonly created_by: number;
     enterprise_id: number;
+    readonly created_date: string;
     location_id?: number;
     booth_template_id?: number;
     live_streams?: Array<LiveStream>;

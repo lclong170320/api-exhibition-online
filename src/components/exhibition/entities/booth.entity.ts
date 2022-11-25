@@ -32,6 +32,9 @@ export class Booth {
     @Column({ name: 'created_by' })
     createdBy: number;
 
+    @Column({ type: 'datetime', name: 'created_date' })
+    createdDate: Date;
+
     @CreateDateColumn({
         type: 'timestamp',
         name: 'created_at',
