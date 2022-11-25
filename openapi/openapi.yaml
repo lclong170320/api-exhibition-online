@@ -1238,9 +1238,13 @@ paths:
           description: |
             List of populatable columns:
               - booth_images.booth_template_position
+              - booth_images.image
               - booth_projects.booth_template_position
+              - booth_projects.project
               - booth_products.booth_template_position
+              - booth_products.product
               - booth_videos.booth_template_position
+              - booth_videos.video
               - booth_template
               - location
               - location.space_template_location
