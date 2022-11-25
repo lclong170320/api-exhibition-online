@@ -3998,6 +3998,101 @@ components:
         position:
           type: string
           maxLength: 255
+    Conference:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: integer
+          readOnly: true
+          example: 1
+        conference_template_id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          minLength: 1
+          maxLength: 255
+          example: 'Mau phong hop 1'
+        exhibition_id:
+          type: number
+          example: 1
+        conference_images:
+          writeOnly: true
+          type: array
+          items:
+            $ref: '#/components/schemas/ConferenceImage'
+        conference_videos:
+          writeOnly: true
+          type: array
+          items:
+            $ref: '#/components/schemas/ConferenceVideo'
+    ConferenceVideo:
+      type: object
+      required:
+        - id
+        - conference_id
+        - conference_template_position_id
+        - video_id
+      properties:
+        id:
+          type: integer
+          readOnly: true
+          example: 1
+        conference_id:
+          type: number
+          writeOnly: true
+          example: 1
+        conference_template_position_id:
+          type: number
+          writeOnly: true
+          example: 1
+        select_media_id:
+          type: number
+          writeOnly: true
+          example: 1
+        video_id:
+          type: number
+          readOnly: true
+          example: 1
+        media_data:
+          type: string
+          writeOnly: true
+          example: "base64 string"
+    ConferenceImage:
+      type: object
+      required:
+        - id
+        - conference_id
+        - conference_template_position_id
+        - image_id
+      properties:
+        id:
+          type: integer
+          readOnly: true
+          example: 1
+        conference_id:
+          type: number
+          writeOnly: true
+          example: 1
+        conference_template_position_id:
+          type: number
+          writeOnly: true
+          example: 1
+        select_media_id:
+          type: number
+          writeOnly: true
+          example: 1
+        image_id:
+          type: number
+          readOnly: true
+          example: 1
+        media_data:
+          type: string
+          writeOnly: true
+          example: "base64 string"
   securitySchemes:
     bearerAuth:
       type: http

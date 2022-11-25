@@ -6,29 +6,23 @@ import {
     JoinColumn,
     ManyToOne,
     OneToMany,
+    OneToOne,
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from 'typeorm';
 import { ConferenceImage } from './conference-image.entity';
 import { ConferenceTemplate } from './conference-template.entity';
 import { ConferenceVideo } from './conference-video.entity';
+import { Exhibition } from './exhibition.entity';
 
-export enum Type {
-    IMAGE = 'image',
-    VIDEO = 'video',
-}
-
-@Entity({ name: 'conference_template_position' })
-export class ConferenceTemplatePosition {
+@Entity({ name: 'conference' })
+export class Conference {
     // table columns
     @PrimaryGeneratedColumn()
     id: number;
 
     @Column({ length: 255 })
-    position: string;
-
-    @Column({ type: 'enum', enum: Type })
-    type: Type;
+    name: string;
 
     @CreateDateColumn({
         type: 'timestamp',
@@ -50,26 +44,28 @@ export class ConferenceTemplatePosition {
     deletedAt: Date;
 
     // relation columns
+    @OneToOne(() => Exhibition, (exhibition) => exhibition.conference)
+    exhibition: Exhibition;
+
     @ManyToOne(
         () => ConferenceTemplate,
-        (conferenceTemplate) => conferenceTemplate.conferenceTemplatePositions,
+        (conferenceTemplate) => conferenceTemplate.conferences,
     )
     @JoinColumn({
         name: 'conference_template_id',
-        foreignKeyConstraintName:
-            'fk-conference_template_position-conference_template',
+        foreignKeyConstraintName: 'fk-conference-conferences_template',
     })
     conferenceTemplate: ConferenceTemplate;
 
     @OneToMany(
         () => ConferenceImage,
-        (conferenceImage) => conferenceImage.conferenceTemplatePosition,
+        (conferenceImage) => conferenceImage.conference,
     )
     conferenceImages: ConferenceImage[];
 
     @OneToMany(
         () => ConferenceVideo,
-        (conferenceVideo) => conferenceVideo.conferenceTemplatePosition,
+        (conferenceVideo) => conferenceVideo.conference,
     )
     conferenceVideos: ConferenceVideo[];
 }

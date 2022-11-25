@@ -9,18 +9,15 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { ConferenceTemplatePosition } from './conference-template-position.dto';
-import { Conference } from './conference.dto';
 
-export interface ConferenceTemplate {
+import { ConferenceTemplatePosition } from './conference-template-position.dto';
+
+export interface ConferenceImage {
     readonly id: number;
-    readonly created_by: number;
-    readonly created_date: string;
-    model_data: string;
-    thumbnail_data: string;
-    name: string;
-    readonly model_id: number;
-    readonly thumbnail_id: number;
-    conference_template_positions?: Array<ConferenceTemplatePosition>;
-    conferences?: Array<Conference>;
+    conference_id: number;
+    readonly conference_template_position?: ConferenceTemplatePosition;
+    conference_template_position_id: number;
+    select_media_id?: number;
+    readonly image_id: number;
+    media_data?: string;
 }

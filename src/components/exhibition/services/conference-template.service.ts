@@ -2,15 +2,13 @@ import { DbConnection } from '@/database/config/db';
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-
 import { DataSource } from 'typeorm';
-
 import { ConferenceTemplate as ConferenceTemplateDto } from '@/components/exhibition/dto/conference-template.dto';
 import { ConferenceTemplatePosition as ConferenceTemplatePositionDto } from '@/components/exhibition/dto/conference-template-position.dto';
-import { ConferenceTemplate } from '../entities/conference-template.entity';
-import { ConferenceTemplatePosition } from '../entities/conference-template-position.entity';
-import { ConferenceTemplateConverter } from '../converters/conference-template.converter';
-import { ConferenceTemplatePositionConverter } from '../converters/conference-template-position.converter';
+import { ConferenceTemplate } from '@/components/exhibition/entities/conference-template.entity';
+import { ConferenceTemplatePosition } from '@/components/exhibition/entities/conference-template-position.entity';
+import { ConferenceTemplateConverter } from '@/components/exhibition/converters/conference-template.converter';
+import { ConferenceTemplatePositionConverter } from '@/components/exhibition/converters/conference-template-position.converter';
 import { UtilService } from '@/utils/helper/util.service';
 
 @Injectable()

@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 import { BoothImage } from './booth-image.entity';
 import { BoothOrganizationImage } from './booth-organization-image.entity';
+import { ConferenceImage } from './conference-image.entity';
 import { SpaceImage } from './space-image.entity';
 
 @Entity({ name: 'image' })
@@ -51,4 +52,10 @@ export class Image {
 
     @OneToMany(() => SpaceImage, (spaceImage) => spaceImage.image)
     spaceImages: SpaceImage[];
+
+    @OneToMany(
+        () => ConferenceImage,
+        (conferenceImage) => conferenceImage.image,
+    )
+    conferenceImages: ConferenceImage[];
 }

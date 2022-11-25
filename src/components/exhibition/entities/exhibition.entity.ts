@@ -13,6 +13,7 @@ import {
 import { BoothOrganization } from './booth-organization.entity';
 import { Booth } from './booth.entity';
 import { Category } from './category.entity';
+import { Conference } from './conference.entity';
 import { Space } from './space.entity';
 
 export enum Status {
@@ -94,4 +95,10 @@ export class Exhibition {
 
     @OneToMany(() => Booth, (booth) => booth.exhibition)
     booths: Booth[];
+
+    @OneToOne(() => Conference, (conference) => conference.exhibition)
+    @JoinColumn({
+        name: 'conference_id',
+    })
+    conference: Conference;
 }

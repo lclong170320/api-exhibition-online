@@ -8,6 +8,7 @@ import {
     UpdateDateColumn,
 } from 'typeorm';
 import { ConferenceTemplatePosition } from './conference-template-position.entity';
+import { Conference } from './conference.entity';
 
 @Entity({ name: 'conference_template' })
 export class ConferenceTemplate {
@@ -48,6 +49,10 @@ export class ConferenceTemplate {
         nullable: true,
     })
     deletedAt: Date;
+
+    //relations
+    @OneToMany(() => Conference, (conference) => conference.conferenceTemplate)
+    conferences: Conference[];
 
     @OneToMany(
         () => ConferenceTemplatePosition,

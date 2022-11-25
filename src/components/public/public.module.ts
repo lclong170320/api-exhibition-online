@@ -68,6 +68,14 @@ import { MediaConverter } from '@/components/public/converters/media/media.conve
 import { ExhibitionConverter } from '@/components/public/converters/exhibition/exhibition.converter';
 import { MeetingConverter } from './converters/exhibition/meeting.converter';
 import { MeetingListConverter } from './converters/exhibition/meeting-list.converter';
+import { ConferenceTemplateConverter } from './converters/exhibition/conference-template.converter';
+import { ConferenceImageConverter } from './converters/exhibition/conference-image.converter';
+import { ConferenceVideoConverter } from './converters/exhibition/conference-video.converter';
+import { ConferenceTemplatePositionConverter } from './converters/exhibition/conference-template-position.converter';
+import { Conference } from '../exhibition/entities/conference.entity';
+import { ConferenceTemplate } from '../exhibition/entities/conference-template.entity';
+import { ConferenceTemplatePosition } from '../exhibition/entities/conference-template-position.entity';
+import { ConferenceConverter } from './converters/exhibition/conference.converter';
 import { BoothTemplateListConverter } from '@/components/public/converters/exhibition/booth-template-list.converter';
 
 @Module({
@@ -109,6 +117,11 @@ import { BoothTemplateListConverter } from '@/components/public/converters/exhib
         MediaConverter,
         MeetingConverter,
         MeetingListConverter,
+        ConferenceConverter,
+        ConferenceTemplateConverter,
+        ConferenceImageConverter,
+        ConferenceVideoConverter,
+        ConferenceTemplatePositionConverter,
         BoothTemplateListConverter,
     ],
     imports: [
@@ -146,6 +159,9 @@ import { BoothTemplateListConverter } from '@/components/public/converters/exhib
                 SpaceTemplate,
                 Space,
                 Video,
+                Conference,
+                ConferenceTemplate,
+                ConferenceTemplatePosition,
             ],
             DbConnection.exhibitionCon,
         ),

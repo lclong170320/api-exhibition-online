@@ -30,6 +30,19 @@ export class PublicController {
         return this.publicService.createMeeting(meeting);
     }
 
+    @Get('/meetings')
+    getMeetings(@Paginate() query: PaginateQuery) {
+        return this.publicService.getMeetings(query);
+    }
+
+    @Get('conferences/:id')
+    getConferenceById(
+        @Param('id') id: string,
+        @Paginate() query: PaginateQuery,
+    ) {
+        return this.publicService.getConferenceById(id, query.populate);
+    }
+
     @Get('/booth-templates')
     getBoothTemplates(@Paginate() query: PaginateQuery) {
         return this.publicService.findBoothTemplates(query);

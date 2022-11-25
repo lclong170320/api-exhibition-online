@@ -314,8 +314,6 @@ paths:
         - Meeting
   '/booth-templates':
     get:
-      security:
-      - bearerAuth: []
       summary: Show list booth templates
       description: Show list booth-templates
       operationId: getBoothTemplates
@@ -394,6 +392,83 @@ paths:
                 $ref: '#/components/schemas/ErrorResponseBody'
       tags:
         - Booth Template
+  '/conferences/{id}':
+    get:
+      summary: Get conference by ID
+      description: Return a single conference
+      operationId: getConferenceById
+      parameters:
+      - name: id
+        description: ID get conference
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: '^[0-9]+$'
+      - in: query
+        name: populate
+        schema:
+          type: array
+          items:
+            type: string
+            example: 'conference_template'
+        description: |
+            List of populatable columns:
+            - exhibition
+            - conference_template
+            - conference_template.conference_template_positions
+            - conference_images
+            - conference_images.image
+            - conference_images.conference_template_position
+            - conference_videos
+            - conference_videos.video
+            - conference_videos.conference_template_position
+      tags:
+        - Conference
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conference'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Bad Request
+                    details:
+                      - field: .params.id
+                        message: 'should match pattern "^[0-9]+$"'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Not Found
+                    details:
+                      - field: .params.id
+                        message: 'The id not exist: "^[0-9]+$"'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Internal server error
+                    details: []
 components:
   schemas:
     Exhibition:
@@ -1623,6 +1698,101 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/BoothTemplate'
+    Conference:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: integer
+          readOnly: true
+          example: 1
+        conference_template_id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          minLength: 1
+          maxLength: 255
+          example: 'Mau phong hop 1'
+        exhibition_id:
+          type: number
+          example: 1
+        conference_images:
+          writeOnly: true
+          type: array
+          items:
+            $ref: '#/components/schemas/ConferenceImage'
+        conference_videos:
+          writeOnly: true
+          type: array
+          items:
+            $ref: '#/components/schemas/ConferenceVideo'
+    ConferenceVideo:
+      type: object
+      required:
+        - id
+        - conference_id
+        - conference_template_position_id
+        - video_id
+      properties:
+        id:
+          type: integer
+          readOnly: true
+          example: 1
+        conference_id:
+          type: number
+          writeOnly: true
+          example: 1
+        conference_template_position_id:
+          type: number
+          writeOnly: true
+          example: 1
+        select_media_id:
+          type: number
+          writeOnly: true
+          example: 1
+        video_id:
+          type: number
+          readOnly: true
+          example: 1
+        media_data:
+          type: string
+          writeOnly: true
+          example: "base64 string"
+    ConferenceImage:
+      type: object
+      required:
+        - id
+        - conference_id
+        - conference_template_position_id
+        - image_id
+      properties:
+        id:
+          type: integer
+          readOnly: true
+          example: 1
+        conference_id:
+          type: number
+          writeOnly: true
+          example: 1
+        conference_template_position_id:
+          type: number
+          writeOnly: true
+          example: 1
+        select_media_id:
+          type: number
+          writeOnly: true
+          example: 1
+        image_id:
+          type: number
+          readOnly: true
+          example: 1
+        media_data:
+          type: string
+          writeOnly: true
+          example: "base64 string"
     User:
         type: object
         required:

@@ -19,7 +19,9 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { Meeting as MeetingDto } from '../exhibition/dto/meeting.dto';
 import { Booth } from '../exhibition/entities/booth.entity';
+import { Conference } from '../exhibition/entities/conference.entity';
 import { Meeting } from '../exhibition/entities/meeting.entity';
+import { ConferenceConverter } from './converters/exhibition/conference.converter';
 import { MeetingListConverter } from './converters/exhibition/meeting-list.converter';
 import { MeetingConverter } from './converters/exhibition/meeting.converter';
 import { BoothTemplate } from '../exhibition/entities/booth-template.entity';
@@ -33,6 +35,9 @@ export class PublicService {
         private readonly mediaDataSource: DataSource,
         @InjectDataSource(DbConnection.enterpriseCon)
         private readonly enterpriseDataSource: DataSource,
+        @InjectDataSource(DbConnection.exhibitionCon)
+        private readonly conferenceDataSource: DataSource,
+        private readonly conferenceConverter: ConferenceConverter,
         private readonly exhibitionConverter: ExhibitionConverter,
         private readonly mediaConverter: MediaConverter,
         private readonly enterpriseConverter: EnterpriseConverter,
@@ -111,6 +116,44 @@ export class PublicService {
         return this.meetingConverter.toDto(meeting);
     }
 
+    async getMeetings(query: PaginateQuery) {
+        const sortableColumns = ['id', 'startTime', 'endTime', 'createdAt'];
+        const searchableColumns = ['customerName', 'email', 'phone'];
+        const filterableColumns = ['booth.id', 'id'];
+        const defaultSortBy = [['createdAt', 'DESC']];
+        const meetingRepository =
+            this.exhibitionDataSource.manager.getRepository(Meeting);
+        const [meetings, total] = await paginate(query, meetingRepository, {
+            searchableColumns,
+            sortableColumns,
+            filterableColumns,
+            defaultSortBy,
+        });
+        return this.meetingListConverter.toDto(
+            query.page,
+            query.limit,
+            total,
+            meetings,
+        );
+    }
+
+    async getConferenceById(id: string, populate: string[]) {
+        const conferenceRepository =
+            this.conferenceDataSource.manager.getRepository(Conference);
+        const firstConference = await conferenceRepository.findOne({
+            where: {
+                id: parseInt(id),
+            },
+            relations: populate,
+        });
+
+        if (!firstConference) {
+            throw new NotFoundException(
+                `The 'conference_id' ${id} is not found`,
+            );
+        }
+        return this.conferenceConverter.toDto(firstConference);
+    }
     async findBoothTemplates(query: PaginateQuery) {
         const sortableColumns = ['id', 'name', 'type', 'createdAt'];
         const searchableColumns = ['name'];

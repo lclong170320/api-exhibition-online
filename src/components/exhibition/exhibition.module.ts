@@ -81,6 +81,9 @@ import { ConferenceTemplateController } from './controllers/conference-template.
 import { ConferenceTemplateService } from './services/conference-template.service';
 import { ConferenceTemplateConverter } from './converters/conference-template.converter';
 import { ConferenceTemplatePositionConverter } from './converters/conference-template-position.converter';
+import { Conference } from './entities/conference.entity';
+import { ConferenceTemplate } from './entities/conference-template.entity';
+import { ConferenceTemplatePosition } from './entities/conference-template-position.entity';
 
 @Module({
     controllers: [
@@ -184,6 +187,9 @@ import { ConferenceTemplatePositionConverter } from './converters/conference-tem
                 BoothProduct,
                 Video,
                 Image,
+                Conference,
+                ConferenceTemplate,
+                ConferenceTemplatePosition,
             ],
             DbConnection.exhibitionCon,
         ),
