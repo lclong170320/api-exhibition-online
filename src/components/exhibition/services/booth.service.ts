@@ -19,6 +19,7 @@ import { JwtService } from '@nestjs/jwt';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { keys } from 'lodash';
+import { BoothConverter } from '@/components/exhibition/converters/booth.converter';
 
 @Injectable()
 export class BoothService {
@@ -26,6 +27,7 @@ export class BoothService {
         @InjectDataSource(DbConnection.exhibitionCon)
         private readonly dataSource: DataSource,
         private readonly boothListConverter: BoothListConverter,
+        private readonly boothConverter: BoothConverter,
         private readonly jwtService: JwtService,
         private readonly utilService: UtilService,
     ) {}
@@ -102,5 +104,22 @@ export class BoothService {
 
             await boothRepository.softRemove(firstBooth);
         });
+    }
+
+    async findBoothById(id: string, populate: string[]) {
+        const boothRepository = this.dataSource.getRepository(Booth);
+
+        const firstBooth = await boothRepository.findOne({
+            where: {
+                id: parseInt(id),
+            },
+            relations: populate,
+        });
+
+        if (!firstBooth) {
+            throw new NotFoundException(`The 'booth_id' ${id} is not found`);
+        }
+
+        return this.boothConverter.toDto(firstBooth);
     }
 }

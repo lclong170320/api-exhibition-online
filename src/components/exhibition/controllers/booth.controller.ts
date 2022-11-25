@@ -34,4 +34,14 @@ export class BoothController {
     deleteBooth(@Param('id') id: string) {
         return this.boothService.deleteBooth(id);
     }
+
+    @UseGuards(RolesGuard)
+    @Roles(Role.ADMIN, Role.USER)
+    @Get(':id')
+    getBoothTemplateById(
+        @Param('id') id: string,
+        @Paginate() query: PaginateQuery,
+    ) {
+        return this.boothService.findBoothById(id, query.populate);
+    }
 }
