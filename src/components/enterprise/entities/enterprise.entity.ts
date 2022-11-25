@@ -30,7 +30,7 @@ export class Enterprise {
     @Column('longtext')
     description: string;
 
-    @Column({ length: 255, name: 'type_of_business' })
+    @Column({ length: 255, name: 'type_of_business', nullable: true })
     typeOfBusiness: string;
 
     @Column({ length: 255, name: 'link_website', nullable: true })

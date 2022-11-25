@@ -3320,7 +3320,6 @@ components:
         - email
         - address
         - description
-        - type_of_business
         - image_id
       properties:
         id:

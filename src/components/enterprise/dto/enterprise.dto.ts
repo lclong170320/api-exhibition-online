@@ -22,6 +22,6 @@ export interface Enterprise {
     description: string;
     link_website?: string;
     link_profile?: string;
-    type_of_business: string;
+    type_of_business?: string;
     readonly created_date: string;
 }
