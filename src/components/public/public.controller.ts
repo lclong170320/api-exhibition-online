@@ -1,6 +1,6 @@
+import { PublicService } from '@/components/public/public.service';
 import { Paginate, PaginateQuery } from '@/decorators/paginate.decorator';
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
-import { PublicService } from '@/components/public/public.service';
 import { Meeting } from '../exhibition/dto/meeting.dto';
 
 @Controller()
@@ -28,5 +28,10 @@ export class PublicController {
     @Post('/meetings')
     createMeeting(@Body() meeting: Meeting) {
         return this.publicService.createMeeting(meeting);
+    }
+
+    @Get('/booth-templates')
+    getBoothTemplates(@Paginate() query: PaginateQuery) {
+        return this.publicService.findBoothTemplates(query);
     }
 }
