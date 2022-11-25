@@ -20,11 +20,9 @@ export class MeetingService {
         const meetingRepository =
             this.dataSource.manager.getRepository(Meeting);
         const boothRepository = this.dataSource.manager.getRepository(Booth);
-        let allowEnterprise = false;
-        if (query.filter && query.filter['booth.id']) {
-            const boothId = query.filter['booth.id'].includes(':')
-                ? query.filter['booth.id'].toString().split(':')[1]
-                : query.filter['booth.id'].toString();
+        const columnFilter = query.filter && Object.keys(query.filter);
+        if (columnFilter && columnFilter.includes('booth.id')) {
+            const boothId = query.filter['booth.id'].toString().split(':')[1];
 
             const firstBooth = await boothRepository.findOneBy({
                 id: parseInt(boothId),
@@ -35,31 +33,62 @@ export class MeetingService {
             }
 
             if (enterpriseId === firstBooth.enterpriseId) {
-                allowEnterprise = true;
-            }
-        }
-        if (allowEnterprise) {
-            const sortableColumns = ['id', 'startTime', 'endTime', 'createdAt'];
-            const searchableColumns = ['customerName', 'email', 'phone'];
-            const filterableColumns = ['booth.id', 'id'];
-            const defaultSortBy = [['createdAt', 'DESC']];
+                const sortableColumns = [
+                    'id',
+                    'startTime',
+                    'endTime',
+                    'createdAt',
+                ];
+                const searchableColumns = ['customerName', 'email', 'phone'];
+                const filterableColumns = ['booth.id', 'id'];
+                const defaultSortBy = [['createdAt', 'DESC']];
 
-            const populatableColumns = query.populate;
-            const [meetings, total] = await paginate(query, meetingRepository, {
-                searchableColumns,
-                sortableColumns,
-                populatableColumns,
-                filterableColumns,
-                defaultSortBy,
-            });
+                const populatableColumns = query.populate;
+                const [meetings, total] = await paginate(
+                    query,
+                    meetingRepository,
+                    {
+                        searchableColumns,
+                        sortableColumns,
+                        populatableColumns,
+                        filterableColumns,
+                        defaultSortBy,
+                    },
+                );
+                return this.meetingListConverter.toDto(
+                    query.page,
+                    query.limit,
+                    total,
+                    meetings,
+                );
+            }
+
             return this.meetingListConverter.toDto(
                 query.page,
                 query.limit,
-                total,
-                meetings,
+                0,
+                [],
             );
         }
 
-        return this.meetingListConverter.toDto(query.page, query.limit, 0, []);
+        const sortableColumns = ['id', 'startTime', 'endTime', 'createdAt'];
+        const searchableColumns = ['customerName', 'email', 'phone'];
+        const filterableColumns = ['booth.id', 'id'];
+        const defaultSortBy = [['createdAt', 'DESC']];
+
+        const populatableColumns = query.populate;
+        const [meetings, total] = await paginate(query, meetingRepository, {
+            searchableColumns,
+            sortableColumns,
+            populatableColumns,
+            filterableColumns,
+            defaultSortBy,
+        });
+        return this.meetingListConverter.toDto(
+            query.page,
+            query.limit,
+            total,
+            meetings,
+        );
     }
 }

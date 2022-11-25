@@ -1,13 +1,13 @@
 import { DbConnection } from '@/database/config/db';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectDataSource } from '@nestjs/typeorm';
 import { Buffer } from 'buffer';
 import * as fileType from 'file-type';
 import { promises } from 'fs';
 import * as path from 'path';
-import { Repository } from 'typeorm';
-import { paginate, FilterOperator } from 'nestjs-paginate';
+import { DataSource } from 'typeorm';
+import { paginate } from '@/utils/pagination';
 import { PaginateQuery } from '@/decorators/paginate.decorator';
 import { v4 as uuid } from 'uuid';
 import { MediaConverter } from './converters/media.converter';
@@ -18,33 +18,34 @@ import { MediaListConverter } from './converters/media-list.converter';
 
 @Injectable()
 export class MediaService {
-    private readonly limitDefault = 10;
-
     constructor(
-        @InjectRepository(Media, DbConnection.mediaCon)
-        private readonly mediaRepository: Repository<Media>,
+        @InjectDataSource(DbConnection.mediaCon)
+        private readonly dataSource: DataSource,
         private configService: ConfigService,
         private mediaConverter: MediaConverter,
         private mediaListConverter: MediaListConverter,
     ) {}
 
     async getMedias(query: PaginateQuery) {
-        const medias = await paginate(query, this.mediaRepository, {
-            maxLimit: query.limit,
-            defaultLimit: this.limitDefault,
-            sortableColumns: ['id', 'mime', 'userId', 'createdAt'],
-            defaultSortBy: [['createdAt', 'DESC']],
-            searchableColumns: ['id', 'mime', 'userId', 'createdAt'],
-            filterableColumns: {
-                userId: [FilterOperator.EQ, FilterOperator.IN],
-            },
+        const sortableColumns = ['id', 'mime', 'userId', 'createdAt'];
+        const searchableColumns = ['id', 'mime', 'userId', 'createdAt'];
+        const filterableColumns = ['userId'];
+        const defaultSortBy = [['createdAt', 'DESC']];
+        const populatableColumns = query.populate;
+        const mediaRepository = this.dataSource.manager.getRepository(Media);
+        const [medias, total] = await paginate(query, mediaRepository, {
+            searchableColumns,
+            sortableColumns,
+            populatableColumns,
+            filterableColumns,
+            defaultSortBy,
         });
 
         return this.mediaListConverter.toDto(
-            medias.meta.currentPage,
-            medias.meta.itemsPerPage,
-            medias.meta.totalItems,
-            medias.data,
+            query.page,
+            query.limit,
+            total,
+            medias,
         );
     }
 
@@ -82,18 +83,20 @@ export class MediaService {
     }
 
     async createMedia(mediaDto: MediaDto): Promise<MediaResponse> {
+        const mediaRepository = this.dataSource.manager.getRepository(Media);
         const media = await this.generateMedia(mediaDto);
         const mediaEntity = this.mediaConverter.toEntity(media);
 
-        const createdMedia = await this.mediaRepository.save(mediaEntity);
+        const createdMedia = await mediaRepository.save(mediaEntity);
 
         return this.mediaConverter.toDto(createdMedia);
     }
 
     async findById(id: string): Promise<MediaResponse> {
-        const mediaId = parseInt(id);
-        const firstMedia = await this.mediaRepository.findOneBy({
-            id: mediaId,
+        const mediaRepository = this.dataSource.manager.getRepository(Media);
+
+        const firstMedia = await mediaRepository.findOneBy({
+            id: parseInt(id),
         });
         return this.mediaConverter.toDto(firstMedia);
     }

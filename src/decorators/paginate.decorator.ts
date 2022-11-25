@@ -1,6 +1,6 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 import { Request } from 'express';
-import { pickBy, Dictionary, isString, mapKeys, camelCase } from 'lodash';
+import { isString, camelCase, mapKeys, pickBy, Dictionary } from 'lodash';
 
 export interface PaginateQuery {
     page?: number;
@@ -11,7 +11,6 @@ export interface PaginateQuery {
     field?: string[];
     filter?: { [column: string]: string | string[] };
     populate?: string[];
-    path: string;
 }
 
 export const Paginate = createParamDecorator(
@@ -19,25 +18,11 @@ export const Paginate = createParamDecorator(
         const request: Request = ctx.switchToHttp().getRequest();
         const { query } = request;
 
-        let originalUrl: string | URL;
-        if (request.originalUrl) {
-            originalUrl =
-                request.protocol +
-                '://' +
-                request.get('host') +
-                request.originalUrl;
-        } else {
-            originalUrl =
-                request.protocol + '://' + request.hostname + request.url;
-        }
-        const urlParts = new URL(originalUrl);
-        const path =
-            urlParts.protocol + '//' + urlParts.host + urlParts.pathname;
-
         const sortBy: [string, string][] = [];
         const searchBy: string[] = [];
         const populate: string[] = [];
         const field: string[] = [];
+        let filter: { [column: string]: string | string[] } = {};
 
         if (query.sort_by) {
             const params = !Array.isArray(query.sort_by)
@@ -108,24 +93,55 @@ export const Paginate = createParamDecorator(
             }
         }
 
-        const filter = mapKeys(
-            pickBy(
-                query,
-                (param, name) =>
-                    name.includes('filter.') &&
-                    (isString(param) ||
-                        (Array.isArray(param) &&
-                            (param as any[]).every((p) => isString(p)))),
-            ) as Dictionary<string | string[]>,
-            (_param, name) => {
-                const columnName = name.replace('filter.', '');
-                const columnSplit = columnName.split('.');
-                const columnCamelCase = columnSplit.map((value) =>
-                    camelCase(value),
-                );
-                return columnCamelCase.join('.');
-            },
-        );
+        if (query.filter) {
+            const params = !Array.isArray(query.filter)
+                ? [query.filter]
+                : query.filter;
+
+            for (const param of params) {
+                if (isString(param)) {
+                    const subParam = param.split(':');
+                    const colunmName = subParam[0];
+                    const valueName = subParam.splice(1, 2).join(':');
+
+                    if (colunmName.includes('.')) {
+                        const subColunmName = colunmName.split('.');
+                        const subcolunmNameConvert = subColunmName.map(
+                            (value) => camelCase(value),
+                        );
+                        const colunmNameConvert =
+                            subcolunmNameConvert.join('.');
+
+                        Object.assign(filter, {
+                            [colunmNameConvert]: valueName,
+                        });
+                    } else {
+                        Object.assign(filter, {
+                            [colunmName]: valueName,
+                        });
+                    }
+                }
+            }
+        } else {
+            filter = mapKeys(
+                pickBy(
+                    query,
+                    (param, name) =>
+                        name.includes('filter.') &&
+                        (isString(param) ||
+                            (Array.isArray(param) &&
+                                (param as any[]).every((p) => isString(p)))),
+                ) as Dictionary<string | string[]>,
+                (_param, name) => {
+                    const columnName = name.replace('filter.', '');
+                    const columnSplit = columnName.split('.');
+                    const columnCamelCase = columnSplit.map((value) =>
+                        camelCase(value),
+                    );
+                    return columnCamelCase.join('.');
+                },
+            );
+        }
 
         return {
             page: query.page ? parseInt(query.page.toString(), 10) : 1,
@@ -136,7 +152,6 @@ export const Paginate = createParamDecorator(
             filter: Object.keys(filter).length ? filter : undefined,
             populate: populate.length ? populate : [],
             field: field.length ? field : [],
-            path,
         };
     },
 );

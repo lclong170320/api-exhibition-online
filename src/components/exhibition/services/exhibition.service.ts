@@ -51,10 +51,10 @@ import { UpdateExhibition } from '../dto/exhibition-update.dto';
 @Injectable()
 export class ExhibitionService {
     constructor(
-        private readonly exhibitionConverter: ExhibitionConverter,
-        private readonly exhibitionListConverter: ExhibitionListConverter,
         @InjectDataSource(DbConnection.exhibitionCon)
         private readonly dataSource: DataSource,
+        private readonly exhibitionConverter: ExhibitionConverter,
+        private readonly exhibitionListConverter: ExhibitionListConverter,
         private readonly configService: ConfigService,
         private readonly httpService: HttpService,
         private readonly liveStreamConverter: LiveStreamConverter,
@@ -100,22 +100,6 @@ export class ExhibitionService {
     }
 
     async findExhibitionById(id: string, populate: string[]) {
-        // const allowPopulate = [
-        //     'category',
-        //     'space',
-        //     'space.locations',
-        //     'space.spaceTemplate',
-        //     'space.spaceTemplate.spaceTemplateLocations',
-        //     'boothOrganization',
-        // ];
-
-        // populate.forEach((value) => {
-        //     if (!allowPopulate.includes(value)) {
-        //         throw new BadRequestException(
-        //             'Query value is not allowed ' + value,
-        //         );
-        //     }
-        // });
         const exhibitionRepository =
             this.dataSource.manager.getRepository(Exhibition);
         const exhibitionEntity = await exhibitionRepository.findOne({
