@@ -2676,6 +2676,72 @@ paths:
                   value:
                     message: Internal server error
                     details: []
+  '/conferences/{id}':
+    put:
+      security:
+      - bearerAuth: []
+      tags:
+        - Conference
+      summary: Update an existing conference
+      description: Update an existing conference by Id
+      operationId: updateConference
+      parameters:
+        - name: id
+          description: ID to update conference
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^[0-9]+$'
+      requestBody:
+        description: Update an existing conference
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Conference'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Conference'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Bad Request
+                    details:
+                      - field: .params.id
+                        message: 'should match pattern "^[0-9]+$"'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Not found
+                    details: []
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Internal server error
+                    details: []
 components:
   schemas:
     Exhibition:
