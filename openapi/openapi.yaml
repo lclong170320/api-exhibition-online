@@ -1172,6 +1172,13 @@ paths:
           example: '10'
         description: The numbers of items to return
       - in: query
+        name: search
+        allowReserved: true
+        schema:
+          type: string
+          example: 'Test'
+        description: Search booths by name
+      - in: query
         name: filter.enterpriseId
         allowReserved: true
         schema:
