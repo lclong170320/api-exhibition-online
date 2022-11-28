@@ -43,22 +43,22 @@ export class BoothConverter {
                       this.liveStreamConverter.toDto(data),
                   )
                 : undefined,
-            booth_images: entity.boothImages?.length
+            booth_images: entity.boothImages
                 ? entity.boothImages.map((data) =>
                       this.boothImageConverter.toDto(data),
                   )
                 : undefined,
-            booth_videos: entity.boothVideos?.length
+            booth_videos: entity.boothVideos
                 ? entity.boothVideos.map((data) =>
                       this.boothVideoConverter.toDto(data),
                   )
                 : undefined,
-            booth_projects: entity.boothProjects?.length
+            booth_projects: entity.boothProjects
                 ? entity.boothProjects.map((data) =>
                       this.boothProjectConverter.toDto(data),
                   )
                 : undefined,
-            booth_products: entity.boothProducts?.length
+            booth_products: entity.boothProducts
                 ? entity.boothProducts.map((data) =>
                       this.boothProductConverter.toDto(data),
                   )
@@ -66,7 +66,7 @@ export class BoothConverter {
             exhibition: entity.exhibition
                 ? this.exhibitionConverter.toDto(entity.exhibition)
                 : undefined,
-            meetings: entity.meetings?.length
+            meetings: entity.meetings
                 ? entity.meetings.map((data) =>
                       this.meetingConverter.toDto(data),
                   )
