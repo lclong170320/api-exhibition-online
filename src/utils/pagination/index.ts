@@ -33,13 +33,13 @@ export async function paginate<T>(
         isNumber(query.page) && isNumber(query.limit)
             ? (query.page - 1) * query.limit
             : 1;
-    findOptions.select = parseFiled(query.field);
+    findOptions.select = parseField(query.field);
     findOptions.order = parseDefaultSortBy(option.defaultSortBy);
     findOptions.relations = parsePopulate(
         query.populate,
         option.populatableColumns,
     );
-    const whereClause = parseWhereClause(
+    const whereClause: FindOptionsWhere<T>[] = parseWhereClause(
         parseSearch(query.search, option.searchableColumns),
         parseFilter(query.filter, option.filterableColumns),
     );
@@ -240,7 +240,7 @@ function parsePopulate(populate: string[], populatableColumns: string[]) {
     return result;
 }
 
-function parseFiled<T>(field: string[]) {
+function parseField<T>(field: string[]) {
     const result: FindOptionsSelect<T> = {};
     field.forEach((column) => {
         if (column.includes('.')) {

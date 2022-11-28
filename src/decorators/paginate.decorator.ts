@@ -101,23 +101,23 @@ export const Paginate = createParamDecorator(
             for (const param of params) {
                 if (isString(param)) {
                     const subParam = param.split(':');
-                    const colunmName = subParam[0];
+                    const columnName = subParam[0];
                     const valueName = subParam.splice(1, 2).join(':');
 
-                    if (colunmName.includes('.')) {
-                        const subColunmName = colunmName.split('.');
-                        const subcolunmNameConvert = subColunmName.map(
+                    if (columnName.includes('.')) {
+                        const subColunmName = columnName.split('.');
+                        const subcolumnNameConvert = subColunmName.map(
                             (value) => camelCase(value),
                         );
-                        const colunmNameConvert =
-                            subcolunmNameConvert.join('.');
+                        const columnNameConvert =
+                            subcolumnNameConvert.join('.');
 
                         Object.assign(filter, {
-                            [colunmNameConvert]: valueName,
+                            [columnNameConvert]: valueName,
                         });
                     } else {
                         Object.assign(filter, {
-                            [colunmName]: valueName,
+                            [columnName]: valueName,
                         });
                     }
                 }

@@ -22,7 +22,11 @@ export class MeetingService {
         const boothRepository = this.dataSource.manager.getRepository(Booth);
         const columnFilter = query.filter && Object.keys(query.filter);
         if (columnFilter && columnFilter.includes('booth.id')) {
-            const boothId = query.filter['booth.id'].toString().split(':')[1];
+            const valueFilter = query.filter['booth.id'].toString();
+
+            let boothId = valueFilter;
+
+            if (valueFilter.includes(':')) boothId = valueFilter.split(':')[1];
 
             const firstBooth = await boothRepository.findOneBy({
                 id: parseInt(boothId),
