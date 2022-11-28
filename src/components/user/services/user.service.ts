@@ -3,6 +3,8 @@ import {
     BadRequestException,
     ForbiddenException,
     Injectable,
+    NotFoundException,
+    UnauthorizedException,
 } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
@@ -12,6 +14,7 @@ import { Role } from '../entities/role.entity';
 import { User } from '../entities/user.entity';
 import { User as UserDto } from '../dto/user.dto';
 import { UpdateUser } from '@/components/user/dto/user-update.dto';
+import { Password as PasswordDto } from '@/components/user/dto/password.dto';
 
 @Injectable()
 export class UserService {
@@ -96,5 +99,28 @@ export class UserService {
     async hashPassword(password: string) {
         const salt = await bcrypt.genSalt();
         return await bcrypt.hash(password, salt);
+    }
+
+    async changePassword(user: UserDto, passwordDto: PasswordDto) {
+        const userRepository = this.dataSource.getRepository(User);
+        const firstUser = await userRepository.findOneBy({
+            id: user.id,
+        });
+        if (!firstUser) {
+            throw new NotFoundException('The user_id not found');
+        }
+
+        const passwordCompare = await bcrypt.compare(
+            passwordDto.current_password,
+            firstUser.password,
+        );
+        if (!passwordCompare) {
+            throw new UnauthorizedException('invalid password');
+        }
+        firstUser.password = await this.hashPassword(passwordDto.password);
+
+        const updatedUser = await userRepository.save(firstUser);
+
+        return this.userConverter.toDto(updatedUser);
     }
 }
