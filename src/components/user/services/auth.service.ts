@@ -19,7 +19,10 @@ export class AuthService {
         @InjectDataSource(DbConnection.userCon)
         private readonly dataSource: DataSource,
     ) {}
-
+    private readonly publicKey = Buffer.from(
+        this.configService.get<string>('JWT_PUBLIC_KEY'),
+        'base64',
+    ).toString('ascii');
     private readonly privateKey = Buffer.from(
         this.configService.get<string>('JWT_PRIVATE_KEY'),
         'base64',
@@ -71,7 +74,10 @@ export class AuthService {
     async logout(token: string) {
         const blacklistRepository =
             this.dataSource.manager.getRepository(Blacklist);
-        await blacklistRepository.save({ token: token });
+        const verifyToken = this.jwtService.verify(token, {
+            publicKey: this.publicKey,
+        }) as LoginPayload;
+        if (verifyToken) await blacklistRepository.save({ token: token });
     }
 
     async removeExpiredToken() {

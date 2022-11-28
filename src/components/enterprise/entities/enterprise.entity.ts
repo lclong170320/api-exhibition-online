@@ -15,9 +15,6 @@ export class Enterprise {
     @Column({ length: 255 })
     name: string;
 
-    @Column({ name: 'image_id' })
-    imageId: number;
-
     @Column({ length: 255 })
     address: string;
 

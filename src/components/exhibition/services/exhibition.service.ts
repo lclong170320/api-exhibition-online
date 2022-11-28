@@ -400,7 +400,7 @@ export class ExhibitionService {
         const firstBooth = await boothRepository.findOne({
             where: {
                 id: parseInt(boothId),
-                exhibition: exhibitionEntity.booths,
+                exhibition: exhibitionEntity,
             },
             relations: [
                 'liveStreams',
@@ -1055,7 +1055,7 @@ export class ExhibitionService {
                 boothEntity.boothTemplate = firstBoothTemplate;
                 boothEntity.location = firstLocation;
                 boothEntity.enterpriseId = enterpriseId;
-
+                boothEntity.name = boothDto.name;
                 await this.removeOldBoothRelations(
                     boothEntity,
                     boothProjectRepository,

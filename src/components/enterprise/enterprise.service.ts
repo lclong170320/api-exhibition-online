@@ -60,13 +60,7 @@ export class EnterpriseService {
         const newEnterpriseEntity =
             this.enterpriseConverter.toEntity(enterpriseDto);
         newEnterpriseEntity.createdDate = new Date();
-        newEnterpriseEntity.imageId = enterpriseDto.selected_media_id;
 
-        if (enterpriseDto.media_data) {
-            newEnterpriseEntity.imageId = await this.createUrlMedias(
-                enterpriseDto.media_data,
-            );
-        }
         const createdEnterprise = await enterpriseRepository.save(
             newEnterpriseEntity,
         );

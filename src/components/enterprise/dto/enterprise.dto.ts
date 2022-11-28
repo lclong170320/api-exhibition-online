@@ -16,9 +16,6 @@ export interface Enterprise {
     phone: string;
     email: string;
     address: string;
-    selected_media_id?: number;
-    readonly image_id: number;
-    media_data?: string;
     description: string;
     link_website?: string;
     link_profile?: string;

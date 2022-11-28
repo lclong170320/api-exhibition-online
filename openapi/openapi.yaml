@@ -3402,7 +3402,6 @@ components:
         - email
         - address
         - description
-        - image_id
       properties:
         id:
           type: integer
@@ -3414,7 +3413,7 @@ components:
           example: DALAVINA TECHNOLOGY SOLUTION JOINT STOCK TECHNOLOGY
         phone:
           type: string
-          pattern: '^(((\+|)84)|0)([0-9]{9})$'
+          pattern: '^[0-9]{10,15}$'
           example: 0707678777
         email:
           type: string
@@ -3425,20 +3424,10 @@ components:
           minLength: 1
           maxLength: 255
           example: 224, Phạm Thị Giây, ấp Tam Đông 2, Hóc Môn, Thành phố Hồ Chí Minh
-        selected_media_id:
-          type: integer
-          writeOnly: true
-        image_id:
-          type: number
-          readOnly: true
-          example: 1
-        media_data:
-          type: string
-          writeOnly: true
-          example: 'base64 string'
         description:
           type: string
           minLength: 1
+          maxLength: 2000
         link_website:
           type: string
           minLength: 1

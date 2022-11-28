@@ -7,7 +7,6 @@ export class EnterpriseConverter {
     toEntity(dto: EnterpriseDto) {
         const entity = new Enterprise();
         entity.name = dto.name;
-        entity.imageId = dto.image_id;
         entity.phone = dto.phone;
         entity.email = dto.email;
         entity.address = dto.address;
@@ -22,7 +21,6 @@ export class EnterpriseConverter {
         const dto = {
             id: entity.id,
             name: entity.name,
-            image_id: entity.imageId,
             phone: entity.phone,
             email: entity.email,
             address: entity.address,
