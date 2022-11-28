@@ -18,6 +18,7 @@ import { Exhibition } from './exhibition.dto';
 
 export interface Booth {
     readonly id: number;
+    name: string;
     readonly created_by: number;
     enterprise_id: number;
     readonly created_date: string;

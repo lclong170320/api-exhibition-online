@@ -1140,6 +1140,7 @@ components:
       type: object
       required:
         - id
+        - name
         - enterprise_id
         - created_by
         - location_id
@@ -1149,6 +1150,8 @@ components:
           type: integer
           example: 1
           readOnly: true
+        name:
+          type: string
         enterprise_id:
           type: integer
           example: 1

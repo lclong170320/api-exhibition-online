@@ -35,6 +35,7 @@ export class BoothService {
     async findBooths(jwtAccessToken: string, query: PaginateQuery) {
         const filterableColumns = keys(query.filter);
         const defaultSortBy = [['createdAt', 'DESC']];
+        const searchableColumns = ['name'];
         const populatableColumns = query.populate;
         const decodedJwtAccessToken = this.jwtService.decode(
             jwtAccessToken,
@@ -64,6 +65,7 @@ export class BoothService {
 
         const boothRepository = this.dataSource.getRepository(Booth);
         const [booths, total] = await paginate(query, boothRepository, {
+            searchableColumns,
             filterableColumns,
             populatableColumns,
             defaultSortBy,

@@ -24,6 +24,7 @@ export class BoothConverter {
         const dto = {
             id: entity.id,
             created_by: entity.createdBy,
+            name: entity.name,
             enterprise_id: entity.enterpriseId,
             created_date: entity.createdDate.toISOString(),
             booth_template: entity.boothTemplate

@@ -926,7 +926,7 @@ export class ExhibitionService {
                 );
 
                 const boothEntity = new Booth();
-
+                boothEntity.name = boothDto.name;
                 boothEntity.createdBy = 1; // TODO: handle getUserId from access token
                 boothEntity.exhibition = firstExhibition;
                 boothEntity.boothTemplate = firstBoothTemplate;
