@@ -1,10 +1,11 @@
-import { Body, Controller, Param, Put, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Put, UseGuards } from '@nestjs/common';
 import { Conference as ConferenceDto } from '@/components/exhibition/dto/conference.dto';
 import { ConferenceService } from '@/components/exhibition/services/conference.service';
 import { Role } from '@/components/exhibition/dto/role.dto';
 import { RolesGuard } from 'guards/roles.guard';
 import { Roles } from '@/decorators/roles.decorator';
 import { JWTAuthGuard } from '@/components/user/guards/auth.guard';
+import { Paginate, PaginateQuery } from '@/decorators/paginate.decorator';
 
 @Controller('conferences')
 export class ConferenceController {
@@ -18,5 +19,15 @@ export class ConferenceController {
         @Body() conferenceDto: ConferenceDto,
     ) {
         return this.conferenceService.updateConference(id, conferenceDto);
+    }
+
+    @UseGuards(JWTAuthGuard, RolesGuard)
+    @Roles(Role.ADMIN)
+    @Get(':id')
+    readConferenceById(
+        @Param('id') id: string,
+        @Paginate() query: PaginateQuery,
+    ) {
+        return this.conferenceService.readConferenceById(id, query.populate);
     }
 }

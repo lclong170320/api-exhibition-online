@@ -249,4 +249,22 @@ export class ConferenceService {
 
         return conference;
     }
+
+    async readConferenceById(id: string, populate: string[]) {
+        const conferenceRepository =
+            this.dataSource.manager.getRepository(Conference);
+        const firstConference = await conferenceRepository.findOne({
+            where: {
+                id: parseInt(id),
+            },
+            relations: populate,
+        });
+
+        if (!firstConference) {
+            throw new NotFoundException(
+                `The 'conference id' ${id} is not found`,
+            );
+        }
+        return this.conferenceConverter.toDto(firstConference);
+    }
 }
