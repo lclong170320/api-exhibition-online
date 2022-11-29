@@ -218,4 +218,21 @@ export class SpaceTemplateService {
 
         return this.spaceTemplateConverter.toDto(createdSpaceTemplate);
     }
+
+    async deleteSpaceTemplate(id: string) {
+        await this.dataSource.transaction(async (manager) => {
+            const spaceTemplateRepository =
+                manager.getRepository(SpaceTemplate);
+
+            const firstSpaceTemplate = await spaceTemplateRepository.findOneBy({
+                id: parseInt(id),
+            });
+
+            if (!firstSpaceTemplate) {
+                throw new NotFoundException('Not found');
+            }
+
+            await spaceTemplateRepository.softRemove(firstSpaceTemplate);
+        });
+    }
 }

@@ -1,4 +1,13 @@
-import { Controller, Get, Param, Post, Body, UseGuards } from '@nestjs/common';
+import {
+    Controller,
+    Get,
+    Param,
+    Post,
+    Body,
+    UseGuards,
+    Delete,
+    HttpCode,
+} from '@nestjs/common';
 import { SpaceTemplateService } from '@/components/exhibition/services/space-template.service';
 import { PaginateQuery, Paginate } from '@/decorators/paginate.decorator';
 import { SpaceTemplate as SpaceTemplateDto } from '@/components/exhibition/dto/space-template.dto';
@@ -36,5 +45,11 @@ export class SpaceTemplateController {
     @Post()
     createSpaceTemplate(@Body() spaceTemplateDto: SpaceTemplateDto) {
         return this.spaceTemplateService.createSpaceTemplate(spaceTemplateDto);
+    }
+
+    @Delete(':id')
+    @HttpCode(204)
+    deleteBooth(@Param('id') id: string) {
+        return this.spaceTemplateService.deleteSpaceTemplate(id);
     }
 }
