@@ -101,6 +101,28 @@ export class ConferenceTemplateService {
         return createdConferenceTemplatePosition;
     }
 
+    async deleteConferenceTemplate(id: string) {
+        await this.dataSource.transaction(async (manager) => {
+            const conferenceTemplateRepository =
+                manager.getRepository(ConferenceTemplate);
+
+            const firstConferenceTemplate =
+                await conferenceTemplateRepository.findOneBy({
+                    id: parseInt(id),
+                });
+
+            if (!firstConferenceTemplate) {
+                throw new NotFoundException(
+                    `The 'conference id' ${id} not found`,
+                );
+            }
+
+            await conferenceTemplateRepository.softRemove(
+                firstConferenceTemplate,
+            );
+        });
+    }
+
     async readConferenceTemplateById(id: string, populate: string[]) {
         const conferenceTemplateRepository =
             this.dataSource.manager.getRepository(ConferenceTemplate);
