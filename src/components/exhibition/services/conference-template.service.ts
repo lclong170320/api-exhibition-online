@@ -10,6 +10,9 @@ import { ConferenceTemplatePosition } from '@/components/exhibition/entities/con
 import { ConferenceTemplateConverter } from '@/components/exhibition/converters/conference-template.converter';
 import { ConferenceTemplatePositionConverter } from '@/components/exhibition/converters/conference-template-position.converter';
 import { UtilService } from '@/utils/helper/util.service';
+import { PaginateQuery } from '@/decorators/paginate.decorator';
+import { PaginatedConferenceTemplatesConverter } from '../converters/paginated-conference-templates.converter';
+import { paginate } from '@/utils/pagination';
 
 @Injectable()
 export class ConferenceTemplateService {
@@ -18,6 +21,7 @@ export class ConferenceTemplateService {
         private readonly dataSource: DataSource,
         private conferenceTemplateConverter: ConferenceTemplateConverter,
         private conferenceTemplatePositionConverter: ConferenceTemplatePositionConverter,
+        private paginatedConferenceTemplatesConverter: PaginatedConferenceTemplatesConverter,
         private readonly utilService: UtilService,
     ) {}
 
@@ -95,5 +99,32 @@ export class ConferenceTemplateService {
             );
 
         return createdConferenceTemplatePosition;
+    }
+
+    async readConferenceTemplates(query: PaginateQuery) {
+        const sortableColumns = ['id', 'name', 'createdAt'];
+        const searchableColumns = ['name'];
+        const defaultSortBy = [['createdAt', 'DESC']];
+        const populatableColumns = query.populate;
+        const conferenceTemplateRepository =
+            this.dataSource.manager.getRepository(ConferenceTemplate);
+
+        const [conferenceTemplate, total] = await paginate(
+            query,
+            conferenceTemplateRepository,
+            {
+                searchableColumns,
+                sortableColumns,
+                populatableColumns,
+                defaultSortBy,
+            },
+        );
+
+        return this.paginatedConferenceTemplatesConverter.toDto(
+            query.page,
+            query.limit,
+            total,
+            conferenceTemplate,
+        );
     }
 }

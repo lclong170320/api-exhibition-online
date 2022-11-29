@@ -3,8 +3,9 @@ import { Role } from '@/components/exhibition/dto/role.dto';
 import { User } from '@/components/user/dto/user.dto';
 import { JWTAuthGuard } from '@/components/user/guards/auth.guard';
 import { CurrentUser } from '@/decorators/current-user';
+import { Paginate, PaginateQuery } from '@/decorators/paginate.decorator';
 import { Roles } from '@/decorators/roles.decorator';
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards, Get } from '@nestjs/common';
 import { RolesGuard } from 'guards/roles.guard';
 import { ConferenceTemplateService } from '../services/conference-template.service';
 
@@ -25,5 +26,12 @@ export class ConferenceTemplateController {
             user?.id,
             conferenceTemplateDto,
         );
+    }
+
+    @UseGuards(JWTAuthGuard, RolesGuard)
+    @Roles(Role.ADMIN)
+    @Get()
+    readConferenceTemplates(@Paginate() query: PaginateQuery) {
+        return this.conferenceTemplateService.readConferenceTemplates(query);
     }
 }

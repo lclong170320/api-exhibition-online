@@ -89,6 +89,7 @@ import { ConferenceImageConverter } from './converters/conference-image.converte
 import { ConferenceVideoConverter } from './converters/conference-video.converter';
 import { ConferenceController } from './controllers/conference.controller';
 import { ConferenceService } from './services/conference.service';
+import { PaginatedConferenceTemplatesConverter } from './converters/paginated-conference-templates.converter';
 
 @Module({
     controllers: [
@@ -155,6 +156,7 @@ import { ConferenceService } from './services/conference.service';
         ConferenceConverter,
         ConferenceImageConverter,
         ConferenceVideoConverter,
+        PaginatedConferenceTemplatesConverter,
     ],
     imports: [
         TypeOrmModule.forFeature(
