@@ -374,7 +374,6 @@ export class ExhibitionService {
                 id: parseInt(exhibitionId),
             },
         });
-
         if (!exhibitionEntity) {
             throw new NotFoundException(
                 `The 'exhibition_id' ${exhibitionId} not found`,
@@ -400,7 +399,9 @@ export class ExhibitionService {
         const firstBooth = await boothRepository.findOne({
             where: {
                 id: parseInt(boothId),
-                exhibition: exhibitionEntity,
+                exhibition: {
+                    id: exhibitionEntity.id,
+                },
             },
             relations: [
                 'liveStreams',
