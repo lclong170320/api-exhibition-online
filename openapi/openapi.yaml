@@ -275,6 +275,8 @@ paths:
       tags:
         - Exhibition
     patch:
+      security:
+      - bearerAuth: []
       summary: Update exhibition by ID
       description: Update exhibition
       operationId: updateExhibitionById
@@ -341,6 +343,8 @@ paths:
       tags:
         - Exhibition
     delete:
+      security:
+      - bearerAuth: []
       tags:
         - Exhibition
       summary: Delete an existing exhibition
@@ -1409,6 +1413,8 @@ paths:
                     message: Internal server error
                     details: []
     delete:
+      security:
+      - bearerAuth: []
       tags:
         - Booth
       summary: Delete an existing booth
@@ -2848,7 +2854,7 @@ paths:
       security:
       - bearerAuth: []
       tags:
-        - Conference
+        - Conference Template
       summary: Show list conference templates
       description: Show list conference-templates
       operationId: readConferenceTemplates
@@ -2919,7 +2925,7 @@ paths:
       security:
       - bearerAuth: []
       tags:
-        - Conference
+        - Conference Template
       summary: Add a conferenceTemplate
       description: Add a conferenceTemplate
       operationId: addConferenceTemplate
@@ -2963,8 +2969,10 @@ paths:
                     details: []
   '/conference-templates/{id}':
     delete:
+      security:
+      - bearerAuth: []
       tags:
-        - Conference
+        - Conference Template
       summary: Delete an existing conference
       description: Delete an existing conference by Id
       operationId: deleteConference
@@ -3020,7 +3028,7 @@ paths:
       security:
       - bearerAuth: []
       tags:
-        - Conference
+        - Conference Template
       summary: Get an existing conference
       description: Get an existing conference by Id
       operationId: readConferenceTemplateById
