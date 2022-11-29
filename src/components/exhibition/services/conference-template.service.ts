@@ -1,5 +1,5 @@
 import { DbConnection } from '@/database/config/db';
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { DataSource } from 'typeorm';
@@ -99,6 +99,24 @@ export class ConferenceTemplateService {
             );
 
         return createdConferenceTemplatePosition;
+    }
+
+    async readConferenceTemplateById(id: string, populate: string[]) {
+        const conferenceTemplateRepository =
+            this.dataSource.manager.getRepository(ConferenceTemplate);
+
+        const firstConferenceTemplate =
+            await conferenceTemplateRepository.findOne({
+                where: {
+                    id: parseInt(id),
+                },
+                relations: populate,
+            });
+
+        if (!firstConferenceTemplate) {
+            throw new NotFoundException(`the 'conference id' ${id} not found`);
+        }
+        return this.conferenceTemplateConverter.toDto(firstConferenceTemplate);
     }
 
     async readConferenceTemplates(query: PaginateQuery) {

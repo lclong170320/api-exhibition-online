@@ -2961,6 +2961,77 @@ paths:
                   value:
                     message: Internal server error
                     details: []
+  '/conference-templates/{id}':
+    get:
+      security:
+      - bearerAuth: []
+      tags:
+        - Conference
+      summary: Get an existing conference
+      description: Get an existing conference by Id
+      operationId: readConferenceTemplateById
+      parameters:
+        - name: id
+          description: ID to Get conference
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^[0-9]+$'
+        - in: query
+          name: populate
+          schema:
+            type: array
+            items:
+              type: string
+              example: 'booth'
+          description: |
+            List of populatable columns:
+              - conference_template_positions
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConferenceTemplate'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Bad Request
+                    details:
+                      - field: .params.id
+                        message: 'should match pattern "^[0-9]+$"'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Not Found
+                    details:
+                      - field: .params.id
+                        message: 'The id not exist: "^[0-9]+$"'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Internal server error
+                    details: []
   '/conferences/{id}':
     put:
       security:
