@@ -78,4 +78,25 @@ export class BoothOrganizationTemplateService {
             boothTemplates,
         );
     }
+
+    async deleteBoothOrganizationTemplate(id: string) {
+        await this.dataSource.transaction(async (manager) => {
+            const boothOrganizationTemplateRepository = manager.getRepository(
+                BoothOrganizationTemplate,
+            );
+
+            const firstBoothOrganizationTemplate =
+                await boothOrganizationTemplateRepository.findOneBy({
+                    id: parseInt(id),
+                });
+
+            if (!firstBoothOrganizationTemplate) {
+                throw new NotFoundException('Not found');
+            }
+
+            await boothOrganizationTemplateRepository.softRemove(
+                firstBoothOrganizationTemplate,
+            );
+        });
+    }
 }

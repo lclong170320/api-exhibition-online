@@ -1,4 +1,4 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, Delete, HttpCode } from '@nestjs/common';
 import { BoothOrganizationTemplateService } from '@/components/exhibition/services/booth-organization-template.service';
 import { Paginate, PaginateQuery } from '@/decorators/paginate.decorator';
 
@@ -23,6 +23,14 @@ export class BoothOrganizationTemplateController {
         return this.boothOrganizationTemplateService.findBoothOrganizationTemplateById(
             id,
             query.populate,
+        );
+    }
+
+    @Delete(':id')
+    @HttpCode(204)
+    deleteBoothTemplate(@Param('id') id: string) {
+        return this.boothOrganizationTemplateService.deleteBoothOrganizationTemplate(
+            id,
         );
     }
 }
