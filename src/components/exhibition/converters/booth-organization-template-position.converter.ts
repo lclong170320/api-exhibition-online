@@ -4,6 +4,13 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class BoothOrganizationTemplatePositionConverter {
+    toEntity(dto: BoothOrganizationTemplatePositionDto) {
+        const entity = new BoothOrganizationTemplatePosition();
+        entity.type = dto.type ?? undefined;
+        entity.position = dto.position ?? undefined;
+        return entity;
+    }
+
     toDto(entity: BoothOrganizationTemplatePosition) {
         const dto = {
             id: entity.id,

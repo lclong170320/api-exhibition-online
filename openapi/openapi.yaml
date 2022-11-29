@@ -932,6 +932,52 @@ paths:
                 $ref: '#/components/schemas/ErrorResponseBody'
       tags:
         - Booth Organization Template
+    post:
+      security:
+      - bearerAuth: []
+      tags:
+        - Booth Organization Template
+      summary: Add a booth organization template
+      description: Add a booth organization template
+      operationId: addBoothOrganizationTemplate
+      requestBody:
+        description: Create a booth organization template
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BoothOrganizationTemplate'
+        required: true
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BoothOrganizationTemplate'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Bad Request
+                    details:
+                      - field: .params.id
+                        message: 'should match pattern "^[0-9]+$"'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Internal server error
+                    details: []
   '/booth-templates':
     get:
       security:
@@ -3514,6 +3560,11 @@ components:
           type: string
           description: "input base64 string example: iVBORw0KGgoAAAANSUhEUgAABuIAAASxCAYAAADF8I..."
           writeOnly: true
+        booth_organization_template_positions:
+          writeOnly: true
+          type: array
+          items:
+            $ref: '#/components/schemas/BoothOrganizationTemplatePosition'
     SpaceTemplatePosition:
       type: object
       required:

@@ -1,5 +1,6 @@
 import { BoothOrganizationTemplate as BoothOrganizationTemplateDto } from '@/components/exhibition/dto/booth-organization-template.dto';
 import { BoothOrganizationTemplate } from '@/components/exhibition/entities/booth-organization-template.entity';
+import { UtilService } from '@/utils/helper/util.service';
 import { Injectable } from '@nestjs/common';
 import { BoothOrganizationTemplatePositionConverter } from './booth-organization-template-position.converter';
 
@@ -7,7 +8,20 @@ import { BoothOrganizationTemplatePositionConverter } from './booth-organization
 export class BoothOrganizationTemplateConverter {
     constructor(
         private readonly boothOrganizationTemplatePositionConverter: BoothOrganizationTemplatePositionConverter,
+        private utilService: UtilService,
     ) {}
+
+    async toEntity(dto: BoothOrganizationTemplateDto, userId: number) {
+        const entity = new BoothOrganizationTemplate();
+        entity.name = dto.name;
+        entity.createdBy = userId;
+        entity.createdDate = new Date();
+        entity.modelId = await this.utilService.createUrlMedias(dto.model_data);
+        entity.thumbnailId = await this.utilService.createUrlMedias(
+            dto.thumbnail_data,
+        );
+        return entity;
+    }
 
     toDto(entity: BoothOrganizationTemplate) {
         const dto = {
