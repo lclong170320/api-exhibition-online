@@ -66,7 +66,8 @@ export class BoothTemplateService {
         const searchableColumns = ['name'];
         const filterableColumns = ['type'];
         const defaultSortBy = [['createdAt', 'DESC']];
-        const populatableColumns = ['boothTemplatePositions'];
+        // const populatableColumns = ['boothTemplatePositions'];
+        const populatableColumns = query.populate;
         const boothTemplateRepository =
             this.dataSource.manager.getRepository(BoothTemplate);
         const [boothTemplates, total] = await paginate(
