@@ -7,7 +7,7 @@ import { paginate } from '@/utils/pagination';
 import { PaginateQuery } from '@/decorators/paginate.decorator';
 import { lastValueFrom, map } from 'rxjs';
 import { DataSource } from 'typeorm';
-import { EnterpriseListConverter } from './converters/enterprise-list.converter';
+import { PaginatedEnterprisesConverter } from './converters/paginated-enterprises.converter';
 import { EnterpriseConverter } from './converters/enterprise.converter';
 import { Enterprise as EnterpriseDto } from './dto/enterprise.dto';
 import { toDataURL } from 'qrcode';
@@ -19,7 +19,7 @@ export class EnterpriseService {
         @InjectDataSource(DbConnection.enterpriseCon)
         private readonly dataSource: DataSource,
         private readonly enterpriseConverter: EnterpriseConverter,
-        private readonly enterpriseListConverter: EnterpriseListConverter,
+        private readonly paginatedEnterprisesConverter: PaginatedEnterprisesConverter,
         private readonly httpService: HttpService,
         private readonly configService: ConfigService,
     ) {}
@@ -39,7 +39,7 @@ export class EnterpriseService {
                 defaultSortBy,
             },
         );
-        return this.enterpriseListConverter.toDto(
+        return this.paginatedEnterprisesConverter.toDto(
             query.page,
             query.limit,
             total,

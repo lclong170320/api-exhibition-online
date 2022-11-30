@@ -9,17 +9,11 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { Media } from './media.dto';
+import { BoothOrganizationTemplate } from './booth-organization-template.dto';
 
-export interface MediaList {
-    /**
-     * The number of items to skip before starting to collect the result set.
-     */
+export interface PaginatedBoothOrganizationTemplates {
     page: number;
-    /**
-     * The number of items to return.
-     */
     limit: number;
     total: number;
-    medias: Array<Media>;
+    booth_organization_templates?: Array<BoothOrganizationTemplate>;
 }

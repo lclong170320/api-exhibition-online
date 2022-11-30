@@ -9,11 +9,11 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { SpaceTemplate } from './space-template.dto';
+import { Booth } from './booth.dto';
 
-export interface SpaceTemplateList {
-    page: number;
-    limit: number;
-    total: number;
-    space_templates: Array<SpaceTemplate>;
+export interface PaginatedBooths {
+    readonly page: number;
+    readonly limit: number;
+    readonly total: number;
+    booths: Array<Booth>;
 }

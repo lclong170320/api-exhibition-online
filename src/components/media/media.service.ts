@@ -14,7 +14,7 @@ import { MediaConverter } from './converters/media.converter';
 import { MediaResponse } from './dto/media-response.dto';
 import { Media as MediaDto } from './dto/media.dto';
 import { Media } from './entities/media.entity';
-import { MediaListConverter } from './converters/media-list.converter';
+import { PaginatedMediasConverter } from './converters/paginated-medias.converter';
 
 @Injectable()
 export class MediaService {
@@ -23,7 +23,7 @@ export class MediaService {
         private readonly dataSource: DataSource,
         private configService: ConfigService,
         private mediaConverter: MediaConverter,
-        private mediaListConverter: MediaListConverter,
+        private paginatedMediasConverter: PaginatedMediasConverter,
     ) {}
 
     async getMedias(query: PaginateQuery) {
@@ -41,7 +41,7 @@ export class MediaService {
             defaultSortBy,
         });
 
-        return this.mediaListConverter.toDto(
+        return this.paginatedMediasConverter.toDto(
             query.page,
             query.limit,
             total,

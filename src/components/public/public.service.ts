@@ -22,10 +22,10 @@ import { Booth } from '../exhibition/entities/booth.entity';
 import { Conference } from '../exhibition/entities/conference.entity';
 import { Meeting } from '../exhibition/entities/meeting.entity';
 import { ConferenceConverter } from './converters/exhibition/conference.converter';
-import { MeetingListConverter } from './converters/exhibition/meeting-list.converter';
+import { PaginatedMeetingsConverter } from './converters/exhibition/paginated-meetings.converter';
 import { MeetingConverter } from './converters/exhibition/meeting.converter';
 import { BoothTemplate } from '../exhibition/entities/booth-template.entity';
-import { BoothTemplateListConverter } from './converters/exhibition/booth-template-list.converter';
+import { PaginatedBoothTemplatesConverter } from './converters/exhibition/paginated-booth-templates.converter';
 import { CountProject } from '../exhibition/entities/count-project.entity';
 import { BoothProject } from '../exhibition/entities/booth-project.entity';
 
@@ -45,8 +45,8 @@ export class PublicService {
         private readonly mediaConverter: MediaConverter,
         private readonly enterpriseConverter: EnterpriseConverter,
         private readonly meetingConverter: MeetingConverter,
-        private readonly meetingListConverter: MeetingListConverter,
-        private readonly boothTemplateListConverter: BoothTemplateListConverter,
+        private readonly paginatedMeetingsConverter: PaginatedMeetingsConverter,
+        private readonly paginatedBoothTemplatesConverter: PaginatedBoothTemplatesConverter,
     ) {}
 
     async getExhibitionById(id: string, query: PaginateQuery) {
@@ -132,7 +132,7 @@ export class PublicService {
             filterableColumns,
             defaultSortBy,
         });
-        return this.meetingListConverter.toDto(
+        return this.paginatedMeetingsConverter.toDto(
             query.page,
             query.limit,
             total,
@@ -177,7 +177,7 @@ export class PublicService {
             },
         );
 
-        return this.boothTemplateListConverter.toDto(
+        return this.paginatedBoothTemplatesConverter.toDto(
             query.page,
             query.limit,
             total,

@@ -9,17 +9,11 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { BoothOrganizationTemplate } from './booth-organization-template.dto';
+import { SpaceTemplate } from './space-template.dto';
 
-export interface BoothOrganizationTemplateList {
-    /**
-     * The number of items to skip before starting to collect the result set.
-     */
+export interface PaginatedSpaceTemplates {
     page: number;
-    /**
-     * The number of items to return.
-     */
     limit: number;
     total: number;
-    booth_organization_templates?: Array<BoothOrganizationTemplate>;
+    space_templates: Array<SpaceTemplate>;
 }

@@ -13,7 +13,7 @@ import { Exhibition } from './entities/exhibition.entity';
 import { SpaceTemplate } from './entities/space-template.entity';
 import { Space } from './entities/space.entity';
 import { BoothOrganizationService } from './services/booth-organization.service';
-import { BoothTemplateListConverter } from './converters/booth-template-list.converter';
+import { PaginatedBoothTemplatesConverter } from './converters/paginated-booth-templates.converter';
 import { BoothTemplateConverter } from './converters/booth-template.converter';
 import { BoothTemplateController } from './controllers/booth-template.controller';
 import { SpaceController } from './controllers/space.controller';
@@ -21,8 +21,8 @@ import { SpaceService } from './services/space.service';
 import { SpaceConverter } from './converters/space.converter';
 import { SpaceTemplateController } from './controllers/space-template.controller';
 import { SpaceTemplateService } from './services/space-template.service';
-import { SpaceTemplateListConverter } from './converters/space-template-list.converter';
-import { ExhibitionListConverter } from './converters/exhibition-list.converter';
+import { PaginatedSpaceTemplatesConverter } from './converters/paginated-space-templates.converter';
+import { PaginatedExhibitionsConverter } from './converters/paginated-exhibitions.converter';
 import { Booth } from './entities/booth.entity';
 import { Location } from './entities/location.entity';
 import { BoothConverter } from './converters/booth.converter';
@@ -66,17 +66,17 @@ import { BoothProject } from './entities/booth-project.entity';
 import { BoothVideo } from './entities/booth-video.entity';
 import { BoothTemplatePositionConverter } from './converters/booth-template-position.converter';
 import { BoothController } from './controllers/booth.controller';
-import { BoothListConverter } from './converters/booth-list.converter';
+import { PaginatedBoothsConverter } from './converters/paginated-booths.converter';
 import { JwtService } from '@nestjs/jwt';
 import { BoothService } from './services/booth.service';
 import { UtilService } from '@/utils/helper/util.service';
-import { BoothOrganizationTemplateListConverter } from './converters/booth-organization-template-list.converter';
+import { PaginatedBoothOrganizationTemplatesConverter } from './converters/paginated-booth-organization-templates.converter';
 import { BoothOrganizationTemplateController } from './controllers/booth-organization-template.controller';
 import { BoothOrganizationTemplateService } from './services/booth-organization-template.service';
 import { MeetingController } from './controllers/meeting.controller';
 import { MeetingService } from './services/meeting.service';
 import { MeetingConverter } from './converters/meeting.converter';
-import { MeetingListConverter } from './converters/meeting-list.converter';
+import { PaginatedMeetingsConverter } from './converters/paginated-meetings.converter';
 import { ConferenceTemplateController } from './controllers/conference-template.controller';
 import { ConferenceTemplateService } from './services/conference-template.service';
 import { ConferenceTemplateConverter } from './converters/conference-template.converter';
@@ -123,17 +123,17 @@ import { PaginatedConferenceTemplatesConverter } from './converters/paginated-co
         CategoryConverter,
         ExhibitionConverter,
         BoothTemplateConverter,
-        BoothTemplateListConverter,
+        PaginatedBoothTemplatesConverter,
         SpaceConverter,
         SpaceTemplateConverter,
         SpaceTemplatePositionConverter,
-        ExhibitionListConverter,
+        PaginatedExhibitionsConverter,
         BoothConverter,
         LiveStreamConverter,
         LocationConverter,
         SpaceImageConverter,
         SpaceVideoConverter,
-        SpaceTemplateListConverter,
+        PaginatedSpaceTemplatesConverter,
         BoothImageConverter,
         BoothVideoConverter,
         BoothProjectConverter,
@@ -147,10 +147,10 @@ import { PaginatedConferenceTemplatesConverter } from './converters/paginated-co
         BoothOrganizationProjectConverter,
         BoothOrganizationTemplateConverter,
         BoothTemplatePositionConverter,
-        BoothListConverter,
-        BoothOrganizationTemplateListConverter,
+        PaginatedBoothsConverter,
+        PaginatedBoothOrganizationTemplatesConverter,
         MeetingConverter,
-        MeetingListConverter,
+        PaginatedMeetingsConverter,
         ConferenceTemplateConverter,
         ConferenceTemplatePositionConverter,
         ConferenceConverter,

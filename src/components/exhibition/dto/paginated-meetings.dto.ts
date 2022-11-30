@@ -11,7 +11,7 @@
  */
 import { Meeting } from './meeting.dto';
 
-export interface MeetingList {
+export interface PaginatedMeetings {
     readonly page: number;
     readonly limit: number;
     readonly total: number;

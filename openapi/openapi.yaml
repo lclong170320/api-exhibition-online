@@ -85,7 +85,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ExhibitionList'
+                $ref: '#/components/schemas/PaginatedExhibitions'
         '400':
           description: Bad request
           content:
@@ -921,7 +921,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BoothOrganizationTemplateList'
+                $ref: '#/components/schemas/PaginatedBoothOrganizationTemplates'
         '400':
           description: Bad request
           content:
@@ -1049,7 +1049,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BoothTemplateList'
+                $ref: '#/components/schemas/PaginatedBoothTemplates'
         '400':
           description: Bad request
           content:
@@ -1314,7 +1314,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BoothList'
+                $ref: '#/components/schemas/PaginatedBooths'
         '400':
           description: Bad request
           content:
@@ -1536,7 +1536,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Meeting'
+                $ref: '#/components/schemas/PaginatedMeetings'
         '400':
           description: Validation error
           content:
@@ -1751,7 +1751,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SpaceTemplateList'
+                $ref: '#/components/schemas/PaginatedSpaceTemplates'
         '400':
           description: Validation error
           content:
@@ -2029,7 +2029,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/EnterpriseList'
+                $ref: '#/components/schemas/PaginatedEnterprises'
     post:
       tags:
         - Enterprise
@@ -2354,7 +2354,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MediaList'
+                $ref: '#/components/schemas/PaginatedMedias'
         '400':
           description: Validation error
           content:
@@ -3660,7 +3660,7 @@ components:
         rotation_z:
           type: number
           example: 1
-    BoothTemplateList:
+    PaginatedBoothTemplates:
       type: object
       required:
         - page
@@ -3857,7 +3857,7 @@ components:
         type:
           type: string
           enum: ['image','video']
-    SpaceTemplateList:
+    PaginatedSpaceTemplates:
       type: object
       required:
         - page
@@ -3931,7 +3931,7 @@ components:
           minLength: 1
           maxLength: 255
           example: Công ty cổ phần ngoài NN
-    MediaList:
+    PaginatedMedias:
       type: object
       required:
         - page
@@ -4016,7 +4016,7 @@ components:
           type: string
         message:
           type: string
-    EnterpriseList:
+    PaginatedEnterprises:
       type: object
       required:
         - limit
@@ -4054,7 +4054,7 @@ components:
           type: string
           example: 'loai triễn lảm'
           description: The name category.
-    ExhibitionList:
+    PaginatedExhibitions:
       type: object
       required:
         - page
@@ -4167,7 +4167,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/BoothProduct'
-    BoothList:
+    PaginatedBooths:
       type: object
       required:
         - page
@@ -4378,7 +4378,7 @@ components:
           type: integer
           writeOnly: true
           example: 1
-    BoothOrganizationTemplateList:
+    PaginatedBoothOrganizationTemplates:
       type: object
       required:
         - page
@@ -4450,7 +4450,7 @@ components:
           type: integer
           writeOnly: true
           example: 1
-    MeetingList:
+    PaginatedMeetings:
       type: object
       required:
         - page

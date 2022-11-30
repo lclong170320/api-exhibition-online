@@ -1,4 +1,4 @@
-import { BoothListConverter } from '@/components/exhibition/converters/booth-list.converter';
+import { PaginatedBoothsConverter } from '@/components/exhibition/converters/paginated-booths.converter';
 import { Booth } from '@/components/exhibition/entities/booth.entity';
 import {
     Location,
@@ -26,7 +26,7 @@ export class BoothService {
     constructor(
         @InjectDataSource(DbConnection.exhibitionCon)
         private readonly dataSource: DataSource,
-        private readonly boothListConverter: BoothListConverter,
+        private readonly paginatedBoothsConverter: PaginatedBoothsConverter,
         private readonly boothConverter: BoothConverter,
         private readonly jwtService: JwtService,
         private readonly utilService: UtilService,
@@ -71,7 +71,7 @@ export class BoothService {
             defaultSortBy,
         });
 
-        return this.boothListConverter.toDto(
+        return this.paginatedBoothsConverter.toDto(
             query.page,
             query.limit,
             total,

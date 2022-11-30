@@ -1,10 +1,10 @@
-import { ExhibitionList as ExhibitionListDto } from '@/components/exhibition/dto/exhibition-list.dto';
+import { PaginatedExhibitions as PaginatedExhibitionsDto } from '@/components/exhibition/dto/paginated-exhibitions.dto';
 import { Exhibition } from '@/components/exhibition/entities/exhibition.entity';
 import { Injectable } from '@nestjs/common';
 import { ExhibitionConverter } from './exhibition.converter';
 
 @Injectable()
-export class ExhibitionListConverter {
+export class PaginatedExhibitionsConverter {
     constructor(private exhibitionConverter: ExhibitionConverter) {}
     async toDto(
         page: number,
@@ -21,7 +21,7 @@ export class ExhibitionListConverter {
                     async (data) => await this.exhibitionConverter.toDto(data),
                 ),
             ),
-        } as ExhibitionListDto;
+        } as PaginatedExhibitionsDto;
 
         return dto;
     }

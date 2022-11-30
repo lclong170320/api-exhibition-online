@@ -11,7 +11,7 @@ import { paginate } from '@/utils/pagination';
 import { BoothOrganizationTemplate } from '@/components/exhibition/entities/booth-organization-template.entity';
 import { BoothOrganizationTemplateConverter } from '@/components/exhibition/converters/booth-organization-template.converter';
 import { BoothOrganizationTemplatePositionConverter } from '@/components/exhibition/converters/booth-organization-template-position.converter';
-import { BoothOrganizationTemplateListConverter } from '@/components/exhibition/converters/booth-organization-template-list.converter';
+import { PaginatedBoothOrganizationTemplatesConverter } from '@/components/exhibition/converters/paginated-booth-organization-templates.converter';
 import { BoothOrganizationTemplate as BoothOrganizationTemplateDto } from '@/components/exhibition/dto/booth-organization-template.dto';
 import { BoothOrganizationTemplatePosition as BoothOrganizationTemplatePositionDto } from '@/components/exhibition/dto/booth-organization-template-position.dto';
 import { BoothOrganizationTemplatePosition } from '@/components/exhibition/entities/booth-organization-template-position.entity';
@@ -24,7 +24,7 @@ export class BoothOrganizationTemplateService {
         private readonly dataSource: DataSource,
         private boothOrganizationTemplateConverter: BoothOrganizationTemplateConverter,
         private boothOrganizationTemplatePositionConverter: BoothOrganizationTemplatePositionConverter,
-        private boothOrganizationTemplateListConverter: BoothOrganizationTemplateListConverter,
+        private paginatedBoothOrganizationTemplatesConverter: PaginatedBoothOrganizationTemplatesConverter,
     ) {}
 
     async findBoothOrganizationTemplateById(id: string, populate: string[]) {
@@ -76,7 +76,7 @@ export class BoothOrganizationTemplateService {
             },
         );
 
-        return this.boothOrganizationTemplateListConverter.toDto(
+        return this.paginatedBoothOrganizationTemplatesConverter.toDto(
             query.page,
             query.limit,
             total,

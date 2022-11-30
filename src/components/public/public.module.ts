@@ -38,7 +38,7 @@ import { SpaceTemplatePosition } from '../exhibition/entities/space-template-pos
 import { Enterprise } from '@/components/enterprise/entities/enterprise.entity';
 
 // converter
-import { ExhibitionListConverter } from '@/components/public/converters/exhibition/exhibition-list.converter';
+import { PaginatedExhibitionsConverter } from '@/components/public/converters/exhibition/paginated-exhibitions.converter';
 import { BoothTemplateConverter } from '@/components/public/converters/exhibition/booth-template.converter';
 import { BoothConverter } from '@/components/public/converters/exhibition/booth.converter';
 import CategoryConverter from '@/components/public/converters/exhibition/category.converter';
@@ -63,11 +63,12 @@ import { BoothOrganizationProductConverter } from '@/components/public/converter
 import { BoothOrganizationProjectConverter } from '@/components/public/converters/exhibition/booth-organization-project.converter';
 import { BoothOrganizationTemplateConverter } from '@/components/public/converters/exhibition/booth-organization-template.converter';
 import { EnterpriseConverter } from '@/components/public/converters/enterprise/enterprise.converter';
-import { EnterpriseListConverter } from '@/components/public/converters/enterprise/enterprise-list.converter';
+import { PaginatedEnterprisesConverter } from '@/components/public/converters/enterprise/paginated-enterprises.converter';
 import { MediaConverter } from '@/components/public/converters/media/media.converter';
 import { ExhibitionConverter } from '@/components/public/converters/exhibition/exhibition.converter';
+import { PaginatedMeetingsConverter } from '@/components/public/converters/exhibition/paginated-meetings.converter';
+import { PaginatedBoothTemplatesConverter } from '@/components/public/converters/exhibition/paginated-booth-templates.converter';
 import { MeetingConverter } from './converters/exhibition/meeting.converter';
-import { MeetingListConverter } from './converters/exhibition/meeting-list.converter';
 import { ConferenceTemplateConverter } from './converters/exhibition/conference-template.converter';
 import { ConferenceImageConverter } from './converters/exhibition/conference-image.converter';
 import { ConferenceVideoConverter } from './converters/exhibition/conference-video.converter';
@@ -76,7 +77,6 @@ import { Conference } from '../exhibition/entities/conference.entity';
 import { ConferenceTemplate } from '../exhibition/entities/conference-template.entity';
 import { ConferenceTemplatePosition } from '../exhibition/entities/conference-template-position.entity';
 import { ConferenceConverter } from './converters/exhibition/conference.converter';
-import { BoothTemplateListConverter } from '@/components/public/converters/exhibition/booth-template-list.converter';
 import { CountProject } from '../exhibition/entities/count-project.entity';
 
 @Module({
@@ -110,20 +110,20 @@ import { CountProject } from '../exhibition/entities/count-project.entity';
         BoothOrganizationProductConverter,
         BoothOrganizationProjectConverter,
         BoothOrganizationTemplateConverter,
-        ExhibitionListConverter,
+        PaginatedExhibitionsConverter,
         EnterpriseConverter,
-        EnterpriseListConverter,
+        PaginatedEnterprisesConverter,
         BoothTemplatePositionConverter,
         JwtService,
         MediaConverter,
         MeetingConverter,
-        MeetingListConverter,
+        PaginatedMeetingsConverter,
         ConferenceConverter,
         ConferenceTemplateConverter,
         ConferenceImageConverter,
         ConferenceVideoConverter,
         ConferenceTemplatePositionConverter,
-        BoothTemplateListConverter,
+        PaginatedBoothTemplatesConverter,
     ],
     imports: [
         TypeOrmModule.forFeature(

@@ -4,7 +4,7 @@ import { paginate } from '@/utils/pagination';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
-import { MeetingListConverter } from '../converters/meeting-list.converter';
+import { PaginatedMeetingsConverter } from '../converters/paginated-meetings.converter';
 import { Booth } from '../entities/booth.entity';
 import { Meeting } from '../entities/meeting.entity';
 
@@ -13,7 +13,7 @@ export class MeetingService {
     constructor(
         @InjectDataSource(DbConnection.exhibitionCon)
         private readonly dataSource: DataSource,
-        private readonly meetingListConverter: MeetingListConverter,
+        private readonly paginatedMeetingsConverter: PaginatedMeetingsConverter,
     ) {}
 
     async getMeetings(enterpriseId: number, query: PaginateQuery) {
@@ -59,7 +59,7 @@ export class MeetingService {
                         defaultSortBy,
                     },
                 );
-                return this.meetingListConverter.toDto(
+                return this.paginatedMeetingsConverter.toDto(
                     query.page,
                     query.limit,
                     total,
@@ -67,7 +67,7 @@ export class MeetingService {
                 );
             }
 
-            return this.meetingListConverter.toDto(
+            return this.paginatedMeetingsConverter.toDto(
                 query.page,
                 query.limit,
                 0,
@@ -88,7 +88,7 @@ export class MeetingService {
             filterableColumns,
             defaultSortBy,
         });
-        return this.meetingListConverter.toDto(
+        return this.paginatedMeetingsConverter.toDto(
             query.page,
             query.limit,
             total,

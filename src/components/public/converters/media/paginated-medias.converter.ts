@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { MediaList } from '../dto/media-list.dto';
-import { Media } from '../entities/media.entity';
+import { PaginatedMedias as PaginatedMediasDto } from '@/components/media/dto/paginated-medias.dto';
+import { Media } from '@/components/media/entities/media.entity';
 import { MediaConverter } from './media.converter';
 
 @Injectable()
-export class MediaListConverter {
+export class PaginatedMediasConverter {
     constructor(private mediaConverter: MediaConverter) {}
     toDto(page: number, limit: number, total: number, entity: Media[]) {
         const dto = {
@@ -12,7 +12,7 @@ export class MediaListConverter {
             limit: limit,
             total: total,
             medias: entity.map((data) => this.mediaConverter.toDto(data)),
-        } as MediaList;
+        } as PaginatedMediasDto;
 
         return dto;
     }

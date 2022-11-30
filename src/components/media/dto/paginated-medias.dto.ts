@@ -9,11 +9,11 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { Enterprise } from './enterprise.dto';
+import { Media } from './media.dto';
 
-export interface EnterpriseList {
-    limit: number;
+export interface PaginatedMedias {
     page: number;
+    limit: number;
     total: number;
-    enterprises: Array<Enterprise>;
+    medias: Array<Media>;
 }

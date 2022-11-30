@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
-import { SpaceTemplateListConverter } from '../converters/space-template-list.converter';
+import { PaginatedSpaceTemplatesConverter } from '../converters/paginated-space-templates.converter';
 import { SpaceTemplate as SpaceTemplateDto } from '@/components/exhibition/dto/space-template.dto';
 import { SpaceTemplatePosition as SpaceTemplatePositionDto } from '@/components/exhibition/dto/space-template-position.dto';
 import { SpaceTemplateLocation as SpaceTemplateLocationDto } from '@/components/exhibition/dto/space-template-location.dto';
@@ -27,7 +27,7 @@ export class SpaceTemplateService {
         @InjectDataSource(DbConnection.exhibitionCon)
         private readonly dataSource: DataSource,
         private spaceTemplateConverter: SpaceTemplateConverter,
-        private spaceTemplateListConverter: SpaceTemplateListConverter,
+        private paginatedSpaceTemplatesConverter: PaginatedSpaceTemplatesConverter,
         private spaceTemplateLocationConverter: SpaceTemplateLocationConverter,
         private readonly configService: ConfigService,
         private readonly httpService: HttpService,
@@ -84,7 +84,7 @@ export class SpaceTemplateService {
             },
         );
 
-        return this.spaceTemplateListConverter.toDto(
+        return this.paginatedSpaceTemplatesConverter.toDto(
             query.page,
             query.limit,
             total,

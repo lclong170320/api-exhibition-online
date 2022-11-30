@@ -7,7 +7,7 @@ import {
 import { InjectDataSource } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { BoothTemplate } from '@/components/exhibition/entities/booth-template.entity';
-import { BoothTemplateListConverter } from '@/components/exhibition/converters/booth-template-list.converter';
+import { PaginatedBoothTemplatesConverter } from '@/components/exhibition/converters/paginated-booth-templates.converter';
 import { BoothTemplateConverter } from '@/components/exhibition/converters/booth-template.converter';
 import { ConfigService } from '@nestjs/config';
 import { HttpService } from '@nestjs/axios';
@@ -27,7 +27,7 @@ export class BoothTemplateService {
     constructor(
         @InjectDataSource(DbConnection.exhibitionCon)
         private readonly dataSource: DataSource,
-        private boothTemplateListConverter: BoothTemplateListConverter,
+        private paginatedBoothTemplatesConverter: PaginatedBoothTemplatesConverter,
         private boothTemplateConverter: BoothTemplateConverter,
         private boothTemplatePositionConverter: BoothTemplatePositionConverter,
         private readonly httpService: HttpService,
@@ -81,7 +81,7 @@ export class BoothTemplateService {
             },
         );
 
-        return this.boothTemplateListConverter.toDto(
+        return this.paginatedBoothTemplatesConverter.toDto(
             query.page,
             query.limit,
             total,

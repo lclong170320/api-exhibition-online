@@ -9,11 +9,11 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { Booth } from './booth.dto';
+import { Exhibition } from './exhibition.dto';
 
-export interface BoothList {
+export interface PaginatedExhibitions {
     page: number;
     limit: number;
     total: number;
-    booths: Array<Booth>;
+    exhibitions: Array<Exhibition>;
 }

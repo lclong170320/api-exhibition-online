@@ -9,17 +9,11 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { Exhibition } from './exhibition.dto';
+import { BoothTemplate } from './booth-template.dto';
 
-export interface ExhibitionList {
-    /**
-     * The number of items to skip before starting to collect the result set.
-     */
+export interface PaginatedBoothTemplates {
     page: number;
-    /**
-     * The number of items to return.
-     */
     limit: number;
     total: number;
-    exhibitions: Array<Exhibition>;
+    booth_templates?: Array<BoothTemplate>;
 }

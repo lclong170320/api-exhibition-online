@@ -12,7 +12,7 @@ import { Exhibition } from '@/components/exhibition/entities/exhibition.entity';
 import { Space } from '@/components/exhibition/entities/space.entity';
 import { DbConnection } from '@/database/config/db';
 
-import { ExhibitionListConverter } from '@/components/exhibition/converters/exhibition-list.converter';
+import { PaginatedExhibitionsConverter } from '@/components/exhibition/converters/paginated-exhibitions.converter';
 import { ExhibitionConverter } from '@/components/exhibition/converters/exhibition.converter';
 import { Exhibition as ExhibitionDto } from '@/components/exhibition/dto/exhibition.dto';
 import { Booth } from '@/components/exhibition/entities/booth.entity';
@@ -56,7 +56,7 @@ export class ExhibitionService {
         @InjectDataSource(DbConnection.exhibitionCon)
         private readonly dataSource: DataSource,
         private readonly exhibitionConverter: ExhibitionConverter,
-        private readonly exhibitionListConverter: ExhibitionListConverter,
+        private readonly paginatedExhibitionsConverter: PaginatedExhibitionsConverter,
         private readonly configService: ConfigService,
         private readonly httpService: HttpService,
         private readonly liveStreamConverter: LiveStreamConverter,
@@ -93,7 +93,7 @@ export class ExhibitionService {
             },
         );
 
-        return this.exhibitionListConverter.toDto(
+        return this.paginatedExhibitionsConverter.toDto(
             query.page,
             query.limit,
             total,

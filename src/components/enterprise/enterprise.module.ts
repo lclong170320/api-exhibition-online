@@ -6,14 +6,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Enterprise } from './entities/enterprise.entity';
 import { HttpModule } from '@nestjs/axios';
 import { EnterpriseConverter } from './converters/enterprise.converter';
-import { EnterpriseListConverter } from './converters/enterprise-list.converter';
+import { PaginatedEnterprisesConverter } from './converters/paginated-enterprises.converter';
 
 @Module({
     controllers: [EnterpriseController],
     providers: [
         EnterpriseService,
         EnterpriseConverter,
-        EnterpriseListConverter,
+        PaginatedEnterprisesConverter,
     ],
     imports: [
         TypeOrmModule.forFeature([Enterprise], DbConnection.enterpriseCon),

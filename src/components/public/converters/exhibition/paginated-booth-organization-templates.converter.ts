@@ -1,4 +1,4 @@
-import { BoothOrganizationTemplateList as BoothOrganizationTemplateListDto } from '@/components/exhibition/dto/booth-organization-template-list.dto';
+import { PaginatedBoothOrganizationTemplates as PaginatedBoothOrganizationTemplates } from '@/components/exhibition/dto/paginated-booth-organization-templates.dto';
 import { BoothOrganizationTemplate } from '@/components/exhibition/entities/booth-organization-template.entity';
 import { Injectable } from '@nestjs/common';
 import { BoothOrganizationTemplateConverter } from './booth-organization-template.converter';
@@ -21,7 +21,7 @@ export class BoothOrganizationTemplateListConverter {
             booth_organization_templates: entity.map((data) =>
                 this.boothOrganizationTemplateConverter.toDto(data),
             ),
-        } as BoothOrganizationTemplateListDto;
+        } as PaginatedBoothOrganizationTemplates;
 
         return dto;
     }

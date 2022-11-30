@@ -1,10 +1,10 @@
-import { BoothList as BoothListDto } from '@/components/exhibition/dto/booth-list.dto';
+import { PaginatedBooths as PaginatedBoothsDto } from '@/components/exhibition/dto/paginated-booths.dto';
 import { Booth } from '@/components/exhibition/entities/booth.entity';
 import { Injectable } from '@nestjs/common';
 import { BoothConverter } from './booth.converter';
 
 @Injectable()
-export class BoothListConverter {
+export class PaginatedBoothsConverter {
     constructor(private boothConverter: BoothConverter) {}
     toDto(page: number, limit: number, total: number, booth: Booth[]) {
         const dto = {
@@ -12,7 +12,7 @@ export class BoothListConverter {
             limit: limit,
             total: total,
             booths: booth.map((data) => this.boothConverter.toDto(data)),
-        } as BoothListDto;
+        } as PaginatedBoothsDto;
 
         return dto;
     }

@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { EnterpriseConverter } from './enterprise.converter';
 import { Enterprise } from '@/components/enterprise/entities/enterprise.entity';
-import { EnterpriseList } from '@/components/enterprise/dto/enterprise-list.dto';
+import { PaginatedEnterprises as PaginatedEnterprisesDto } from '@/components/enterprise/dto/paginated-enterprises.dto';
+
+import { EnterpriseConverter } from './enterprise.converter';
 
 @Injectable()
-export class EnterpriseListConverter {
+export class PaginatedEnterprisesConverter {
     constructor(private enterpriseConverter: EnterpriseConverter) {}
     toDto(page: number, limit: number, total: number, entity: Enterprise[]) {
         const dto = {
@@ -14,7 +15,7 @@ export class EnterpriseListConverter {
             enterprises: entity.map((data) =>
                 this.enterpriseConverter.toDto(data),
             ),
-        } as EnterpriseList;
+        } as PaginatedEnterprisesDto;
 
         return dto;
     }

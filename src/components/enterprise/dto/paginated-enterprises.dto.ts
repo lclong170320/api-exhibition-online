@@ -9,17 +9,11 @@
  * https://openapi-generator.tech
  * Do not edit the class manually.
  */
-import { BoothTemplate } from './booth-template.dto';
+import { Enterprise } from './enterprise.dto';
 
-export interface BoothTemplateList {
-    /**
-     * The number of items to skip before starting to collect the result set.
-     */
+export interface PaginatedEnterprises {
     page: number;
-    /**
-     * The number of items to return.
-     */
     limit: number;
     total: number;
-    booth_templates?: Array<BoothTemplate>;
+    enterprises: Array<Enterprise>;
 }
