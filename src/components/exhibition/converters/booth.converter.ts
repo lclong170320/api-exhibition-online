@@ -16,6 +16,7 @@ export class BoothConverter {
     constructor(
         private readonly liveStreamConverter: LiveStreamConverter,
         private readonly locationConverter: LocationConverter,
+        @Inject(forwardRef(() => BoothTemplateConverter))
         private readonly boothTemplateConverter: BoothTemplateConverter,
         private readonly boothImageConverter: BoothImageConverter,
         private readonly boothVideoConverter: BoothVideoConverter,

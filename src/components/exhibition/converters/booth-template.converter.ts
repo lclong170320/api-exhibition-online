@@ -1,12 +1,15 @@
 import { BoothTemplate as BoothTemplateDto } from '@/components/exhibition/dto/booth-template.dto';
 import { BoothTemplate } from '@/components/exhibition/entities/booth-template.entity';
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { BoothTemplatePositionConverter } from './booth-template-position.converter';
+import { BoothConverter } from './booth.converter';
 
 @Injectable()
 export class BoothTemplateConverter {
     constructor(
         private readonly boothTemplatePositionConverter: BoothTemplatePositionConverter,
+        @Inject(forwardRef(() => BoothConverter))
+        private readonly boothConverter: BoothConverter,
     ) {}
 
     toEntity(dto: BoothTemplateDto) {
@@ -31,6 +34,9 @@ export class BoothTemplateConverter {
                 ? entity.boothTemplatePositions.map((data) =>
                       this.boothTemplatePositionConverter.toDto(data),
                   )
+                : undefined,
+            booths: entity.booths
+                ? entity.booths.map((data) => this.boothConverter.toDto(data))
                 : undefined,
         } as BoothTemplateDto;
 
