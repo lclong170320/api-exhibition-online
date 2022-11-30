@@ -77,6 +77,7 @@ import { ConferenceTemplate } from '../exhibition/entities/conference-template.e
 import { ConferenceTemplatePosition } from '../exhibition/entities/conference-template-position.entity';
 import { ConferenceConverter } from './converters/exhibition/conference.converter';
 import { BoothTemplateListConverter } from '@/components/public/converters/exhibition/booth-template-list.converter';
+import { CountProject } from '../exhibition/entities/count-project.entity';
 
 @Module({
     controllers: [PublicController],
@@ -162,6 +163,7 @@ import { BoothTemplateListConverter } from '@/components/public/converters/exhib
                 Conference,
                 ConferenceTemplate,
                 ConferenceTemplatePosition,
+                CountProject,
             ],
             DbConnection.exhibitionCon,
         ),

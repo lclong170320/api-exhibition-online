@@ -26,6 +26,9 @@ import { MeetingListConverter } from './converters/exhibition/meeting-list.conve
 import { MeetingConverter } from './converters/exhibition/meeting.converter';
 import { BoothTemplate } from '../exhibition/entities/booth-template.entity';
 import { BoothTemplateListConverter } from './converters/exhibition/booth-template-list.converter';
+import { CountProject } from '../exhibition/entities/count-project.entity';
+import { BoothProject } from '../exhibition/entities/booth-project.entity';
+
 @Injectable()
 export class PublicService {
     constructor(
@@ -180,5 +183,40 @@ export class PublicService {
             total,
             boothTemplates,
         );
+    }
+
+    async createCountProject(id: string) {
+        const countProjectRepository =
+            this.exhibitionDataSource.manager.getRepository(CountProject);
+        const countProjectEntity = new CountProject();
+        countProjectEntity.boothProjectId = parseInt(id);
+
+        await countProjectRepository.save(countProjectEntity);
+    }
+
+    async countViewProject() {
+        const countProjectRepository =
+            this.exhibitionDataSource.manager.getRepository(CountProject);
+        const boothProjectRepository =
+            this.exhibitionDataSource.manager.getRepository(BoothProject);
+
+        const [boothProject] = await boothProjectRepository.findAndCount();
+
+        const updatedBoothProject = await Promise.all(
+            boothProject.map(async (data) => {
+                const [project, count] =
+                    await countProjectRepository.findAndCountBy({
+                        boothProjectId: data.id,
+                    });
+
+                await countProjectRepository.remove(project);
+
+                data.view += count;
+
+                return data;
+            }),
+        );
+
+        await boothProjectRepository.save(updatedBoothProject);
     }
 }

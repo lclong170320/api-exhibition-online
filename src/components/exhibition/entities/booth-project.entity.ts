@@ -1,4 +1,5 @@
 import {
+    Column,
     CreateDateColumn,
     DeleteDateColumn,
     Entity,
@@ -16,6 +17,9 @@ export class BoothProject {
     // table columns
     @PrimaryGeneratedColumn()
     id: number;
+
+    @Column({ default: 0 })
+    view: number;
 
     @CreateDateColumn({
         type: 'timestamp',
