@@ -3,6 +3,7 @@ import { Role } from '@/components/exhibition/dto/role.dto';
 import { User } from '@/components/user/dto/user.dto';
 import { JWTAuthGuard } from '@/components/user/guards/auth.guard';
 import { CurrentUser } from '@/decorators/current-user';
+import { JwtAccessToken } from '@/decorators/jwt-access-token.decorator';
 import { Paginate, PaginateQuery } from '@/decorators/paginate.decorator';
 import { Roles } from '@/decorators/roles.decorator';
 import {
@@ -28,10 +29,12 @@ export class ConferenceTemplateController {
     @Roles(Role.ADMIN)
     @Post()
     createConferenceTemplate(
+        @JwtAccessToken() jwtAccessToken: string,
         @CurrentUser() user: User,
         @Body() conferenceTemplateDto: ConferenceTemplateDto,
     ) {
         return this.conferenceTemplateService.createConferenceTemplate(
+            jwtAccessToken,
             user?.id,
             conferenceTemplateDto,
         );

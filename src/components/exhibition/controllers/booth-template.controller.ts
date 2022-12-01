@@ -15,6 +15,9 @@ import { Roles } from '@/decorators/roles.decorator';
 import { Role } from '@/components/exhibition/dto/role.dto';
 import { RolesGuard } from 'guards/roles.guard';
 import { JWTAuthGuard } from '@/components/user/guards/auth.guard';
+import { CurrentUser } from '@/decorators/current-user';
+import { User } from '@/components/exhibition/dto/user.dto';
+import { JwtAccessToken } from '@/decorators/jwt-access-token.decorator';
 
 @Controller('booth-templates')
 export class BoothTemplateController {
@@ -43,8 +46,16 @@ export class BoothTemplateController {
     @UseGuards(JWTAuthGuard, RolesGuard)
     @Roles(Role.ADMIN)
     @Post()
-    createBoothTemplate(@Body() boothTemplateDto: BoothTemplateDto) {
-        return this.boothTemplateService.createBoothTemplate(boothTemplateDto);
+    createBoothTemplate(
+        @CurrentUser() user: User,
+        @JwtAccessToken() jwtAccessToken: string,
+        @Body() boothTemplateDto: BoothTemplateDto,
+    ) {
+        return this.boothTemplateService.createBoothTemplate(
+            jwtAccessToken,
+            user,
+            boothTemplateDto,
+        );
     }
 
     @UseGuards(JWTAuthGuard, RolesGuard)

@@ -12,6 +12,7 @@ import { Paginate, PaginateQuery } from '@/decorators/paginate.decorator';
 import { BoothOrganizationTemplate as BoothOrganizationTemplateDto } from '@/components/exhibition/dto/booth-organization-template.dto';
 import { CurrentUser } from '@/decorators/current-user';
 import { User } from '@/components/exhibition/dto/user.dto';
+import { JwtAccessToken } from '@/decorators/jwt-access-token.decorator';
 
 @Controller('booth-organization-templates')
 export class BoothOrganizationTemplateController {
@@ -39,10 +40,12 @@ export class BoothOrganizationTemplateController {
 
     @Post()
     createBoothOrganizationTemplate(
+        @JwtAccessToken() jwtAccessToken: string,
         @CurrentUser() user: User,
         @Body() boothOrganizationTemplateDto: BoothOrganizationTemplateDto,
     ) {
         return this.boothOrganizationTemplateService.createBoothOrganizationTemplate(
+            jwtAccessToken,
             user,
             boothOrganizationTemplateDto,
         );

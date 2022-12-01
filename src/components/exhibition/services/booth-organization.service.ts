@@ -79,6 +79,7 @@ export class BoothOrganizationService {
     }
 
     async updateBoothOrganization(
+        jwtAccessToken: string,
         boothOrganizationId: string,
         boothOrganizationDto: BoothOrganizationDto,
     ) {
@@ -144,6 +145,7 @@ export class BoothOrganizationService {
                     );
 
                 await this.createMultipleBoothOrganizationImage(
+                    jwtAccessToken,
                     boothOrganizationDto,
                     boothOrganizationEntity,
                     boothOrganizationImageRepository,
@@ -152,6 +154,7 @@ export class BoothOrganizationService {
                 );
 
                 await this.createMultipleBoothOrganizationVideo(
+                    jwtAccessToken,
                     boothOrganizationDto,
                     boothOrganizationEntity,
                     boothOrganizationVideoRepository,
@@ -160,6 +163,7 @@ export class BoothOrganizationService {
                 );
 
                 await this.createMultipleBoothOrganizationProduct(
+                    jwtAccessToken,
                     boothOrganizationDto,
                     boothOrganizationEntity,
                     boothOrganizationProductRepository,
@@ -168,6 +172,7 @@ export class BoothOrganizationService {
                 );
 
                 await this.createMultipleBoothOrganizationProject(
+                    jwtAccessToken,
                     boothOrganizationDto,
                     boothOrganizationEntity,
                     boothOrganizationProjectRepository,
@@ -185,6 +190,7 @@ export class BoothOrganizationService {
     }
 
     private async createMultipleBoothOrganizationImage(
+        jwtAccessToken: string,
         boothOrganizationDto: BoothOrganizationDto,
         boothOrganization: BoothOrganization,
         boothOrganizationImageRepository: Repository<BoothOrganizationImage>,
@@ -198,6 +204,7 @@ export class BoothOrganizationService {
                     async (boothOrganizationImage) => {
                         const createdBoothOrganizationImage =
                             await this.createBoothOrganizationImage(
+                                jwtAccessToken,
                                 boothOrganizationImage,
                                 boothOrganization,
                                 boothOrganizationImageRepository,
@@ -214,6 +221,7 @@ export class BoothOrganizationService {
     }
 
     private async createMultipleBoothOrganizationVideo(
+        jwtAccessToken: string,
         boothOrganizationDto: BoothOrganizationDto,
         boothOrganization: BoothOrganization,
         boothOrganizationVideoRepository: Repository<BoothOrganizationVideo>,
@@ -227,6 +235,7 @@ export class BoothOrganizationService {
                     async (boothOrganizationVideo) => {
                         const createdBoothOrganizationVideo =
                             await this.createBoothOrganizationVideo(
+                                jwtAccessToken,
                                 boothOrganizationVideo,
                                 boothOrganization,
                                 boothOrganizationVideoRepository,
@@ -243,6 +252,7 @@ export class BoothOrganizationService {
     }
 
     private async createMultipleBoothOrganizationProject(
+        jwtAccessToken: string,
         boothOrganizationDto: BoothOrganizationDto,
         boothOrganization: BoothOrganization,
         boothOrganizationProjectRepository: Repository<BoothOrganizationProject>,
@@ -256,6 +266,7 @@ export class BoothOrganizationService {
                     async (boothOrganizationVideo) => {
                         const createdBoothOrganizationProject =
                             await this.createBoothOrganizationProject(
+                                jwtAccessToken,
                                 boothOrganizationVideo,
                                 boothOrganization,
                                 boothOrganizationProjectRepository,
@@ -272,6 +283,7 @@ export class BoothOrganizationService {
     }
 
     private async createMultipleBoothOrganizationProduct(
+        jwtAccessToken: string,
         boothOrganizationDto: BoothOrganizationDto,
         boothOrganization: BoothOrganization,
         boothOrganizationProductRepository: Repository<BoothOrganizationProduct>,
@@ -285,6 +297,7 @@ export class BoothOrganizationService {
                     async (boothOrganizationProduct) => {
                         const createdBoothOrganizationProduct =
                             await this.createBoothOrganizationProduct(
+                                jwtAccessToken,
                                 boothOrganizationProduct,
                                 boothOrganization,
                                 boothOrganizationProductRepository,
@@ -485,6 +498,7 @@ export class BoothOrganizationService {
     }
 
     private async createBoothOrganizationImage(
+        jwtAccessToken: string,
         boothOrganizationImageDto: BoothOrganizationImageDto,
         boothOrganization: BoothOrganization,
         boothOrganizationImageRepository: Repository<BoothOrganizationImage>,
@@ -508,6 +522,7 @@ export class BoothOrganizationService {
         if (boothOrganizationImageDto.media_data) {
             imageEntity.imageId = await this.utilService.createUrlMedias(
                 boothOrganizationImageDto.media_data,
+                jwtAccessToken,
             );
         }
 
@@ -529,6 +544,7 @@ export class BoothOrganizationService {
     }
 
     private async createBoothOrganizationVideo(
+        jwtAccessToken: string,
         boothOrganizationVideoDto: BoothOrganizationVideoDto,
         boothOrganization: BoothOrganization,
         boothOrganizationVideoRepository: Repository<BoothOrganizationVideo>,
@@ -552,6 +568,7 @@ export class BoothOrganizationService {
         if (boothOrganizationVideoDto.media_data) {
             videoEntity.videoId = await this.utilService.createUrlMedias(
                 boothOrganizationVideoDto.media_data,
+                jwtAccessToken,
             );
         }
 
@@ -573,6 +590,7 @@ export class BoothOrganizationService {
     }
 
     private async createBoothOrganizationProject(
+        jwtAccessToken: string,
         boothOrganizationProjectDto: BoothOrganizationProjectDto,
         boothOrganization: BoothOrganization,
         boothOrganizationProjectRepository: Repository<BoothOrganizationProject>,
@@ -598,6 +616,7 @@ export class BoothOrganizationService {
         if (boothOrganizationProjectDto.media_data) {
             projectEntity.imageId = await this.utilService.createUrlMedias(
                 boothOrganizationProjectDto.media_data,
+                jwtAccessToken,
             );
         }
 
@@ -619,6 +638,7 @@ export class BoothOrganizationService {
     }
 
     private async createBoothOrganizationProduct(
+        jwtAccessToken: string,
         boothOrganizationProductDto: BoothOrganizationProductDto,
         boothOrganization: BoothOrganization,
         boothOrganizationProductRepository: Repository<BoothOrganizationProduct>,
@@ -646,6 +666,7 @@ export class BoothOrganizationService {
         if (boothOrganizationProductDto.media_data) {
             productEntity.imageId = await this.utilService.createUrlMedias(
                 boothOrganizationProductDto.media_data,
+                jwtAccessToken,
             );
         }
 

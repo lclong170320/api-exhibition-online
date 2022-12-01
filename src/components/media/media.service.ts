@@ -15,6 +15,7 @@ import { MediaResponse } from './dto/media-response.dto';
 import { Media as MediaDto } from './dto/media.dto';
 import { Media } from './entities/media.entity';
 import { PaginatedMediasConverter } from './converters/paginated-medias.converter';
+import { User } from '@/components/media/dto/user.dto';
 
 @Injectable()
 export class MediaService {
@@ -49,7 +50,10 @@ export class MediaService {
         );
     }
 
-    async generateMedia(mediaDto: MediaDto): Promise<MediaDto> {
+    async generateMedia(
+        mediaDto: MediaDto,
+        created_by: number,
+    ): Promise<MediaDto> {
         const allowExtension = this.configService
             .get<string>('ALLOW_UPLOAD_FILE')
             .split(',');
@@ -77,14 +81,13 @@ export class MediaService {
         return {
             url: url,
             mime: type.mime,
-            // TODO: handle getUserId from access token
-            user_id: 1,
+            user_id: created_by,
         } as MediaDto;
     }
 
-    async createMedia(mediaDto: MediaDto): Promise<MediaResponse> {
+    async createMedia(mediaDto: MediaDto, user: User): Promise<MediaResponse> {
         const mediaRepository = this.dataSource.manager.getRepository(Media);
-        const media = await this.generateMedia(mediaDto);
+        const media = await this.generateMedia(mediaDto, user.id);
         const mediaEntity = this.mediaConverter.toEntity(media);
 
         const createdMedia = await mediaRepository.save(mediaEntity);

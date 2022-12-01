@@ -6,6 +6,7 @@ import { Role } from '@/components/exhibition/dto/role.dto';
 import { RolesGuard } from 'guards/roles.guard';
 import { Roles } from '@/decorators/roles.decorator';
 import { JWTAuthGuard } from '@/components/user/guards/auth.guard';
+import { JwtAccessToken } from '@/decorators/jwt-access-token.decorator';
 
 @Controller('spaces')
 export class SpaceController {
@@ -21,7 +22,11 @@ export class SpaceController {
     @UseGuards(JWTAuthGuard, RolesGuard)
     @Roles(Role.ADMIN)
     @Put(':id')
-    updateSpace(@Param('id') id: string, @Body() spaceDto: SpaceDto) {
-        return this.spaceService.updateSpace(id, spaceDto);
+    updateSpace(
+        @JwtAccessToken() jwtAccessToken: string,
+        @Param('id') id: string,
+        @Body() spaceDto: SpaceDto,
+    ) {
+        return this.spaceService.updateSpace(jwtAccessToken, id, spaceDto);
     }
 }

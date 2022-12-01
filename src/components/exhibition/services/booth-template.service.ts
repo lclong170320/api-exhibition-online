@@ -19,6 +19,7 @@ import { BoothTemplatePosition as BoothTemplatePositionDto } from '@/components/
 import { BoothTemplatePosition } from '../entities/booth-template-position.entity';
 import { BoothTemplatePositionConverter } from '../converters/booth-template-position.converter';
 import { UtilService } from '@/utils/helper/util.service';
+import { User } from '@/components/exhibition/dto/user.dto';
 
 @Injectable()
 export class BoothTemplateService {
@@ -63,7 +64,6 @@ export class BoothTemplateService {
         const searchableColumns = ['name'];
         const filterableColumns = ['type'];
         const defaultSortBy = [['createdAt', 'DESC']];
-        // const populatableColumns = ['boothTemplatePositions'];
         const populatableColumns = query.populate;
         const boothTemplateRepository =
             this.dataSource.manager.getRepository(BoothTemplate);
@@ -88,6 +88,8 @@ export class BoothTemplateService {
     }
 
     async createBoothTemplate(
+        jwtAccessToken: string,
+        user: User,
         boothTemplateDto: BoothTemplateDto,
     ): Promise<BoothTemplateDto> {
         const createdBoothTemplate = await this.dataSource.transaction(
@@ -98,17 +100,19 @@ export class BoothTemplateService {
                     BoothTemplatePosition,
                 );
 
-                const created_by = 1; // TODO: handle getUserId from access token
+                const created_by = user.id;
                 const boothTemplateEntity =
                     this.boothTemplateConverter.toEntity(boothTemplateDto);
                 boothTemplateEntity.modelId =
                     await this.utilService.createUrlMedias(
                         boothTemplateDto.model_data,
+                        jwtAccessToken,
                     );
 
                 boothTemplateEntity.thumbnailId =
                     await this.utilService.createUrlMedias(
                         boothTemplateDto.thumbnail_data,
+                        jwtAccessToken,
                     );
                 boothTemplateEntity.createdBy = created_by;
                 boothTemplateEntity.createdDate = new Date();

@@ -85,6 +85,7 @@ export class BoothOrganizationTemplateService {
     }
 
     async createBoothOrganizationTemplate(
+        jwtAccessToken: string,
         user: User,
         boothOrganizationTemplateDto: BoothOrganizationTemplateDto,
     ) {
@@ -99,6 +100,7 @@ export class BoothOrganizationTemplateService {
                     await this.boothOrganizationTemplateConverter.toEntity(
                         boothOrganizationTemplateDto,
                         user.id,
+                        jwtAccessToken,
                     );
                 const createdBoothTemplateOrganization =
                     await boothOrganizationTemplateRepository.save(

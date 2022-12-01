@@ -19,6 +19,9 @@ import { Roles } from '@/decorators/roles.decorator';
 import { Role } from '../dto/role.dto';
 import { UpdateExhibition } from '../dto/exhibition-update.dto';
 import { JWTAuthGuard } from '@/components/user/guards/auth.guard';
+import { CurrentUser } from '@/decorators/current-user';
+import { User } from '@/components/exhibition/dto/user.dto';
+import { JwtAccessToken } from '@/decorators/jwt-access-token.decorator';
 
 @Controller('exhibitions')
 export class ExhibitionController {
@@ -62,10 +65,14 @@ export class ExhibitionController {
     @Roles(Role.ADMIN)
     @Post(':exhibitionId/booths')
     createBooth(
+        @JwtAccessToken() jwtAccessToken: string,
+        @CurrentUser() user: User,
         @Param('exhibitionId') exhibitionId: string,
         @Body() boothDto: BoothDto,
     ) {
         return this.exhibitionService.createBooth(
+            jwtAccessToken,
+            user,
             parseInt(exhibitionId),
             boothDto,
         );
@@ -90,11 +97,15 @@ export class ExhibitionController {
     @Roles(Role.ADMIN)
     @Put(':exhibition_id/booths/:booth_id')
     updateBooth(
+        @JwtAccessToken() jwtAccessToken: string,
+        @CurrentUser() user: User,
         @Param('exhibition_id') exhibitionId: string,
         @Param('booth_id') boothId: string,
         @Body() boothDto: BoothDto,
     ) {
         return this.exhibitionService.updateBooth(
+            jwtAccessToken,
+            user,
             exhibitionId,
             boothId,
             boothDto,

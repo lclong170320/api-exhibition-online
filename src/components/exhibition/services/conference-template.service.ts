@@ -26,6 +26,7 @@ export class ConferenceTemplateService {
     ) {}
 
     async createConferenceTemplate(
+        jwtAccessToken: string,
         userId: number,
         conferenceTemplateDto: ConferenceTemplateDto,
     ): Promise<ConferenceTemplateDto> {
@@ -43,11 +44,13 @@ export class ConferenceTemplateService {
                 conferenceTemplateEntity.modelId =
                     await this.utilService.createUrlMedias(
                         conferenceTemplateDto.model_data,
+                        jwtAccessToken,
                     );
 
                 conferenceTemplateEntity.thumbnailId =
                     await this.utilService.createUrlMedias(
                         conferenceTemplateDto.thumbnail_data,
+                        jwtAccessToken,
                     );
                 conferenceTemplateEntity.createdBy = userId;
                 conferenceTemplateEntity.createdDate = new Date();

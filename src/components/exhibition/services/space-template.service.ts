@@ -18,6 +18,7 @@ import { SpaceTemplateLocation } from '../entities/space-template-location.entit
 import { SpaceTemplatePosition } from '../entities/space-template-position.entity';
 import { SpaceTemplateLocationConverter } from '../converters/space-template-location.converter';
 import { UtilService } from '@/utils/helper/util.service';
+import { User } from '@/components/exhibition/dto/user.dto';
 
 @Injectable()
 export class SpaceTemplateService {
@@ -146,7 +147,11 @@ export class SpaceTemplateService {
         return createdSpaceTemplateLocations;
     }
 
-    async createSpaceTemplate(spaceTemplateDto: SpaceTemplateDto) {
+    async createSpaceTemplate(
+        jwtAccessToken: string,
+        user: User,
+        spaceTemplateDto: SpaceTemplateDto,
+    ) {
         const createdSpaceTemplate = await this.dataSource.transaction(
             async (manager) => {
                 const spaceTemplateRepository =
@@ -163,19 +168,22 @@ export class SpaceTemplateService {
                 spaceTemplateEntity.createdDate = new Date(
                     spaceTemplateDto.created_date,
                 );
-                spaceTemplateEntity.createdBy = 1; // TODO: handle getUserId from access token
+                spaceTemplateEntity.createdBy = user.id;
 
                 spaceTemplateEntity.thumbnailId =
                     await this.utilService.createUrlMedias(
                         spaceTemplateDto.thumbnail_data,
+                        jwtAccessToken,
                     );
                 spaceTemplateEntity.modelId =
                     await this.utilService.createUrlMedias(
                         spaceTemplateDto.model_data,
+                        jwtAccessToken,
                     );
                 spaceTemplateEntity.mapId =
                     await this.utilService.createUrlMedias(
                         spaceTemplateDto.map_data,
+                        jwtAccessToken,
                     );
                 const createdSpaceTemplate = await spaceTemplateRepository.save(
                     spaceTemplateEntity,

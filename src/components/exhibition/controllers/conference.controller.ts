@@ -6,6 +6,7 @@ import { RolesGuard } from 'guards/roles.guard';
 import { Roles } from '@/decorators/roles.decorator';
 import { JWTAuthGuard } from '@/components/user/guards/auth.guard';
 import { Paginate, PaginateQuery } from '@/decorators/paginate.decorator';
+import { JwtAccessToken } from '@/decorators/jwt-access-token.decorator';
 
 @Controller('conferences')
 export class ConferenceController {
@@ -15,10 +16,15 @@ export class ConferenceController {
     @Roles(Role.ADMIN)
     @Put(':id')
     updateConference(
+        @JwtAccessToken() jwtAccessToken: string,
         @Param('id') id: string,
         @Body() conferenceDto: ConferenceDto,
     ) {
-        return this.conferenceService.updateConference(id, conferenceDto);
+        return this.conferenceService.updateConference(
+            jwtAccessToken,
+            id,
+            conferenceDto,
+        );
     }
 
     @UseGuards(JWTAuthGuard, RolesGuard)

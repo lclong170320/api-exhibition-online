@@ -32,7 +32,11 @@ export class ConferenceService {
         private readonly utilService: UtilService,
     ) {}
 
-    async updateConference(conferenceId: string, conferenceDto: ConferenceDto) {
+    async updateConference(
+        jwtAccessToken: string,
+        conferenceId: string,
+        conferenceDto: ConferenceDto,
+    ) {
         const updatedConference = await this.dataSource.transaction(
             async (manager) => {
                 const conferenceRepository = manager.getRepository(Conference);
@@ -74,6 +78,7 @@ export class ConferenceService {
                     conferenceVideoRepository,
                 );
                 await this.createConferenceData(
+                    jwtAccessToken,
                     conferenceDto,
                     conferenceEntity,
                     conferenceImageRepository,
@@ -113,6 +118,7 @@ export class ConferenceService {
     }
 
     private async createConferenceVideo(
+        jwtAccessToken: string,
         data: ConferenceVideoDto,
         conference: Conference,
         conferenceVideoRepository: Repository<ConferenceVideo>,
@@ -127,6 +133,7 @@ export class ConferenceService {
         if (data.media_data) {
             const newVideoId = await this.utilService.createUrlMedias(
                 data.media_data,
+                jwtAccessToken,
             );
             newVideo.videoId = newVideoId;
         }
@@ -156,6 +163,7 @@ export class ConferenceService {
     }
 
     private async createConferenceImage(
+        jwtAccessToken: string,
         data: ConferenceImageDto,
         conference: Conference,
         conferenceImageRepository: Repository<ConferenceImage>,
@@ -170,6 +178,7 @@ export class ConferenceService {
         if (data.media_data) {
             const newImageId = await this.utilService.createUrlMedias(
                 data.media_data,
+                jwtAccessToken,
             );
             imageEntity.imageId = newImageId;
         }
@@ -200,6 +209,7 @@ export class ConferenceService {
     }
 
     private async createConferenceData(
+        jwtAccessToken: string,
         conferenceDto: ConferenceDto,
         conference: Conference,
         conferenceImageRepository: Repository<ConferenceImage>,
@@ -209,6 +219,7 @@ export class ConferenceService {
         await Promise.all(
             conferenceDto.conference_images?.map(async (data) => {
                 const newConferenceImage = await this.createConferenceImage(
+                    jwtAccessToken,
                     data,
                     conference,
                     conferenceImageRepository,
@@ -220,6 +231,7 @@ export class ConferenceService {
         await Promise.all(
             conferenceDto.conference_videos?.map(async (data) => {
                 const newConferenceVideo = await this.createConferenceVideo(
+                    jwtAccessToken,
                     data,
                     conference,
                     conferenceVideoRepository,

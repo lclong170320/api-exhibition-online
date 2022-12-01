@@ -50,6 +50,7 @@ import { UpdateExhibition } from '../dto/exhibition-update.dto';
 import { Conference } from '../entities/conference.entity';
 import { ConferenceTemplate } from '../entities/conference-template.entity';
 import { UtilService } from '@/utils/helper/util.service';
+import { User } from '@/components/exhibition/dto/user.dto';
 
 @Injectable()
 export class ExhibitionService {
@@ -514,6 +515,7 @@ export class ExhibitionService {
     }
 
     private async createBoothImages(
+        jwtAccessToken: string,
         listOfBoothImageDto: BoothImageDto[],
         booth: Booth,
         boothImageRepository: Repository<BoothImage>,
@@ -541,6 +543,7 @@ export class ExhibitionService {
                         imageEntity.imageId =
                             await this.utilService.createUrlMedias(
                                 imageDto.media_data,
+                                jwtAccessToken,
                             );
                     }
 
@@ -567,6 +570,7 @@ export class ExhibitionService {
     }
 
     private async createBoothVideos(
+        jwtAccessToken: string,
         listOfBoothVideoDto: BoothVideoDto[],
         booth: Booth,
         boothVideoRepository: Repository<BoothVideo>,
@@ -594,6 +598,7 @@ export class ExhibitionService {
                         videoEntity.videoId =
                             await this.utilService.createUrlMedias(
                                 videoDto.media_data,
+                                jwtAccessToken,
                             );
                     }
 
@@ -620,6 +625,7 @@ export class ExhibitionService {
     }
 
     private async createBoothProjects(
+        jwtAccessToken: string,
         listOfBoothProjectDto: BoothProjectDto[],
         booth: Booth,
         boothProjectRepository: Repository<BoothProject>,
@@ -648,6 +654,7 @@ export class ExhibitionService {
                             projectEntity.imageId =
                                 await this.utilService.createUrlMedias(
                                     projectDto.media_data,
+                                    jwtAccessToken,
                                 );
                         }
 
@@ -680,6 +687,7 @@ export class ExhibitionService {
     }
 
     private async createBoothProducts(
+        jwtAccessToken: string,
         listOfBoothProductDto: BoothProductDto[],
         booth: Booth,
         boothProductRepository: Repository<BoothProduct>,
@@ -708,6 +716,7 @@ export class ExhibitionService {
                             productEntity.imageId =
                                 await this.utilService.createUrlMedias(
                                     productDto.media_data,
+                                    jwtAccessToken,
                                 );
                         }
 
@@ -847,7 +856,12 @@ export class ExhibitionService {
         return booth;
     }
 
-    async createBooth(exhibitionId: number, boothDto: BoothDto) {
+    async createBooth(
+        jwtAccessToken: string,
+        user: User,
+        exhibitionId: number,
+        boothDto: BoothDto,
+    ) {
         const createdBooth = await this.dataSource.transaction(
             async (manager) => {
                 const boothRepository = manager.getRepository(Booth);
@@ -900,7 +914,7 @@ export class ExhibitionService {
 
                 const boothEntity = new Booth();
                 boothEntity.name = boothDto.name;
-                boothEntity.createdBy = 1; // TODO: handle getUserId from access token
+                boothEntity.createdBy = user.id;
                 boothEntity.exhibition = firstExhibition;
                 boothEntity.boothTemplate = firstBoothTemplate;
                 boothEntity.location = firstLocation;
@@ -915,6 +929,7 @@ export class ExhibitionService {
                 );
 
                 const createdBoothImages = await this.createBoothImages(
+                    jwtAccessToken,
                     boothDto.booth_images,
                     createdBooth,
                     boothImageRepository,
@@ -923,6 +938,7 @@ export class ExhibitionService {
                 );
 
                 const createdBoothVideos = await this.createBoothVideos(
+                    jwtAccessToken,
                     boothDto.booth_videos,
                     createdBooth,
                     boothVideoRepository,
@@ -931,6 +947,7 @@ export class ExhibitionService {
                 );
 
                 const createdBoothProjects = await this.createBoothProjects(
+                    jwtAccessToken,
                     boothDto.booth_projects,
                     createdBooth,
                     boothProjectRepository,
@@ -938,6 +955,7 @@ export class ExhibitionService {
                     boothTemplatePositionRepository,
                 );
                 const createdBoothProducts = await this.createBoothProducts(
+                    jwtAccessToken,
                     boothDto.booth_products,
                     createdBooth,
                     boothProductRepository,
@@ -959,6 +977,8 @@ export class ExhibitionService {
     }
 
     async updateBooth(
+        jwtAccessToken: string,
+        user: User,
         exhibitionId: string,
         boothId: string,
         boothDto: BoothDto,
@@ -1023,7 +1043,7 @@ export class ExhibitionService {
                     boothTemplateRepository,
                 );
 
-                boothEntity.createdBy = 1; // TODO: handle getUserId from access token
+                boothEntity.createdBy = user.id;
                 boothEntity.exhibition = firstExhibition;
                 boothEntity.boothTemplate = firstBoothTemplate;
                 boothEntity.location = firstLocation;
@@ -1059,6 +1079,7 @@ export class ExhibitionService {
 
                 if (boothDto.booth_products) {
                     createdBoothProduct = await this.createBoothProducts(
+                        jwtAccessToken,
                         boothDto.booth_products,
                         createdBooth,
                         boothProductRepository,
@@ -1070,6 +1091,7 @@ export class ExhibitionService {
 
                 if (boothDto.booth_projects) {
                     createdBoothProject = await this.createBoothProjects(
+                        jwtAccessToken,
                         boothDto.booth_projects,
                         createdBooth,
                         boothProjectRepository,
@@ -1081,6 +1103,7 @@ export class ExhibitionService {
 
                 if (boothDto.booth_images) {
                     createdBoothImage = await this.createBoothImages(
+                        jwtAccessToken,
                         boothDto.booth_images,
                         createdBooth,
                         boothImageRepository,
@@ -1092,6 +1115,7 @@ export class ExhibitionService {
 
                 if (boothDto.booth_videos) {
                     createdBoothVideo = await this.createBoothVideos(
+                        jwtAccessToken,
                         boothDto.booth_videos,
                         createdBooth,
                         boothVideoRepository,

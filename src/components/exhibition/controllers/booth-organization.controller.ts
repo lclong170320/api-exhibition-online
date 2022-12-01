@@ -6,6 +6,7 @@ import { Role } from '@/components/exhibition/dto/role.dto';
 import { RolesGuard } from 'guards/roles.guard';
 import { Roles } from '@/decorators/roles.decorator';
 import { JWTAuthGuard } from '@/components/user/guards/auth.guard';
+import { JwtAccessToken } from '@/decorators/jwt-access-token.decorator';
 
 @Controller('booth-organizations')
 export class BoothOrganizationController {
@@ -28,10 +29,12 @@ export class BoothOrganizationController {
 
     @Put(':id')
     updateBoothOrganization(
+        @JwtAccessToken() jwtAccessToken: string,
         @Param('id') id: string,
         @Body() boothOrganizationDto: BoothOrganizationDto,
     ) {
         return this.boothOrganizationService.updateBoothOrganization(
+            jwtAccessToken,
             id,
             boothOrganizationDto,
         );

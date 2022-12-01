@@ -68,7 +68,11 @@ export class SpaceService {
         return this.spaceConverter.toDto(firstSpace);
     }
 
-    async updateSpace(spaceId: string, spaceDto: SpaceDto) {
+    async updateSpace(
+        jwtAccessToken: string,
+        spaceId: string,
+        spaceDto: SpaceDto,
+    ) {
         const updatedSpace = await this.dataSource.transaction(
             async (manager) => {
                 const spaceRepository = manager.getRepository(Space);
@@ -108,6 +112,7 @@ export class SpaceService {
                     spaceVideoRepository,
                 );
                 await this.createSpaceData(
+                    jwtAccessToken,
                     spaceDto,
                     spaceEntity,
                     spaceImageRepository,
@@ -147,6 +152,7 @@ export class SpaceService {
     }
 
     private async createSpaceVideo(
+        jwtAccessToken: string,
         data: SpaceVideoDto,
         space: Space,
         spaceVideoRepository: Repository<SpaceVideo>,
@@ -160,6 +166,7 @@ export class SpaceService {
         if (data.media_data) {
             const newVideoId = await this.utilService.createUrlMedias(
                 data.media_data,
+                jwtAccessToken,
             );
             newVideo.videoId = newVideoId;
         }
@@ -188,6 +195,7 @@ export class SpaceService {
     }
 
     private async createSpaceImage(
+        jwtAccessToken: string,
         data: SpaceImageDto,
         space: Space,
         spaceImageRepository: Repository<SpaceImage>,
@@ -201,6 +209,7 @@ export class SpaceService {
         if (data.media_data) {
             const newImageId = await this.utilService.createUrlMedias(
                 data.media_data,
+                jwtAccessToken,
             );
             imageEntity.imageId = newImageId;
         }
@@ -230,6 +239,7 @@ export class SpaceService {
     }
 
     private async createSpaceData(
+        jwtAccessToken: string,
         spaceDto: SpaceDto,
         space: Space,
         spaceImageRepository: Repository<SpaceImage>,
@@ -239,6 +249,7 @@ export class SpaceService {
         await Promise.all(
             spaceDto.space_images?.map(async (data) => {
                 const newSpaceImage = await this.createSpaceImage(
+                    jwtAccessToken,
                     data,
                     space,
                     spaceImageRepository,
@@ -250,6 +261,7 @@ export class SpaceService {
         await Promise.all(
             spaceDto.space_videos?.map(async (data) => {
                 const newSpaceVideo = await this.createSpaceVideo(
+                    jwtAccessToken,
                     data,
                     space,
                     spaceVideoRepository,

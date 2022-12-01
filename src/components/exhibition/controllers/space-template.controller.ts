@@ -15,6 +15,9 @@ import { Role } from '@/components/exhibition/dto/role.dto';
 import { RolesGuard } from 'guards/roles.guard';
 import { Roles } from '@/decorators/roles.decorator';
 import { JWTAuthGuard } from '@/components/user/guards/auth.guard';
+import { CurrentUser } from '@/decorators/current-user';
+import { User } from '@/components/exhibition/dto/user.dto';
+import { JwtAccessToken } from '@/decorators/jwt-access-token.decorator';
 
 @Controller('space-templates')
 export class SpaceTemplateController {
@@ -43,8 +46,16 @@ export class SpaceTemplateController {
     @UseGuards(JWTAuthGuard, RolesGuard)
     @Roles(Role.ADMIN)
     @Post()
-    createSpaceTemplate(@Body() spaceTemplateDto: SpaceTemplateDto) {
-        return this.spaceTemplateService.createSpaceTemplate(spaceTemplateDto);
+    createSpaceTemplate(
+        @JwtAccessToken() jwtAccessToken: string,
+        @CurrentUser() user: User,
+        @Body() spaceTemplateDto: SpaceTemplateDto,
+    ) {
+        return this.spaceTemplateService.createSpaceTemplate(
+            jwtAccessToken,
+            user,
+            spaceTemplateDto,
+        );
     }
 
     @Delete(':id')

@@ -11,14 +11,22 @@ export class BoothOrganizationTemplateConverter {
         private utilService: UtilService,
     ) {}
 
-    async toEntity(dto: BoothOrganizationTemplateDto, userId: number) {
+    async toEntity(
+        dto: BoothOrganizationTemplateDto,
+        userId: number,
+        jwtAccessToken: string,
+    ) {
         const entity = new BoothOrganizationTemplate();
         entity.name = dto.name;
         entity.createdBy = userId;
         entity.createdDate = new Date();
-        entity.modelId = await this.utilService.createUrlMedias(dto.model_data);
+        entity.modelId = await this.utilService.createUrlMedias(
+            dto.model_data,
+            jwtAccessToken,
+        );
         entity.thumbnailId = await this.utilService.createUrlMedias(
             dto.thumbnail_data,
+            jwtAccessToken,
         );
         return entity;
     }

@@ -74,11 +74,15 @@ export class UtilService {
         return result.url;
     }
 
-    async createUrlMedias(data: string): Promise<number> {
+    async createUrlMedias(
+        data: string,
+        jwtAccessToken: string,
+    ): Promise<number> {
         const requestConfig = {
             maxBodyLength: Infinity,
             headers: {
                 'Content-Type': 'application/json',
+                Authorization: `Bearer ${jwtAccessToken}`,
             },
         };
         const url = this.configService.get('CREATING_MEDIA_URL');
