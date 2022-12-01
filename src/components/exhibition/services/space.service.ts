@@ -1,8 +1,6 @@
 import { DbConnection } from '@/database/config/db';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
-import { ConfigService } from '@nestjs/config';
-import { lastValueFrom, map } from 'rxjs';
 import {
     NotFoundException,
     BadRequestException,
@@ -12,7 +10,6 @@ import { Space as SpaceDto } from '@/components/exhibition/dto/space.dto';
 import { Space } from '@/components/exhibition/entities/space.entity';
 import { SpaceTemplate } from '@/components/exhibition/entities/space-template.entity';
 import { SpaceConverter } from '@/components/exhibition/converters/space.converter';
-import { HttpService } from '@nestjs/axios';
 import { SpaceTemplatePosition } from '../entities/space-template-position.entity';
 import { SpaceImage } from '../entities/space-image.entity';
 import { SpaceVideo } from '../entities/space-video.entity';
@@ -22,17 +19,17 @@ import { SpaceVideoConverter } from '../converters/space-video.converter';
 import { SpaceImageConverter } from '../converters/space-image.converter';
 import { Video } from '../entities/video.entity';
 import { Image } from '../entities/image.entity';
+import { UtilService } from '@/utils/helper/util.service';
 
 @Injectable()
 export class SpaceService {
     constructor(
         @InjectDataSource(DbConnection.exhibitionCon)
         private readonly dataSource: DataSource,
-        private readonly configService: ConfigService,
-        private readonly httpService: HttpService,
         private readonly spaceConverter: SpaceConverter,
         private readonly spaceVideoConverter: SpaceVideoConverter,
         private readonly spaceImageConverter: SpaceImageConverter,
+        private readonly utilService: UtilService,
     ) {}
 
     async getSpaceById(spaceId: string, populate: string[]) {
@@ -149,25 +146,6 @@ export class SpaceService {
         return space;
     }
 
-    private async createUrlMedias(data: string): Promise<number> {
-        const requestConfig = {
-            maxBodyLength: Infinity,
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        };
-        const url = this.configService.get('CREATING_MEDIA_URL');
-        const media = this.httpService.post(url, { data }, requestConfig);
-        const response = media.pipe(
-            map((res) => {
-                return res.data;
-            }),
-        );
-        const result = await lastValueFrom(response);
-
-        return result.id;
-    }
-
     private async createSpaceVideo(
         data: SpaceVideoDto,
         space: Space,
@@ -180,7 +158,9 @@ export class SpaceService {
         newVideo.videoId = data.select_media_id;
 
         if (data.media_data) {
-            const newVideoId = await this.createUrlMedias(data.media_data);
+            const newVideoId = await this.utilService.createUrlMedias(
+                data.media_data,
+            );
             newVideo.videoId = newVideoId;
         }
         const createdVideo = await videoRepository.save(newVideo);
@@ -219,7 +199,9 @@ export class SpaceService {
         imageEntity.imageId = data.select_media_id;
 
         if (data.media_data) {
-            const newImageId = await this.createUrlMedias(data.media_data);
+            const newImageId = await this.utilService.createUrlMedias(
+                data.media_data,
+            );
             imageEntity.imageId = newImageId;
         }
 

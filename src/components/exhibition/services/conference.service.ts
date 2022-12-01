@@ -1,8 +1,6 @@
 import { DbConnection } from '@/database/config/db';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
-import { ConfigService } from '@nestjs/config';
-import { lastValueFrom, map } from 'rxjs';
 import {
     NotFoundException,
     BadRequestException,
@@ -12,7 +10,6 @@ import { Conference as ConferenceDto } from '@/components/exhibition/dto/confere
 import { Conference } from '@/components/exhibition/entities/conference.entity';
 import { ConferenceTemplate } from '@/components/exhibition/entities/conference-template.entity';
 import { ConferenceConverter } from '@/components/exhibition/converters/conference.converter';
-import { HttpService } from '@nestjs/axios';
 import { ConferenceTemplatePosition } from '../entities/conference-template-position.entity';
 import { ConferenceImage } from '../entities/conference-image.entity';
 import { ConferenceVideo } from '../entities/conference-video.entity';
@@ -22,17 +19,17 @@ import { ConferenceVideoConverter } from '../converters/conference-video.convert
 import { ConferenceImageConverter } from '../converters/conference-image.converter';
 import { Video } from '../entities/video.entity';
 import { Image } from '../entities/image.entity';
+import { UtilService } from '@/utils/helper/util.service';
 
 @Injectable()
 export class ConferenceService {
     constructor(
         @InjectDataSource(DbConnection.exhibitionCon)
         private readonly dataSource: DataSource,
-        private readonly configService: ConfigService,
-        private readonly httpService: HttpService,
         private readonly conferenceConverter: ConferenceConverter,
         private readonly conferenceVideoConverter: ConferenceVideoConverter,
         private readonly conferenceImageConverter: ConferenceImageConverter,
+        private readonly utilService: UtilService,
     ) {}
 
     async updateConference(conferenceId: string, conferenceDto: ConferenceDto) {
@@ -115,25 +112,6 @@ export class ConferenceService {
         return conference;
     }
 
-    private async createUrlMedias(data: string): Promise<number> {
-        const requestConfig = {
-            maxBodyLength: Infinity,
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        };
-        const url = this.configService.get('CREATING_MEDIA_URL');
-        const media = this.httpService.post(url, { data }, requestConfig);
-        const response = media.pipe(
-            map((res) => {
-                return res.data;
-            }),
-        );
-        const result = await lastValueFrom(response);
-
-        return result.id;
-    }
-
     private async createConferenceVideo(
         data: ConferenceVideoDto,
         conference: Conference,
@@ -147,7 +125,9 @@ export class ConferenceService {
         newVideo.videoId = data.select_media_id;
 
         if (data.media_data) {
-            const newVideoId = await this.createUrlMedias(data.media_data);
+            const newVideoId = await this.utilService.createUrlMedias(
+                data.media_data,
+            );
             newVideo.videoId = newVideoId;
         }
         const createdVideo = await videoRepository.save(newVideo);
@@ -188,7 +168,9 @@ export class ConferenceService {
         imageEntity.imageId = data.select_media_id;
 
         if (data.media_data) {
-            const newImageId = await this.createUrlMedias(data.media_data);
+            const newImageId = await this.utilService.createUrlMedias(
+                data.media_data,
+            );
             imageEntity.imageId = newImageId;
         }
 

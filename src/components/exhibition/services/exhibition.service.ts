@@ -49,6 +49,7 @@ import { Video } from '../entities/video.entity';
 import { UpdateExhibition } from '../dto/exhibition-update.dto';
 import { Conference } from '../entities/conference.entity';
 import { ConferenceTemplate } from '../entities/conference-template.entity';
+import { UtilService } from '@/utils/helper/util.service';
 
 @Injectable()
 export class ExhibitionService {
@@ -61,6 +62,7 @@ export class ExhibitionService {
         private readonly httpService: HttpService,
         private readonly liveStreamConverter: LiveStreamConverter,
         private readonly boothConverter: BoothConverter,
+        private readonly utilService: UtilService,
     ) {}
 
     private checkDateExhibition(exhibitionDto: ExhibitionDto) {
@@ -379,22 +381,7 @@ export class ExhibitionService {
                 `The 'exhibition_id' ${exhibitionId} not found`,
             );
         }
-        // const allowPopulate = [
-        //     'boothImages.boothTemplatePosition',
-        //     'boothProjects.boothTemplatePosition',
-        //     'boothProducts.boothTemplatePosition',
-        //     'boothProducts.boothTemplatePosition',
-        //     'boothVideos.boothTemplatePosition',
-        //     'boothTemplate',
-        //     'location',
-        // ];
-        // populate.forEach((value) => {
-        //     if (!allowPopulate.includes(value)) {
-        //         throw new BadRequestException(
-        //             'Query value is not allowed ' + value,
-        //         );
-        //     }
-        // });
+
         const boothRepository = this.dataSource.getRepository(Booth);
         const firstBooth = await boothRepository.findOne({
             where: {
@@ -423,25 +410,6 @@ export class ExhibitionService {
             );
         }
         return this.boothConverter.toDto(firstBooth);
-    }
-
-    private async createUrlMedias(data: string): Promise<number> {
-        const requestConfig = {
-            maxBodyLength: Infinity,
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        };
-        const url = this.configService.get('CREATING_MEDIA_URL');
-        const media = this.httpService.post(url, { data }, requestConfig);
-        const response = media.pipe(
-            map((res) => {
-                return res.data;
-            }),
-        );
-        const result = await lastValueFrom(response);
-
-        return result.id;
     }
 
     private async getLocationById(
@@ -570,9 +538,10 @@ export class ExhibitionService {
                     imageEntity.imageId = imageDto.selected_media_id;
 
                     if (imageDto.media_data) {
-                        imageEntity.imageId = await this.createUrlMedias(
-                            imageDto.media_data,
-                        );
+                        imageEntity.imageId =
+                            await this.utilService.createUrlMedias(
+                                imageDto.media_data,
+                            );
                     }
 
                     const createdImage = await imageRepository.save(
@@ -622,9 +591,10 @@ export class ExhibitionService {
                     videoEntity.videoId = videoDto.selected_media_id;
 
                     if (videoDto.media_data) {
-                        videoEntity.videoId = await this.createUrlMedias(
-                            videoDto.media_data,
-                        );
+                        videoEntity.videoId =
+                            await this.utilService.createUrlMedias(
+                                videoDto.media_data,
+                            );
                     }
 
                     const createdVideo = await videoRepository.save(
@@ -675,9 +645,10 @@ export class ExhibitionService {
                         projectEntity.imageId = projectDto.selected_media_id;
 
                         if (projectDto.media_data) {
-                            projectEntity.imageId = await this.createUrlMedias(
-                                projectDto.media_data,
-                            );
+                            projectEntity.imageId =
+                                await this.utilService.createUrlMedias(
+                                    projectDto.media_data,
+                                );
                         }
 
                         projectEntity.title = projectDto.title;
@@ -734,9 +705,10 @@ export class ExhibitionService {
                         productEntity.imageId = productDto.selected_media_id;
 
                         if (productDto.media_data) {
-                            productEntity.imageId = await this.createUrlMedias(
-                                productDto.media_data,
-                            );
+                            productEntity.imageId =
+                                await this.utilService.createUrlMedias(
+                                    productDto.media_data,
+                                );
                         }
 
                         productEntity.name = productDto.name;

@@ -1,11 +1,8 @@
 import { DbConnection } from '@/database/config/db';
-import { HttpService } from '@nestjs/axios';
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { paginate } from '@/utils/pagination';
 import { PaginateQuery } from '@/decorators/paginate.decorator';
-import { lastValueFrom, map } from 'rxjs';
 import { DataSource } from 'typeorm';
 import { PaginatedEnterprisesConverter } from './converters/paginated-enterprises.converter';
 import { EnterpriseConverter } from './converters/enterprise.converter';
@@ -20,8 +17,6 @@ export class EnterpriseService {
         private readonly dataSource: DataSource,
         private readonly enterpriseConverter: EnterpriseConverter,
         private readonly paginatedEnterprisesConverter: PaginatedEnterprisesConverter,
-        private readonly httpService: HttpService,
-        private readonly configService: ConfigService,
     ) {}
 
     async getEnterprises(query: PaginateQuery) {
@@ -66,26 +61,6 @@ export class EnterpriseService {
         );
 
         return this.enterpriseConverter.toDto(createdEnterprise);
-    }
-
-    async createUrlMedias(data: string): Promise<number> {
-        const requestConfig = {
-            maxBodyLength: Infinity,
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        };
-
-        const url = this.configService.get('CREATING_MEDIA_URL');
-        const media = this.httpService.post(url, { data }, requestConfig);
-        const response = media.pipe(
-            map((res) => {
-                return res.data;
-            }),
-        );
-        const result = await lastValueFrom(response);
-
-        return result.id;
     }
 
     async generateQR(text: string): Promise<string> {

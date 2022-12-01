@@ -16,10 +16,8 @@ import { SpaceTemplatePosition as SpaceTemplatePositionDto } from '@/components/
 import { SpaceTemplateLocation as SpaceTemplateLocationDto } from '@/components/exhibition/dto/space-template-location.dto';
 import { SpaceTemplateLocation } from '../entities/space-template-location.entity';
 import { SpaceTemplatePosition } from '../entities/space-template-position.entity';
-import { ConfigService } from '@nestjs/config';
-import { HttpService } from '@nestjs/axios';
-import { lastValueFrom, map } from 'rxjs';
 import { SpaceTemplateLocationConverter } from '../converters/space-template-location.converter';
+import { UtilService } from '@/utils/helper/util.service';
 
 @Injectable()
 export class SpaceTemplateService {
@@ -29,8 +27,7 @@ export class SpaceTemplateService {
         private spaceTemplateConverter: SpaceTemplateConverter,
         private paginatedSpaceTemplatesConverter: PaginatedSpaceTemplatesConverter,
         private spaceTemplateLocationConverter: SpaceTemplateLocationConverter,
-        private readonly configService: ConfigService,
-        private readonly httpService: HttpService,
+        private readonly utilService: UtilService,
     ) {}
 
     async findSpaceTemplateById(id: string, populate: string[]) {
@@ -149,25 +146,6 @@ export class SpaceTemplateService {
         return createdSpaceTemplateLocations;
     }
 
-    private async createUrlMedias(data: string): Promise<number> {
-        const requestConfig = {
-            maxBodyLength: Infinity,
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        };
-        const url = this.configService.get('CREATING_MEDIA_URL');
-        const media = this.httpService.post(url, { data }, requestConfig);
-        const response = media.pipe(
-            map((res) => {
-                return res.data;
-            }),
-        );
-        const result = await lastValueFrom(response);
-
-        return result.id;
-    }
-
     async createSpaceTemplate(spaceTemplateDto: SpaceTemplateDto) {
         const createdSpaceTemplate = await this.dataSource.transaction(
             async (manager) => {
@@ -187,15 +165,18 @@ export class SpaceTemplateService {
                 );
                 spaceTemplateEntity.createdBy = 1; // TODO: handle getUserId from access token
 
-                spaceTemplateEntity.thumbnailId = await this.createUrlMedias(
-                    spaceTemplateDto.thumbnail_data,
-                );
-                spaceTemplateEntity.modelId = await this.createUrlMedias(
-                    spaceTemplateDto.model_data,
-                );
-                spaceTemplateEntity.mapId = await this.createUrlMedias(
-                    spaceTemplateDto.map_data,
-                );
+                spaceTemplateEntity.thumbnailId =
+                    await this.utilService.createUrlMedias(
+                        spaceTemplateDto.thumbnail_data,
+                    );
+                spaceTemplateEntity.modelId =
+                    await this.utilService.createUrlMedias(
+                        spaceTemplateDto.model_data,
+                    );
+                spaceTemplateEntity.mapId =
+                    await this.utilService.createUrlMedias(
+                        spaceTemplateDto.map_data,
+                    );
                 const createdSpaceTemplate = await spaceTemplateRepository.save(
                     spaceTemplateEntity,
                 );

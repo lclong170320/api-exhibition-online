@@ -1,16 +1,13 @@
 import { DbConnection } from '@/database/config/db';
-import { HttpService } from '@nestjs/axios';
 import {
     BadRequestException,
     NotFoundException,
     Injectable,
 } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
-import { lastValueFrom, map } from 'rxjs';
 import { DataSource, Repository } from 'typeorm';
 import { BoothOrganization as BoothOrganizationDto } from '@/components/exhibition/dto/booth-organization.dto';
 import { BoothOrganization } from '@/components/exhibition/entities/booth-organization.entity';
-import { ConfigService } from '@nestjs/config';
 import { BoothOrganizationTemplate } from '../entities/booth-organization-template.entity';
 import { BoothOrganizationImage } from '../entities/booth-organization-image.entity';
 import { BoothOrganizationImage as BoothOrganizationImageDto } from '@/components/exhibition/dto/booth-organization-image.dto';
@@ -26,6 +23,7 @@ import { Video } from '../entities/video.entity';
 import { Project } from '../entities/project.entity';
 import { Product } from '../entities/product.entity';
 import { BoothOrganizationConverter } from '../converters/booth-organization.converter';
+import { UtilService } from '@/utils/helper/util.service';
 
 @Injectable()
 export class BoothOrganizationService {
@@ -33,8 +31,7 @@ export class BoothOrganizationService {
         @InjectDataSource(DbConnection.exhibitionCon)
         private readonly dataSource: DataSource,
         private readonly boothOrganizationConverter: BoothOrganizationConverter,
-        private readonly httpService: HttpService,
-        private readonly configService: ConfigService,
+        private readonly utilService: UtilService,
     ) {}
 
     async getBoothOrganizationById(
@@ -185,25 +182,6 @@ export class BoothOrganizationService {
         delete updatedBoothOrganization['boothOrganizationTemplate'];
 
         return this.boothOrganizationConverter.toDto(updatedBoothOrganization);
-    }
-
-    private async createUrlMedias(data: string): Promise<number> {
-        const requestConfig = {
-            maxBodyLength: Infinity,
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        };
-        const url = this.configService.get('CREATING_MEDIA_URL');
-        const media = this.httpService.post(url, { data }, requestConfig);
-        const response = media.pipe(
-            map((res) => {
-                return res.data;
-            }),
-        );
-        const result = await lastValueFrom(response);
-
-        return result.id;
     }
 
     private async createMultipleBoothOrganizationImage(
@@ -528,7 +506,7 @@ export class BoothOrganizationService {
         imageEntity.imageId = boothOrganizationImageDto.selected_media_id;
 
         if (boothOrganizationImageDto.media_data) {
-            imageEntity.imageId = await this.createUrlMedias(
+            imageEntity.imageId = await this.utilService.createUrlMedias(
                 boothOrganizationImageDto.media_data,
             );
         }
@@ -572,7 +550,7 @@ export class BoothOrganizationService {
         videoEntity.videoId = boothOrganizationVideoDto.selected_media_id;
 
         if (boothOrganizationVideoDto.media_data) {
-            videoEntity.videoId = await this.createUrlMedias(
+            videoEntity.videoId = await this.utilService.createUrlMedias(
                 boothOrganizationVideoDto.media_data,
             );
         }
@@ -618,7 +596,7 @@ export class BoothOrganizationService {
         projectEntity.description = boothOrganizationProjectDto.description;
 
         if (boothOrganizationProjectDto.media_data) {
-            projectEntity.imageId = await this.createUrlMedias(
+            projectEntity.imageId = await this.utilService.createUrlMedias(
                 boothOrganizationProjectDto.media_data,
             );
         }
@@ -666,7 +644,7 @@ export class BoothOrganizationService {
         productEntity.description = boothOrganizationProductDto.description;
 
         if (boothOrganizationProductDto.media_data) {
-            productEntity.imageId = await this.createUrlMedias(
+            productEntity.imageId = await this.utilService.createUrlMedias(
                 boothOrganizationProductDto.media_data,
             );
         }

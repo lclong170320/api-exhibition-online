@@ -263,12 +263,14 @@ paths:
             - [['id', 'start_time','end_time', 'created_at'], [DESC,ASC]]
             - Default: [['created_at', 'DESC']]
       - in: query
-        name: filter.booth.id
+        name: filter
         allowReserved: true
         schema:
-          type: string
-          example: $eq:30
-        description: Filter on the `booth.id` field.
+          type: array
+          items:
+            type: string
+            example: 'booth.id:$eq:30'
+        description: Filter by the field with syntax `column_name:operator:value`
       - in: query
         name: populate
         schema:
@@ -355,12 +357,14 @@ paths:
             - [['id', 'type','name', 'created_at'], [DESC,ASC]]
             - Default: [['createdAt', 'DESC']]
       - in: query
-        name: filter.type
+        name: filter
         allowReserved: true
         schema:
-          type: string
-          example: $eq:product
-        description: Filter on the `type` field.
+          type: array
+          items:
+            type: string
+            example: 'type:$eq:product'
+        description: Filter by the field with syntax `column_name:operator:value`
       - in: query
         name: populate
         schema:

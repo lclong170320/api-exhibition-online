@@ -9,9 +9,6 @@ import { Repository } from 'typeorm';
 import { BoothTemplate } from '@/components/exhibition/entities/booth-template.entity';
 import { PaginatedBoothTemplatesConverter } from '@/components/exhibition/converters/paginated-booth-templates.converter';
 import { BoothTemplateConverter } from '@/components/exhibition/converters/booth-template.converter';
-import { ConfigService } from '@nestjs/config';
-import { HttpService } from '@nestjs/axios';
-import { lastValueFrom, map } from 'rxjs';
 import { DataSource } from 'typeorm';
 import { PaginateQuery } from '@/decorators/paginate.decorator';
 import { paginate } from '@/utils/pagination';
@@ -21,6 +18,7 @@ import { BoothTemplatePosition as BoothTemplatePositionDto } from '@/components/
 
 import { BoothTemplatePosition } from '../entities/booth-template-position.entity';
 import { BoothTemplatePositionConverter } from '../converters/booth-template-position.converter';
+import { UtilService } from '@/utils/helper/util.service';
 
 @Injectable()
 export class BoothTemplateService {
@@ -30,8 +28,7 @@ export class BoothTemplateService {
         private paginatedBoothTemplatesConverter: PaginatedBoothTemplatesConverter,
         private boothTemplateConverter: BoothTemplateConverter,
         private boothTemplatePositionConverter: BoothTemplatePositionConverter,
-        private readonly httpService: HttpService,
-        private readonly configService: ConfigService,
+        private readonly utilService: UtilService,
     ) {}
 
     async findBoothTemplateById(id: string, populate: string[]) {
@@ -90,25 +87,6 @@ export class BoothTemplateService {
         );
     }
 
-    private async createUrlMedias(data: string): Promise<number> {
-        const requestConfig = {
-            maxBodyLength: Infinity,
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        };
-        const url = this.configService.get('CREATING_MEDIA_URL');
-        const media = this.httpService.post(url, { data }, requestConfig);
-        const response = media.pipe(
-            map((res) => {
-                return res.data;
-            }),
-        );
-        const result = await lastValueFrom(response);
-
-        return result.id;
-    }
-
     async createBoothTemplate(
         boothTemplateDto: BoothTemplateDto,
     ): Promise<BoothTemplateDto> {
@@ -123,13 +101,15 @@ export class BoothTemplateService {
                 const created_by = 1; // TODO: handle getUserId from access token
                 const boothTemplateEntity =
                     this.boothTemplateConverter.toEntity(boothTemplateDto);
-                boothTemplateEntity.modelId = await this.createUrlMedias(
-                    boothTemplateDto.model_data,
-                );
+                boothTemplateEntity.modelId =
+                    await this.utilService.createUrlMedias(
+                        boothTemplateDto.model_data,
+                    );
 
-                boothTemplateEntity.thumbnailId = await this.createUrlMedias(
-                    boothTemplateDto.thumbnail_data,
-                );
+                boothTemplateEntity.thumbnailId =
+                    await this.utilService.createUrlMedias(
+                        boothTemplateDto.thumbnail_data,
+                    );
                 boothTemplateEntity.createdBy = created_by;
                 boothTemplateEntity.createdDate = new Date();
                 const createdBoothTemplate = await boothTemplateRepository.save(

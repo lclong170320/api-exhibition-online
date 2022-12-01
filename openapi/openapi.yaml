@@ -57,12 +57,14 @@ paths:
            - ['id', 'DESC']
            - ['id', 'ASC']
       - in: query
-        name: filter.status
+        name: filter
         allowReserved: true
         schema:
-          type: string
-          example: $eq:new
-        description: Filter on the `status` field.
+          type: array
+          items:
+            type: string
+            example: 'status:$eq:new'
+        description: Filter by the field with syntax `column_name:operator:value`
       - in: query
         name: populate
         schema:
@@ -1027,12 +1029,14 @@ paths:
             - [['id', 'type','name', 'created_at'], [DESC,ASC]]
             - Default: [['createdAt', 'DESC']]
       - in: query
-        name: filter.type
+        name: filter
         allowReserved: true
         schema:
-          type: string
-          example: $eq:product
-        description: Filter on the `type` field.
+          type: array
+          items:
+            type: string
+            example: 'type:$eq:product'
+        description: Filter by the field with syntax `column_name:operator:value`
       - in: query
         name: populate
         schema:
@@ -1285,12 +1289,14 @@ paths:
           example: 'Test'
         description: Search booths by name
       - in: query
-        name: filter.enterpriseId
+        name: filter
         allowReserved: true
         schema:
-          type: string
-          example: $eq:1
-        description: Filter on the `enterpriseId` field.
+          type: array
+          items:
+            type: string
+            example: 'exhibition.name:$eq:trien%20lam%20'
+        description: Filter by the field with syntax `column_name:operator:value`
       - in: query
         name: populate
         schema:
@@ -1729,12 +1735,14 @@ paths:
           example: 'name:DESC'
         description: "Sort on allow columns:[['id', 'name', 'created_at'],[DESC,ASC]]\n default column:['created_at', 'DESC']"
       - in: query
-        name: filter.name
+        name: filter
         allowReserved: true
         schema:
-          type: string
-          example: $eq:Space 01
-        description: Filter on the `name` field.
+          type: array
+          items:
+            type: string
+            example: 'name:$eq:Space%2001'
+        description: Filter by the field with syntax `column_name:operator:value`
       - in: query
         name: populate
         schema:
@@ -2342,12 +2350,14 @@ paths:
           example: 'mime:DESC'
         description: "Sort on allow columns:[['id', 'mime', 'user_id', 'created_at'],[DESC,ASC]]\n default column:['created_at', 'DESC']"
       - in: query
-        name: filter.user_id
+        name: filter
         allowReserved: true
         schema:
-          type: string
-          example: $eq:1
-        description: Filter on the `user_id` field.
+          type: array
+          items:
+            type: string
+            example: user_id:$eq:1'
+        description: Filter by the field with syntax `column_name:operator:value`.
       responses:
         '200':
           description: OK
