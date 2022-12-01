@@ -27,18 +27,18 @@ export class ExhibitionController {
     @UseGuards(JWTAuthGuard, RolesGuard)
     @Roles(Role.ADMIN)
     @Get(':id')
-    getExhibitionById(
+    readExhibitionById(
         @Param('id') id: string,
         @Paginate() query: PaginateQuery,
     ) {
-        return this.exhibitionService.findExhibitionById(id, query.populate);
+        return this.exhibitionService.readExhibitionById(id, query.populate);
     }
 
     @UseGuards(JWTAuthGuard, RolesGuard)
     @Roles(Role.ADMIN)
     @Get()
-    getExhibitions(@Paginate() query: PaginateQuery) {
-        return this.exhibitionService.findExhibitions(query);
+    readExhibitions(@Paginate() query: PaginateQuery) {
+        return this.exhibitionService.readExhibitions(query);
     }
 
     @UseGuards(JWTAuthGuard, RolesGuard)
@@ -74,12 +74,12 @@ export class ExhibitionController {
     @UseGuards(JWTAuthGuard, RolesGuard)
     @Roles(Role.ADMIN)
     @Get(':exhibitionId/booths/:boothId')
-    getBoothById(
+    readBoothById(
         @Param('exhibitionId') exhibitionId: string,
         @Param('boothId') boothId: string,
         @Paginate() query: PaginateQuery,
     ) {
-        return this.exhibitionService.getBoothById(
+        return this.exhibitionService.readBoothById(
             exhibitionId,
             boothId,
             query.populate,

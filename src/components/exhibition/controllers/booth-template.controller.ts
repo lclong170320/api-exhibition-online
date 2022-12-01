@@ -23,11 +23,11 @@ export class BoothTemplateController {
     @UseGuards(JWTAuthGuard, RolesGuard)
     @Roles(Role.ADMIN)
     @Get(':id')
-    getBoothTemplateById(
+    readBoothTemplateById(
         @Param('id') id: string,
         @Paginate() query: PaginateQuery,
     ) {
-        return this.boothTemplateService.findBoothTemplateById(
+        return this.boothTemplateService.readBoothTemplateById(
             id,
             query.populate,
         );
@@ -36,8 +36,8 @@ export class BoothTemplateController {
     @UseGuards(JWTAuthGuard, RolesGuard)
     @Roles(Role.ADMIN)
     @Get()
-    getBoothTemplates(@Paginate() query: PaginateQuery) {
-        return this.boothTemplateService.findBoothTemplates(query);
+    readBoothTemplates(@Paginate() query: PaginateQuery) {
+        return this.boothTemplateService.readBoothTemplates(query);
     }
 
     @UseGuards(JWTAuthGuard, RolesGuard)

@@ -16,13 +16,13 @@ export class EnterpriseController {
     constructor(private readonly enterpriseService: EnterpriseService) {}
 
     @Get()
-    getEnterprises(@Paginate() query: PaginateQuery) {
-        return this.enterpriseService.getEnterprises(query);
+    readEnterprises(@Paginate() query: PaginateQuery) {
+        return this.enterpriseService.readEnterprises(query);
     }
 
     @Get(':id')
-    getEnterpriseById(@Param('id') id: string) {
-        return this.enterpriseService.getEnterpriseById(id);
+    readEnterpriseById(@Param('id') id: string) {
+        return this.enterpriseService.readEnterpriseById(id);
     }
 
     @Post()

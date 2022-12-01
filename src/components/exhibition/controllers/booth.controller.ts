@@ -21,11 +21,11 @@ export class BoothController {
     @UseGuards(JWTAuthGuard, RolesGuard)
     @Roles(Role.USER)
     @Get()
-    getBooths(
+    readBooths(
         @JwtAccessToken() jwtAccessToken: string,
         @Paginate() query: PaginateQuery,
     ) {
-        return this.boothService.findBooths(jwtAccessToken, query);
+        return this.boothService.readBooths(jwtAccessToken, query);
     }
 
     @UseGuards(JWTAuthGuard, RolesGuard)
@@ -39,10 +39,10 @@ export class BoothController {
     @UseGuards(JWTAuthGuard, RolesGuard)
     @Roles(Role.ADMIN, Role.USER)
     @Get(':id')
-    getBoothTemplateById(
+    readBoothTemplateById(
         @Param('id') id: string,
         @Paginate() query: PaginateQuery,
     ) {
-        return this.boothService.findBoothById(id, query.populate);
+        return this.boothService.readBoothById(id, query.populate);
     }
 }

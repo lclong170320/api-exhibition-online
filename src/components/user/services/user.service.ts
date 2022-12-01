@@ -23,7 +23,7 @@ export class UserService {
         @InjectDataSource(DbConnection.userCon)
         private readonly dataSource: DataSource,
     ) {}
-    async getUserById(id: string, populate: string[]): Promise<UserDto> {
+    async readUserById(id: string, populate: string[]): Promise<UserDto> {
         const allowPopulate = ['role'];
         const userRepository = this.dataSource.manager.getRepository(User);
         populate.forEach((value) => {

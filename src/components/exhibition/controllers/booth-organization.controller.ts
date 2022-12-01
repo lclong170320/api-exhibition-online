@@ -16,11 +16,11 @@ export class BoothOrganizationController {
     @UseGuards(JWTAuthGuard, RolesGuard)
     @Roles(Role.ADMIN)
     @Get(':id')
-    getBoothOrganizationById(
+    readBoothOrganizationById(
         @Param('id') id: string,
         @Paginate() query: PaginateQuery,
     ) {
-        return this.boothOrganizationService.getBoothOrganizationById(
+        return this.boothOrganizationService.readBoothOrganizationById(
             id,
             query.populate,
         );

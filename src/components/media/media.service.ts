@@ -26,7 +26,7 @@ export class MediaService {
         private paginatedMediasConverter: PaginatedMediasConverter,
     ) {}
 
-    async getMedias(query: PaginateQuery) {
+    async readMedias(query: PaginateQuery) {
         const sortableColumns = ['id', 'mime', 'userId', 'createdAt'];
         const searchableColumns = ['id', 'mime', 'userId', 'createdAt'];
         const filterableColumns = ['userId'];
@@ -92,7 +92,7 @@ export class MediaService {
         return this.mediaConverter.toDto(createdMedia);
     }
 
-    async findById(id: string): Promise<MediaResponse> {
+    async readById(id: string): Promise<MediaResponse> {
         const mediaRepository = this.dataSource.manager.getRepository(Media);
 
         const firstMedia = await mediaRepository.findOneBy({

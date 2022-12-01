@@ -75,7 +75,7 @@ export class ExhibitionService {
         return true;
     }
 
-    async findExhibitions(query: PaginateQuery) {
+    async readExhibitions(query: PaginateQuery) {
         const sortableColumns = ['id', 'name', 'createdAt'];
         const searchableColumns = ['name'];
         const filterableColumns = ['status'];
@@ -103,7 +103,7 @@ export class ExhibitionService {
         );
     }
 
-    async findExhibitionById(id: string, populate: string[]) {
+    async readExhibitionById(id: string, populate: string[]) {
         const exhibitionRepository =
             this.dataSource.manager.getRepository(Exhibition);
         const exhibitionEntity = await exhibitionRepository.findOne({
@@ -364,7 +364,7 @@ export class ExhibitionService {
         return this.exhibitionConverter.toDto(createdExhibition);
     }
 
-    async getBoothById(
+    async readBoothById(
         exhibitionId: string,
         boothId: string,
         populate: string[],

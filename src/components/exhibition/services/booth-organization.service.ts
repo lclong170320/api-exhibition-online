@@ -34,7 +34,7 @@ export class BoothOrganizationService {
         private readonly utilService: UtilService,
     ) {}
 
-    async getBoothOrganizationById(
+    async readBoothOrganizationById(
         boothOrganizationId: string,
         populate: string[],
     ): Promise<BoothOrganizationDto> {

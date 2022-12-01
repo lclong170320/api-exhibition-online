@@ -32,7 +32,7 @@ export class SpaceService {
         private readonly utilService: UtilService,
     ) {}
 
-    async getSpaceById(spaceId: string, populate: string[]) {
+    async readSpaceById(spaceId: string, populate: string[]) {
         const allowPopulate = [
             'exhibition',
             'spaceImages',

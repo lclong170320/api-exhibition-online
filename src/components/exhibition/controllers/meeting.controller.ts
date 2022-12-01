@@ -12,7 +12,7 @@ export class MeetingController {
 
     @UseGuards(JWTAuthGuard, RolesGuard)
     @Get()
-    getMeetings(@CurrentUser() user: User, @Paginate() query: PaginateQuery) {
-        return this.meetingService.getMeetings(user?.enterprise_id, query);
+    readMeetings(@CurrentUser() user: User, @Paginate() query: PaginateQuery) {
+        return this.meetingService.readMeetings(user?.enterprise_id, query);
     }
 }

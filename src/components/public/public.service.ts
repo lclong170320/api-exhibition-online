@@ -49,7 +49,7 @@ export class PublicService {
         private readonly paginatedBoothTemplatesConverter: PaginatedBoothTemplatesConverter,
     ) {}
 
-    async getExhibitionById(id: string, query: PaginateQuery) {
+    async readExhibitionById(id: string, query: PaginateQuery) {
         const exhibitionRepository =
             this.exhibitionDataSource.manager.getRepository(Exhibition);
         const exhibitionEntity = await exhibitionRepository.findOne({
@@ -66,7 +66,7 @@ export class PublicService {
         return this.exhibitionConverter.toDto(exhibitionEntity);
     }
 
-    async getMediaById(id: string) {
+    async readMediaById(id: string) {
         const mediaId = parseInt(id);
 
         const mediaRepository =
@@ -85,7 +85,7 @@ export class PublicService {
         return this.mediaConverter.toDto(mediaEntity);
     }
 
-    async getEnterpriseById(id: string) {
+    async readEnterpriseById(id: string) {
         const enterpriseRepository =
             this.enterpriseDataSource.manager.getRepository(Enterprise);
         const enterprise = await enterpriseRepository.findOne({
@@ -119,7 +119,7 @@ export class PublicService {
         return this.meetingConverter.toDto(meeting);
     }
 
-    async getMeetings(query: PaginateQuery) {
+    async readMeetings(query: PaginateQuery) {
         const sortableColumns = ['id', 'startTime', 'endTime', 'createdAt'];
         const searchableColumns = ['customerName', 'email', 'phone'];
         const filterableColumns = ['booth.id', 'id'];
@@ -140,7 +140,7 @@ export class PublicService {
         );
     }
 
-    async getConferenceById(id: string, populate: string[]) {
+    async readConferenceById(id: string, populate: string[]) {
         const conferenceRepository =
             this.conferenceDataSource.manager.getRepository(Conference);
         const firstConference = await conferenceRepository.findOne({
@@ -157,7 +157,7 @@ export class PublicService {
         }
         return this.conferenceConverter.toDto(firstConference);
     }
-    async findBoothTemplates(query: PaginateQuery) {
+    async readBoothTemplates(query: PaginateQuery) {
         const sortableColumns = ['id', 'name', 'type', 'createdAt'];
         const searchableColumns = ['name'];
         const filterableColumns = ['type'];

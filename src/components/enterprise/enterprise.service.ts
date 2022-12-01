@@ -19,7 +19,7 @@ export class EnterpriseService {
         private readonly paginatedEnterprisesConverter: PaginatedEnterprisesConverter,
     ) {}
 
-    async getEnterprises(query: PaginateQuery) {
+    async readEnterprises(query: PaginateQuery) {
         const enterpriseRepository =
             this.dataSource.manager.getRepository(Enterprise);
         const sortableColumns = ['createdDate'];
@@ -42,7 +42,7 @@ export class EnterpriseService {
         );
     }
 
-    async getEnterpriseById(id: string) {
+    async readEnterpriseById(id: string) {
         const enterpriseEntity = await this.findEnterpriseById(id);
         return this.enterpriseConverter.toDto(enterpriseEntity);
     }

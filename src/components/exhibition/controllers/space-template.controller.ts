@@ -23,18 +23,18 @@ export class SpaceTemplateController {
     @UseGuards(JWTAuthGuard, RolesGuard)
     @Roles(Role.ADMIN)
     @Get()
-    getSpaceTemplates(@Paginate() query: PaginateQuery) {
-        return this.spaceTemplateService.getSpaceTemplates(query);
+    readSpaceTemplates(@Paginate() query: PaginateQuery) {
+        return this.spaceTemplateService.readSpaceTemplates(query);
     }
 
     @UseGuards(JWTAuthGuard, RolesGuard)
     @Roles(Role.ADMIN)
     @Get(':id')
-    getSpaceTemplateById(
+    readSpaceTemplateById(
         @Param('id') id: string,
         @Paginate() query: PaginateQuery,
     ) {
-        return this.spaceTemplateService.findSpaceTemplateById(
+        return this.spaceTemplateService.readSpaceTemplateById(
             id,
             query.populate,
         );

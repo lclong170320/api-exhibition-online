@@ -31,7 +31,7 @@ export class BoothTemplateService {
         private readonly utilService: UtilService,
     ) {}
 
-    async findBoothTemplateById(id: string, populate: string[]) {
+    async readBoothTemplateById(id: string, populate: string[]) {
         const boothTemplateRepository =
             this.dataSource.getRepository(BoothTemplate);
 
@@ -58,7 +58,7 @@ export class BoothTemplateService {
         return this.boothTemplateConverter.toDto(firstBoothTemplate);
     }
 
-    async findBoothTemplates(query: PaginateQuery) {
+    async readBoothTemplates(query: PaginateQuery) {
         const sortableColumns = ['id', 'name', 'type', 'createdAt'];
         const searchableColumns = ['name'];
         const filterableColumns = ['type'];

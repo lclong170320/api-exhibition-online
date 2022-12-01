@@ -9,21 +9,21 @@ export class PublicController {
     constructor(private readonly publicService: PublicService) {}
 
     @Get('/exhibitions/:id')
-    getExhibitionById(
+    readExhibitionById(
         @Param('id') id: string,
         @Paginate() query: PaginateQuery,
     ) {
-        return this.publicService.getExhibitionById(id, query);
+        return this.publicService.readExhibitionById(id, query);
     }
 
     @Get('/medias/:id')
-    getMediaById(@Param('id') id: string) {
-        return this.publicService.getMediaById(id);
+    readMediaById(@Param('id') id: string) {
+        return this.publicService.readMediaById(id);
     }
 
     @Get('/enterprises/:id')
-    getEnterpriseById(@Param('id') id: string) {
-        return this.publicService.getEnterpriseById(id);
+    readEnterpriseById(@Param('id') id: string) {
+        return this.publicService.readEnterpriseById(id);
     }
 
     @Post('/meetings')
@@ -32,21 +32,21 @@ export class PublicController {
     }
 
     @Get('/meetings')
-    getMeetings(@Paginate() query: PaginateQuery) {
-        return this.publicService.getMeetings(query);
+    readMeetings(@Paginate() query: PaginateQuery) {
+        return this.publicService.readMeetings(query);
     }
 
     @Get('conferences/:id')
-    getConferenceById(
+    readConferenceById(
         @Param('id') id: string,
         @Paginate() query: PaginateQuery,
     ) {
-        return this.publicService.getConferenceById(id, query.populate);
+        return this.publicService.readConferenceById(id, query.populate);
     }
 
     @Get('/booth-templates')
-    getBoothTemplates(@Paginate() query: PaginateQuery) {
-        return this.publicService.findBoothTemplates(query);
+    readBoothTemplates(@Paginate() query: PaginateQuery) {
+        return this.publicService.readBoothTemplates(query);
     }
 
     @Post('/projects/:id/count')

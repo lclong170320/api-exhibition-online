@@ -16,7 +16,7 @@ export class MeetingService {
         private readonly paginatedMeetingsConverter: PaginatedMeetingsConverter,
     ) {}
 
-    async getMeetings(enterpriseId: number, query: PaginateQuery) {
+    async readMeetings(enterpriseId: number, query: PaginateQuery) {
         const meetingRepository =
             this.dataSource.manager.getRepository(Meeting);
         const boothRepository = this.dataSource.manager.getRepository(Booth);

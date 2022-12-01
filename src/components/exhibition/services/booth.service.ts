@@ -32,7 +32,7 @@ export class BoothService {
         private readonly utilService: UtilService,
     ) {}
 
-    async findBooths(jwtAccessToken: string, query: PaginateQuery) {
+    async readBooths(jwtAccessToken: string, query: PaginateQuery) {
         const filterableColumns = keys(query.filter);
         const defaultSortBy = [['createdAt', 'DESC']];
         const searchableColumns = ['name'];
@@ -107,7 +107,7 @@ export class BoothService {
         });
     }
 
-    async findBoothById(id: string, populate: string[]) {
+    async readBoothById(id: string, populate: string[]) {
         const boothRepository = this.dataSource.getRepository(Booth);
 
         const firstBooth = await boothRepository.findOne({

@@ -23,8 +23,8 @@ export class AuthController {
     }
 
     @Get('me')
-    getAuthMe(@JwtAccessToken() jwtAccessToken: string) {
-        return this.authService.getAuthMe(jwtAccessToken);
+    readAuthMe(@JwtAccessToken() jwtAccessToken: string) {
+        return this.authService.readAuthMe(jwtAccessToken);
     }
 
     @Cron(CronExpression.EVERY_HOUR)

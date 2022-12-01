@@ -20,18 +20,18 @@ export class BoothOrganizationTemplateController {
     ) {}
 
     @Get()
-    getBoothOrganizationTemplates(@Paginate() query: PaginateQuery) {
-        return this.boothOrganizationTemplateService.findBoothOrganizationTemplates(
+    readBoothOrganizationTemplates(@Paginate() query: PaginateQuery) {
+        return this.boothOrganizationTemplateService.readBoothOrganizationTemplates(
             query,
         );
     }
 
     @Get(':id')
-    getBoothOrganizationTemplateById(
+    readBoothOrganizationTemplateById(
         @Param('id') id: string,
         @Paginate() query: PaginateQuery,
     ) {
-        return this.boothOrganizationTemplateService.findBoothOrganizationTemplateById(
+        return this.boothOrganizationTemplateService.readBoothOrganizationTemplateById(
             id,
             query.populate,
         );

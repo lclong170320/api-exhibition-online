@@ -114,7 +114,7 @@ export class AuthService {
         if (result) throw new UnauthorizedException('Expired token');
     }
 
-    async getAuthMe(jwtAccessToken: string) {
+    async readAuthMe(jwtAccessToken: string) {
         const userRepository = this.dataSource.manager.getRepository(User);
         const payload = this.jwtService.decode(jwtAccessToken) as LoginPayload;
         const user = await userRepository.findOne({

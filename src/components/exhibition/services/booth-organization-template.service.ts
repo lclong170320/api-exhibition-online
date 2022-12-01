@@ -27,7 +27,7 @@ export class BoothOrganizationTemplateService {
         private paginatedBoothOrganizationTemplatesConverter: PaginatedBoothOrganizationTemplatesConverter,
     ) {}
 
-    async findBoothOrganizationTemplateById(id: string, populate: string[]) {
+    async readBoothOrganizationTemplateById(id: string, populate: string[]) {
         const boothOrganizationTemplateRepository =
             this.dataSource.manager.getRepository(BoothOrganizationTemplate);
         const allowPopulate = ['boothOrganizationTemplatePositions'];
@@ -56,7 +56,7 @@ export class BoothOrganizationTemplateService {
         );
     }
 
-    async findBoothOrganizationTemplates(query: PaginateQuery) {
+    async readBoothOrganizationTemplates(query: PaginateQuery) {
         const sortableColumns = ['id', 'name', 'createdAt'];
         const searchableColumns = ['name'];
         const filterableColumns = [''];

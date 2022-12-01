@@ -30,7 +30,7 @@ export class SpaceTemplateService {
         private readonly utilService: UtilService,
     ) {}
 
-    async findSpaceTemplateById(id: string, populate: string[]) {
+    async readSpaceTemplateById(id: string, populate: string[]) {
         const spaceTemplateRepository =
             this.dataSource.manager.getRepository(SpaceTemplate);
         const populatableColumns = [
@@ -59,7 +59,7 @@ export class SpaceTemplateService {
         return this.spaceTemplateConverter.toDto(firstSpaceTemplate);
     }
 
-    async getSpaceTemplates(query: PaginateQuery) {
+    async readSpaceTemplates(query: PaginateQuery) {
         const spaceTemplateRepository =
             this.dataSource.manager.getRepository(SpaceTemplate);
         const sortableColumns = ['name', 'createdDate'];

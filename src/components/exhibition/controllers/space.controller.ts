@@ -14,8 +14,8 @@ export class SpaceController {
     @UseGuards(JWTAuthGuard, RolesGuard)
     @Roles(Role.ADMIN)
     @Get(':id')
-    getBoothById(@Param('id') id: string, @Paginate() query: PaginateQuery) {
-        return this.spaceService.getSpaceById(id, query.populate);
+    readBoothById(@Param('id') id: string, @Paginate() query: PaginateQuery) {
+        return this.spaceService.readSpaceById(id, query.populate);
     }
 
     @UseGuards(JWTAuthGuard, RolesGuard)

@@ -12,12 +12,12 @@ export class MediaController {
     }
 
     @Get()
-    getMedias(@Paginate() query: PaginateQuery) {
-        return this.mediaService.getMedias(query);
+    readMedias(@Paginate() query: PaginateQuery) {
+        return this.mediaService.readMedias(query);
     }
 
     @Get(':id')
-    getById(@Param('id') id: string) {
-        return this.mediaService.findById(id);
+    readById(@Param('id') id: string) {
+        return this.mediaService.readById(id);
     }
 }
