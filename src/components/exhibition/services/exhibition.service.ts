@@ -1167,14 +1167,16 @@ export class ExhibitionService {
             exhibition.status = exhibitionDto.status;
         }
         exhibition.name = exhibitionDto.name ?? exhibition.name;
-        exhibition.dateExhibitionStart =
-            new Date(exhibitionDto.date_exhibition_start) ??
-            exhibition.dateExhibitionStart;
+        if (exhibitionDto.date_exhibition_start)
+            exhibition.dateExhibitionStart = new Date(
+                exhibitionDto.date_exhibition_start,
+            );
         exhibition.exhibitionCode =
             exhibitionDto.exhibition_code ?? exhibition.exhibitionCode;
-        exhibition.dateExhibitionEnd =
-            new Date(exhibitionDto.date_exhibition_end) ??
-            exhibition.dateExhibitionEnd;
+        if (exhibitionDto.date_exhibition_end)
+            exhibition.dateExhibitionEnd = new Date(
+                exhibitionDto.date_exhibition_end,
+            );
         exhibition.introduction =
             exhibitionDto.introduction ?? exhibition.introduction;
         exhibition.agenda = exhibitionDto.agenda ?? exhibition.agenda;
