@@ -52,6 +52,14 @@ paths:
             - space.space_images.space_template_position
             - space.space_videos.video
             - space.space_videos.space_template_position
+            - booth_organization
+            - booth_organization.booth_organization_template
+            - booth_organization.booth_organization_images.image
+            - booth_organization.booth_organization_images.booth_organization_template_position
+            - booth_organization.booth_organization_videos.video
+            - booth_organization.booth_organization_videos.booth_organization_template_position
+            - booth_organization.booth_organization_projects.project
+            - booth_organization.booth_organization_projects.booth_organization_template_position
       responses:
         '200':
           description: OK
