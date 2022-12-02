@@ -7,6 +7,7 @@ export class BoothProjectConverter {
     toDto(entity: BoothProject) {
         const dto = {
             id: entity.id,
+            view: undefined,
             image_id: entity.project.imageId,
             title: entity.project.title,
             description: entity.project.description,

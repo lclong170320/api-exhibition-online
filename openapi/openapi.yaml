@@ -4364,6 +4364,10 @@ components:
           type: integer
           readOnly: true
           example: 1
+        view:
+          type: integer
+          readOnly: true
+          example: 1
         selected_media_id:
           type: integer
           writeOnly: true
