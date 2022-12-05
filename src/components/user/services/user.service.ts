@@ -15,6 +15,10 @@ import { User } from '../entities/user.entity';
 import { User as UserDto } from '../dto/user.dto';
 import { UpdateUser } from '@/components/user/dto/user-update.dto';
 import { Password as PasswordDto } from '@/components/user/dto/password.dto';
+import { keys } from 'lodash';
+import { PaginateQuery } from '@/decorators/paginate.decorator';
+import { paginate } from '@/utils/pagination';
+import { PaginatedUsersConverter } from '../converters/paginated-users.converter';
 
 @Injectable()
 export class UserService {
@@ -22,7 +26,31 @@ export class UserService {
         private readonly userConverter: UserConverter,
         @InjectDataSource(DbConnection.userCon)
         private readonly dataSource: DataSource,
+        private readonly paginatedUsersConverter: PaginatedUsersConverter,
     ) {}
+
+    async readUsers(query: PaginateQuery) {
+        const filterableColumns = keys(query.filter);
+        const defaultSortBy = [['createdAt', 'DESC']];
+        const searchableColumns = ['name', 'createdDate'];
+        const populatableColumns = query.populate;
+
+        const userRepository = this.dataSource.getRepository(User);
+        const [booths, total] = await paginate(query, userRepository, {
+            searchableColumns,
+            filterableColumns,
+            populatableColumns,
+            defaultSortBy,
+        });
+
+        return this.paginatedUsersConverter.toDto(
+            query.page,
+            query.limit,
+            total,
+            booths,
+        );
+    }
+
     async readUserById(id: string, populate: string[]): Promise<UserDto> {
         const allowPopulate = ['role'];
         const userRepository = this.dataSource.manager.getRepository(User);

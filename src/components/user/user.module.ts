@@ -7,6 +7,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthController } from './controllers/auth.controller';
 import { UserController } from './controllers/user.controller';
+import { PaginatedUsersConverter } from './converters/paginated-users.converter';
 import { RoleConverter } from './converters/role.converter';
 import { UserConverter } from './converters/user.converter';
 import { Blacklist } from './entities/blacklist.entity';
@@ -27,6 +28,7 @@ import { JWTStrategy } from './strategies/jwt.strategy';
         UserConverter,
         RoleConverter,
         JWTStrategy,
+        PaginatedUsersConverter,
     ],
     imports: [
         TypeOrmModule.forFeature([User, Role, Blacklist], DbConnection.userCon),

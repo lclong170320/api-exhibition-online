@@ -2480,6 +2480,84 @@ paths:
                     message: Internal server error
                     details: []
   '/users':
+    get:
+      tags:
+        - User
+      summary: Show list users
+      description: Show list users
+      operationId: getUsers
+      parameters:
+      - in: query
+        name: page
+        schema:
+          type: string
+          pattern: '^[0-9]+'
+          example: '1'
+        description: The number of items to skip before starting to collect the result set
+      - in: query
+        name: limit
+        schema:
+          type: string
+          pattern: '^[0-9]+'
+          example: '10'
+        description: The numbers of items to return
+      - in: query
+        name: search
+        schema:
+          type: string
+          example: 'image'
+        description:
+         " Searching on allow columns:['id', 'name'', 'created_at']\n
+          example: http://localhost:3000/api/v1/users?search=ABC"
+      - in: query
+        name: sort_by
+        allowReserved: true
+        schema:
+          type: string
+          example: 'mime:DESC'
+        description: "Sort on allow columns:[['id', 'name', 'created_by','created_date','role','created_at'],[DESC,ASC]]\n default column:['created_at', 'DESC']"
+      - in: query
+        name: filter
+        allowReserved: true
+        schema:
+          type: array
+          items:
+            type: string
+            example: 
+              - status:$eq:active'
+              - created_date:$eq:active'
+        description: Filter by the field with syntax `column_name:operator:value`.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedUsers'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Bad Request
+                    details:
+                      - field: .params.id
+                        message: 'should match pattern "^[0-9]+$"'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Internal server error
+                    details: []
     post:
       security:
       - bearerAuth: []
@@ -4717,6 +4795,30 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ConferenceTemplate'
+    PaginatedUsers:
+      type: object
+      required:
+        - page
+        - limit
+        - total
+        - users
+      properties:
+        page:
+          type: integer
+          readOnly: true
+          example: 1
+        limit:
+          type: integer
+          readOnly: true
+          example: 1
+        total:
+          type: integer
+          readOnly: true
+          example: 1
+        users:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
   securitySchemes:
     bearerAuth:
       type: http

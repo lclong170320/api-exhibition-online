@@ -36,6 +36,13 @@ export class UserController {
     }
 
     @UseGuards(JWTAuthGuard, RolesGuard)
+    @Roles(Role.ADMIN)
+    @Get()
+    readUsers(@Paginate() query: PaginateQuery) {
+        return this.userService.readUsers(query);
+    }
+
+    @UseGuards(JWTAuthGuard, RolesGuard)
     @Roles(Role.ADMIN, Role.ADMIN)
     @Post('change-password')
     @HttpCode(204)
