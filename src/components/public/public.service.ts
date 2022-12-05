@@ -28,6 +28,7 @@ import { BoothTemplate } from '../exhibition/entities/booth-template.entity';
 import { PaginatedBoothTemplatesConverter } from './converters/exhibition/paginated-booth-templates.converter';
 import { CountProject } from '../exhibition/entities/count-project.entity';
 import { BoothProject } from '../exhibition/entities/booth-project.entity';
+import { LikeProject } from '../exhibition/entities/like-project.entity';
 
 @Injectable()
 export class PublicService {
@@ -212,6 +213,41 @@ export class PublicService {
                 await countProjectRepository.remove(project);
 
                 data.view += count;
+
+                return data;
+            }),
+        );
+
+        await boothProjectRepository.save(updatedBoothProject);
+    }
+
+    async createLikeProject(id: string) {
+        const likeProjectRepository =
+            this.exhibitionDataSource.manager.getRepository(LikeProject);
+        const likeProjectEntity = new LikeProject();
+        likeProjectEntity.boothProjectId = parseInt(id);
+
+        await likeProjectRepository.save(likeProjectEntity);
+    }
+
+    async countLikeProject() {
+        const likeProjectRepository =
+            this.exhibitionDataSource.manager.getRepository(LikeProject);
+        const boothProjectRepository =
+            this.exhibitionDataSource.manager.getRepository(BoothProject);
+
+        const boothProject = await boothProjectRepository.find();
+
+        const updatedBoothProject = await Promise.all(
+            boothProject.map(async (data) => {
+                const [project, count] =
+                    await likeProjectRepository.findAndCountBy({
+                        boothProjectId: data.id,
+                    });
+
+                await likeProjectRepository.remove(project);
+
+                data.like += count;
 
                 return data;
             }),

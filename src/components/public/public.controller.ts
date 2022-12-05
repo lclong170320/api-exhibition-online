@@ -54,8 +54,14 @@ export class PublicController {
         return this.publicService.createCountProject(id);
     }
 
+    @Post('/projects/:id/like')
+    createLikeProject(@Param('id') id: string) {
+        return this.publicService.createLikeProject(id);
+    }
+
     @Cron(CronExpression.EVERY_DAY_AT_5PM)
     handleCron() {
         this.publicService.countViewProject();
+        this.publicService.countLikeProject();
     }
 }

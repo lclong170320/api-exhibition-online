@@ -523,6 +523,48 @@ paths:
                     details: []
       tags:
         - Counter
+  '/projects/{id}/like':
+    post:
+      summary: Count like project
+      description: Count like project
+      operationId: createLikeProject
+      parameters:
+      - name: id
+        description: ID to count like project
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: '^[0-9]+$'
+      responses:
+        '204':
+          description: No Content
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Bad Request
+                    details:
+                      - field: .params.id
+                        message: 'should match pattern "^[0-9]+$"'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Internal server error
+                    details: []
+      tags:
+        - Counter
 components:
   schemas:
     Exhibition:

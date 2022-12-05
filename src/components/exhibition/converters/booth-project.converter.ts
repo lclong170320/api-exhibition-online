@@ -8,6 +8,7 @@ export class BoothProjectConverter {
         const dto = {
             id: entity.id,
             view: entity.view ?? undefined,
+            like: entity.like ?? undefined,
             image_id: entity.project.imageId ?? undefined,
 
             title: entity.project.title ?? undefined,

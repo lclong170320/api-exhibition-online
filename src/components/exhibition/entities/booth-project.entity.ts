@@ -21,6 +21,9 @@ export class BoothProject {
     @Column({ default: 0 })
     view: number;
 
+    @Column({ default: 0 })
+    like: number;
+
     @CreateDateColumn({
         type: 'timestamp',
         name: 'created_at',

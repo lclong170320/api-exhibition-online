@@ -13,6 +13,7 @@
 export interface BoothProject {
     readonly id: number;
     readonly view: number;
+    readonly like: number;
     readonly image_id: number;
     selected_media_id?: number;
     media_data?: string;

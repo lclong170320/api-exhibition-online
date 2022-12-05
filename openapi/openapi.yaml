@@ -4508,6 +4508,10 @@ components:
           type: integer
           readOnly: true
           example: 1
+        like:
+          type: integer
+          readOnly: true
+          example: 1
         selected_media_id:
           type: integer
           writeOnly: true
