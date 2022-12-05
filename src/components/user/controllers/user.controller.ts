@@ -2,6 +2,7 @@ import { Paginate, PaginateQuery } from '@/decorators/paginate.decorator';
 import {
     Body,
     Controller,
+    Delete,
     Get,
     HttpCode,
     Param,
@@ -58,5 +59,13 @@ export class UserController {
     @Patch(':id')
     updateUser(@Param('id') id: string, @Body() user: UpdateUser) {
         return this.userService.updateUser(id, user);
+    }
+
+    @UseGuards(JWTAuthGuard, RolesGuard)
+    @Roles(Role.ADMIN)
+    @Delete(':id')
+    @HttpCode(204)
+    deleteBooth(@Param('id') id: string) {
+        return this.userService.deleteUser(id);
     }
 }

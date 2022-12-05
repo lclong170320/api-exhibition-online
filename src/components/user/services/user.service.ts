@@ -152,4 +152,20 @@ export class UserService {
 
         return this.userConverter.toDto(updatedUser);
     }
+
+    async deleteUser(id: string) {
+        await this.dataSource.transaction(async (manager) => {
+            const userRepository = manager.getRepository(User);
+
+            const firstUser = await userRepository.findOneBy({
+                id: parseInt(id),
+            });
+
+            if (!firstUser) {
+                throw new NotFoundException('Not found');
+            }
+
+            await userRepository.softRemove(firstUser);
+        });
+    }
 }

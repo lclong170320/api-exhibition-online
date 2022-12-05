@@ -1,6 +1,7 @@
 import {
     Column,
     CreateDateColumn,
+    DeleteDateColumn,
     Entity,
     JoinColumn,
     ManyToOne,
@@ -52,6 +53,13 @@ export class User {
         name: 'updated_at',
     })
     updatedAt: Date;
+
+    @DeleteDateColumn({
+        type: 'timestamp',
+        name: 'deleted_at',
+        nullable: true,
+    })
+    deletedAt: Date;
 
     @ManyToOne(() => Role, (role) => role.users)
     @JoinColumn({
