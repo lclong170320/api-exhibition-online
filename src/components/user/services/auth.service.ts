@@ -96,34 +96,26 @@ export class AuthService {
         });
     }
 
-    async checkToken(token: string, payload: LoginPayload) {
+    async readAuthMe(jwtAccessToken: string) {
         const blacklistRepository =
             this.dataSource.manager.getRepository(Blacklist);
         const result = await blacklistRepository.findOne({
             where: {
-                token: token,
+                token: jwtAccessToken,
             },
         });
-        const userRepository = this.dataSource.manager.getRepository(User);
-        const firstUser = await userRepository.findOneBy({
-            id: payload.user.id,
-        });
-        if (!firstUser) {
-            throw new UnauthorizedException('invalid user');
-        }
         if (result) throw new UnauthorizedException('Expired token');
-    }
-
-    async readAuthMe(jwtAccessToken: string) {
         const userRepository = this.dataSource.manager.getRepository(User);
-        const payload = this.jwtService.decode(jwtAccessToken) as LoginPayload;
+        const payload = this.jwtService.verify(jwtAccessToken, {
+            publicKey: this.publicKey,
+        }) as LoginPayload;
         const user = await userRepository.findOne({
             where: {
                 id: payload.user.id,
             },
             relations: ['role'],
         });
-
+        if (!user) throw new UnauthorizedException('Invalid user');
         return this.userConverter.toDto(user);
     }
 }

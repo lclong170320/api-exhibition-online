@@ -14,16 +14,16 @@ import { BoothTemplate as BoothTemplateDto } from '@/components/exhibition/dto/b
 import { Roles } from '@/decorators/roles.decorator';
 import { Role } from '@/components/exhibition/dto/role.dto';
 import { RolesGuard } from 'guards/roles.guard';
-import { JWTAuthGuard } from '@/components/user/guards/auth.guard';
 import { CurrentUser } from '@/decorators/current-user';
 import { User } from '@/components/exhibition/dto/user.dto';
 import { JwtAccessToken } from '@/decorators/jwt-access-token.decorator';
+import { JWTAuthGuard } from 'guards/auth.guard';
 
+@UseGuards(JWTAuthGuard, RolesGuard)
 @Controller('booth-templates')
 export class BoothTemplateController {
     constructor(private readonly boothTemplateService: BoothTemplateService) {}
 
-    @UseGuards(JWTAuthGuard, RolesGuard)
     @Roles(Role.ADMIN)
     @Get(':id')
     readBoothTemplateById(
@@ -36,14 +36,12 @@ export class BoothTemplateController {
         );
     }
 
-    @UseGuards(JWTAuthGuard, RolesGuard)
     @Roles(Role.ADMIN)
     @Get()
     readBoothTemplates(@Paginate() query: PaginateQuery) {
         return this.boothTemplateService.readBoothTemplates(query);
     }
 
-    @UseGuards(JWTAuthGuard, RolesGuard)
     @Roles(Role.ADMIN)
     @Post()
     createBoothTemplate(
@@ -58,7 +56,6 @@ export class BoothTemplateController {
         );
     }
 
-    @UseGuards(JWTAuthGuard, RolesGuard)
     @Roles(Role.ADMIN)
     @Delete(':id')
     @HttpCode(204)

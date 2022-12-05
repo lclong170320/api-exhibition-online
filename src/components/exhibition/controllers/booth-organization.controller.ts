@@ -5,16 +5,16 @@ import { PaginateQuery, Paginate } from '@/decorators/paginate.decorator';
 import { Role } from '@/components/exhibition/dto/role.dto';
 import { RolesGuard } from 'guards/roles.guard';
 import { Roles } from '@/decorators/roles.decorator';
-import { JWTAuthGuard } from '@/components/user/guards/auth.guard';
 import { JwtAccessToken } from '@/decorators/jwt-access-token.decorator';
+import { JWTAuthGuard } from 'guards/auth.guard';
 
+@UseGuards(JWTAuthGuard, RolesGuard)
 @Controller('booth-organizations')
 export class BoothOrganizationController {
     constructor(
         private readonly boothOrganizationService: BoothOrganizationService,
     ) {}
 
-    @UseGuards(JWTAuthGuard, RolesGuard)
     @Roles(Role.ADMIN)
     @Get(':id')
     readBoothOrganizationById(

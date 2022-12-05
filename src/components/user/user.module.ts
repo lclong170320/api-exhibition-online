@@ -1,4 +1,5 @@
 import { DbConnection } from '@/database/config/db';
+import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule, JwtService } from '@nestjs/jwt';
@@ -15,7 +16,7 @@ import { Role } from './entities/role.entity';
 import { User } from './entities/user.entity';
 import { AuthService } from './services/auth.service';
 import { UserService } from './services/user.service';
-import { JWTStrategy } from './strategies/jwt.strategy';
+import { JWTStrategy } from 'strategies/jwt.strategy';
 
 @Module({
     controllers: [UserController, AuthController],
@@ -48,6 +49,7 @@ import { JWTStrategy } from './strategies/jwt.strategy';
             }),
             inject: [ConfigService],
         }),
+        HttpModule,
     ],
     exports: [TypeOrmModule, UserService],
 })

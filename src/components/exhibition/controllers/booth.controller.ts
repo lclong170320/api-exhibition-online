@@ -1,6 +1,6 @@
 import { Role } from '@/components/exhibition/dto/role.dto';
 import { BoothService } from '@/components/exhibition/services/booth.service';
-import { JWTAuthGuard } from '@/components/user/guards/auth.guard';
+import { JWTAuthGuard } from 'guards/auth.guard';
 import { JwtAccessToken } from '@/decorators/jwt-access-token.decorator';
 import { Paginate, PaginateQuery } from '@/decorators/paginate.decorator';
 import { Roles } from '@/decorators/roles.decorator';
@@ -14,11 +14,11 @@ import {
 } from '@nestjs/common';
 import { RolesGuard } from 'guards/roles.guard';
 
+@UseGuards(JWTAuthGuard, RolesGuard)
 @Controller('booths')
 export class BoothController {
     constructor(private readonly boothService: BoothService) {}
 
-    @UseGuards(JWTAuthGuard, RolesGuard)
     @Roles(Role.USER)
     @Get()
     readBooths(
@@ -28,7 +28,6 @@ export class BoothController {
         return this.boothService.readBooths(jwtAccessToken, query);
     }
 
-    @UseGuards(JWTAuthGuard, RolesGuard)
     @Roles(Role.ADMIN)
     @Delete(':id')
     @HttpCode(204)
@@ -36,7 +35,6 @@ export class BoothController {
         return this.boothService.deleteBooth(id);
     }
 
-    @UseGuards(JWTAuthGuard, RolesGuard)
     @Roles(Role.ADMIN, Role.USER)
     @Get(':id')
     readBoothTemplateById(

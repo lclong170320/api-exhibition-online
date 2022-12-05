@@ -14,23 +14,22 @@ import { SpaceTemplate as SpaceTemplateDto } from '@/components/exhibition/dto/s
 import { Role } from '@/components/exhibition/dto/role.dto';
 import { RolesGuard } from 'guards/roles.guard';
 import { Roles } from '@/decorators/roles.decorator';
-import { JWTAuthGuard } from '@/components/user/guards/auth.guard';
 import { CurrentUser } from '@/decorators/current-user';
 import { User } from '@/components/exhibition/dto/user.dto';
 import { JwtAccessToken } from '@/decorators/jwt-access-token.decorator';
+import { JWTAuthGuard } from 'guards/auth.guard';
 
+@UseGuards(JWTAuthGuard, RolesGuard)
 @Controller('space-templates')
 export class SpaceTemplateController {
     constructor(private readonly spaceTemplateService: SpaceTemplateService) {}
 
-    @UseGuards(JWTAuthGuard, RolesGuard)
     @Roles(Role.ADMIN)
     @Get()
     readSpaceTemplates(@Paginate() query: PaginateQuery) {
         return this.spaceTemplateService.readSpaceTemplates(query);
     }
 
-    @UseGuards(JWTAuthGuard, RolesGuard)
     @Roles(Role.ADMIN)
     @Get(':id')
     readSpaceTemplateById(
@@ -43,7 +42,6 @@ export class SpaceTemplateController {
         );
     }
 
-    @UseGuards(JWTAuthGuard, RolesGuard)
     @Roles(Role.ADMIN)
     @Post()
     createSpaceTemplate(
@@ -60,7 +58,7 @@ export class SpaceTemplateController {
 
     @Delete(':id')
     @HttpCode(204)
-    deleteBooth(@Param('id') id: string) {
+    deleteSpaceTemplate(@Param('id') id: string) {
         return this.spaceTemplateService.deleteSpaceTemplate(id);
     }
 }

@@ -1,7 +1,7 @@
 import { ConferenceTemplate as ConferenceTemplateDto } from '@/components/exhibition/dto/conference-template.dto';
 import { Role } from '@/components/exhibition/dto/role.dto';
 import { User } from '@/components/user/dto/user.dto';
-import { JWTAuthGuard } from '@/components/user/guards/auth.guard';
+import { JWTAuthGuard } from 'guards/auth.guard';
 import { CurrentUser } from '@/decorators/current-user';
 import { JwtAccessToken } from '@/decorators/jwt-access-token.decorator';
 import { Paginate, PaginateQuery } from '@/decorators/paginate.decorator';
@@ -17,15 +17,15 @@ import {
     Param,
 } from '@nestjs/common';
 import { RolesGuard } from 'guards/roles.guard';
-import { ConferenceTemplateService } from '../services/conference-template.service';
+import { ConferenceTemplateService } from '@/components/exhibition/services/conference-template.service';
 
+@UseGuards(JWTAuthGuard, RolesGuard)
 @Controller('conference-templates')
 export class ConferenceTemplateController {
     constructor(
         private readonly conferenceTemplateService: ConferenceTemplateService,
     ) {}
 
-    @UseGuards(JWTAuthGuard, RolesGuard)
     @Roles(Role.ADMIN)
     @Post()
     createConferenceTemplate(
@@ -40,7 +40,6 @@ export class ConferenceTemplateController {
         );
     }
 
-    @UseGuards(JWTAuthGuard, RolesGuard)
     @Roles(Role.ADMIN)
     @Get(':id')
     readConferenceTemplateById(
@@ -53,7 +52,6 @@ export class ConferenceTemplateController {
         );
     }
 
-    @UseGuards(JWTAuthGuard, RolesGuard)
     @Roles(Role.ADMIN)
     @Delete(':id')
     @HttpCode(204)
@@ -61,7 +59,6 @@ export class ConferenceTemplateController {
         return this.conferenceTemplateService.deleteConferenceTemplate(id);
     }
 
-    @UseGuards(JWTAuthGuard, RolesGuard)
     @Roles(Role.ADMIN)
     @Get()
     readConferenceTemplates(@Paginate() query: PaginateQuery) {

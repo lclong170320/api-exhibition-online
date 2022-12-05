@@ -16,18 +16,18 @@ import { Paginate, PaginateQuery } from '@/decorators/paginate.decorator';
 import { Booth as BoothDto } from '@/components/exhibition/dto/booth.dto';
 import { RolesGuard } from 'guards/roles.guard';
 import { Roles } from '@/decorators/roles.decorator';
-import { Role } from '../dto/role.dto';
-import { UpdateExhibition } from '../dto/exhibition-update.dto';
-import { JWTAuthGuard } from '@/components/user/guards/auth.guard';
 import { CurrentUser } from '@/decorators/current-user';
 import { User } from '@/components/exhibition/dto/user.dto';
 import { JwtAccessToken } from '@/decorators/jwt-access-token.decorator';
+import { Role } from '@/components/exhibition/dto/role.dto';
+import { UpdateExhibition } from '@/components/exhibition/dto/exhibition-update.dto';
+import { JWTAuthGuard } from 'guards/auth.guard';
 
+@UseGuards(JWTAuthGuard, RolesGuard)
 @Controller('exhibitions')
 export class ExhibitionController {
     constructor(private readonly exhibitionService: ExhibitionService) {}
 
-    @UseGuards(JWTAuthGuard, RolesGuard)
     @Roles(Role.ADMIN)
     @Get(':id')
     readExhibitionById(
@@ -37,21 +37,18 @@ export class ExhibitionController {
         return this.exhibitionService.readExhibitionById(id, query.populate);
     }
 
-    @UseGuards(JWTAuthGuard, RolesGuard)
     @Roles(Role.ADMIN)
     @Get()
     readExhibitions(@Paginate() query: PaginateQuery) {
         return this.exhibitionService.readExhibitions(query);
     }
 
-    @UseGuards(JWTAuthGuard, RolesGuard)
     @Roles(Role.ADMIN)
     @Post()
     createExhibition(@Body() exhibition: ExhibitionDto) {
         return this.exhibitionService.createExhibition(exhibition);
     }
 
-    @UseGuards(JWTAuthGuard, RolesGuard)
     @Roles(Role.ADMIN)
     @Patch(':id')
     async updateExhibition(
@@ -61,7 +58,6 @@ export class ExhibitionController {
         return await this.exhibitionService.updateExhibition(id, exhibition);
     }
 
-    @UseGuards(JWTAuthGuard, RolesGuard)
     @Roles(Role.ADMIN)
     @Post(':exhibitionId/booths')
     createBooth(
@@ -78,7 +74,6 @@ export class ExhibitionController {
         );
     }
 
-    @UseGuards(JWTAuthGuard, RolesGuard)
     @Roles(Role.ADMIN)
     @Get(':exhibitionId/booths/:boothId')
     readBoothById(
@@ -93,7 +88,6 @@ export class ExhibitionController {
         );
     }
 
-    @UseGuards(JWTAuthGuard, RolesGuard)
     @Roles(Role.ADMIN)
     @Put(':exhibition_id/booths/:booth_id')
     updateBooth(
@@ -112,7 +106,6 @@ export class ExhibitionController {
         );
     }
 
-    @UseGuards(JWTAuthGuard, RolesGuard)
     @Roles(Role.ADMIN)
     @Delete(':id')
     @HttpCode(204)

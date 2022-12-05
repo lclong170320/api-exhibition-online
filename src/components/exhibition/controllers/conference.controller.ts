@@ -4,15 +4,15 @@ import { ConferenceService } from '@/components/exhibition/services/conference.s
 import { Role } from '@/components/exhibition/dto/role.dto';
 import { RolesGuard } from 'guards/roles.guard';
 import { Roles } from '@/decorators/roles.decorator';
-import { JWTAuthGuard } from '@/components/user/guards/auth.guard';
+import { JWTAuthGuard } from 'guards/auth.guard';
 import { Paginate, PaginateQuery } from '@/decorators/paginate.decorator';
 import { JwtAccessToken } from '@/decorators/jwt-access-token.decorator';
 
+@UseGuards(JWTAuthGuard, RolesGuard)
 @Controller('conferences')
 export class ConferenceController {
     constructor(private readonly conferenceService: ConferenceService) {}
 
-    @UseGuards(JWTAuthGuard, RolesGuard)
     @Roles(Role.ADMIN)
     @Put(':id')
     updateConference(
@@ -27,7 +27,6 @@ export class ConferenceController {
         );
     }
 
-    @UseGuards(JWTAuthGuard, RolesGuard)
     @Roles(Role.ADMIN)
     @Get(':id')
     readConferenceById(

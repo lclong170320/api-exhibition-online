@@ -10,9 +10,9 @@ import {
     Post,
     UseGuards,
 } from '@nestjs/common';
-import { UpdateUser } from '../dto/user-update.dto';
-import { JWTAuthGuard } from '../guards/auth.guard';
-import { UserService } from '../services/user.service';
+import { UpdateUser } from '@/components/user/dto/user-update.dto';
+import { JWTAuthGuard } from 'guards/auth.guard';
+import { UserService } from '@/components/user/services/user.service';
 import { RolesGuard } from 'guards/roles.guard';
 import { Roles } from '@/decorators/roles.decorator';
 import { Role } from '@/components/exhibition/dto/role.dto';

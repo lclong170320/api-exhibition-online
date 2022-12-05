@@ -2,8 +2,8 @@ import { JwtAccessToken } from '@/decorators/jwt-access-token.decorator';
 import { Body, Controller, Get, Post, Req } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { Request } from 'express';
-import { Login } from '../dto/login.dto';
-import { AuthService } from '../services/auth.service';
+import { Login } from '@/components/user/dto/login.dto';
+import { AuthService } from '@/components/user/services/auth.service';
 
 @Controller('auth')
 export class AuthController {
