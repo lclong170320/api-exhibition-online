@@ -15,6 +15,7 @@ export class UserConverter {
         entity.phone = dto.phone;
         entity.email = dto.email;
         entity.password = dto.password;
+        entity.createdDate = new Date();
         entity.status =
             dto.status === StatusDto.ACTIVE ? Status.ACTIVE : Status.INACTIVE;
         entity.enterpriseId = dto.enterprise_id;
@@ -31,6 +32,10 @@ export class UserConverter {
                 ? this.roleConverter.toDto(entity.role)
                 : undefined,
             status: entity.status,
+            created_by: entity.createdBy,
+            created_date: entity.createdDate
+                ? entity.createdDate.toISOString()
+                : undefined,
             enterprise_id: entity.enterpriseId,
         } as UserDto;
 

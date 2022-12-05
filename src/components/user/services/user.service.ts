@@ -45,7 +45,7 @@ export class UserService {
         return this.userConverter.toDto(user);
     }
 
-    async createUser(userDto: UserDto): Promise<UserDto> {
+    async createUser(userDto: UserDto, user: UserDto): Promise<UserDto> {
         const roleRepository = this.dataSource.manager.getRepository(Role);
         const userRepository = this.dataSource.manager.getRepository(User);
         const role = await roleRepository.findOne({
@@ -62,6 +62,7 @@ export class UserService {
         userDto.password = await this.hashPassword(userDto.password);
         const newUserEntity = this.userConverter.toEntity(userDto);
         newUserEntity.role = role;
+        newUserEntity.createdBy = user.id;
         const savedUser = await userRepository.save(newUserEntity);
         return this.userConverter.toDto(savedUser);
     }

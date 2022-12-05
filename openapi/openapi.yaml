@@ -4232,6 +4232,12 @@ components:
           status:
             type: string
             enum: [active, inactive]
+          created_by:
+            type: integer
+            readOnly: true
+          created_date:
+            type: string
+            readOnly: true
           enterprise_id:
             type: number
     Role:

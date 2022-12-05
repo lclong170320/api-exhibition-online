@@ -19,6 +19,8 @@ export interface User {
     password: string;
     role_id: number;
     status: Status;
+    readonly created_by?: number;
+    readonly created_date: string;
     enterprise_id: number;
     role: Role;
 }

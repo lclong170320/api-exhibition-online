@@ -32,6 +32,12 @@ export class User {
     @Column({ type: 'enum', enum: Status, default: Status.ACTIVE })
     status: Status;
 
+    @Column({ name: 'created_by', nullable: true })
+    createdBy: number;
+
+    @Column({ type: 'datetime', name: 'created_date' })
+    createdDate: Date;
+
     @Column({ name: 'enterprise_id' })
     enterpriseId: number;
 

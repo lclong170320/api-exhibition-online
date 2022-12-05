@@ -26,8 +26,8 @@ export class UserController {
     @UseGuards(JWTAuthGuard, RolesGuard)
     @Roles(Role.ADMIN)
     @Post()
-    createUser(@Body() user: UserDto) {
-        return this.userService.createUser(user);
+    createUser(@Body() userDto: UserDto, @CurrentUser() user: UserDto) {
+        return this.userService.createUser(userDto, user);
     }
 
     @Get(':id')
