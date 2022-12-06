@@ -106,9 +106,14 @@ export class AuthService {
         });
         if (result) throw new UnauthorizedException('Expired token');
         const userRepository = this.dataSource.manager.getRepository(User);
-        const payload = this.jwtService.verify(jwtAccessToken, {
-            publicKey: this.publicKey,
-        }) as LoginPayload;
+        let payload: LoginPayload;
+        try {
+            payload = this.jwtService.verify(jwtAccessToken, {
+                publicKey: this.publicKey,
+            });
+        } catch (e) {
+            throw new UnauthorizedException(e);
+        }
         const user = await userRepository.findOne({
             where: {
                 id: payload.user.id,
