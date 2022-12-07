@@ -3376,6 +3376,85 @@ paths:
                   value:
                     message: Internal server error
                     details: []
+  '/dashboards':
+    get:
+      security:
+      - bearerAuth: []
+      tags:
+      - Dashboard
+      summary: get data in dashboard
+      description: get data in dashboard
+      operationId: readDashboard
+      parameters:
+      - in: query
+        name: search
+        allowReserved: true
+        schema:
+          type: array
+          items:
+            type: string
+            example: 'viewer_of_exhibition'
+        description: |
+          - viewer_of_exhibition
+          - booths
+          - live_streams
+          - viewer_of_project
+          - viewer_of_product
+          - meetings
+      - in: query
+        name: filter
+        allowReserved: true
+        schema:
+          type: array
+          items:
+            type: string
+            example: 'exhibition.category:$eq:new'
+        description: |
+          - Filter by 'exhibition.category:$eq:'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Dashboard'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Bad Request
+                    details:
+                      - field: .params.id
+                        message: 'should match pattern "^[0-9]+$"'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Not Found
+                    details:
+                      - field: .params.id
+                        message: 'The id not exist: "^[0-9]+$"'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Internal server error
+                    details: []
 components:
   schemas:
     Exhibition:
@@ -4855,6 +4934,80 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ConferenceTemplate'
+    Dashboard:
+      type: object
+      required:
+        - max_view_exhibition
+        - total_viewer
+        - viewer_of_exhibitions
+        - enterprises
+        - booth_templates
+        - exhibitions
+      properties:
+        max_view_exhibition:
+          type: number
+          description: The exhibition with the highest number of views
+        total_viewer:
+          type: number
+          description: total number of viewers from last 30 days
+        viewer_of_exhibitions:
+          type: array
+          items:
+            type: object
+            required:
+            - exhibition_name
+            - view
+            properties:
+              exhibition_name:
+                type: string
+              view:
+                type: number
+                description: Number of viewers of each exhibition
+        enterprises:
+          type: array
+          items:
+            type: object
+            required:
+              - enterprise_name
+              - quantity
+            properties:
+              enterprise_name:
+                type: string
+              quantity:
+                type: number
+                description: Number of enterprises joined
+        booth_templates:
+          type: array
+          items:
+            type: object
+            required:
+              - booth_template_name
+              - quantity
+            properties:
+              booth_template_name:
+                type: string
+              quantity:
+                type: number
+                description: Number of booth template chosen
+        exhibitions:
+          type: object
+          required:
+            - new
+            - listing
+            - finished
+            - project
+            - product
+          properties:
+            new:
+              type: number
+            listing:
+              type: number
+            finished:
+              type: number
+            project:
+              type: number
+            product:
+              type: number
     PaginatedUsers:
       type: object
       required:

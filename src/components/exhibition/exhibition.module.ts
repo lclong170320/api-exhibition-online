@@ -90,6 +90,13 @@ import { ConferenceVideoConverter } from './converters/conference-video.converte
 import { ConferenceController } from './controllers/conference.controller';
 import { ConferenceService } from './services/conference.service';
 import { PaginatedConferenceTemplatesConverter } from './converters/paginated-conference-templates.converter';
+import { DashboardController } from './controllers/dashboard.controller';
+import { DashboardService } from './services/dashboard.service';
+import { DashboardConverter } from './converters/dashboard.converter';
+import { DashboardBoothTemplatesConverter } from './converters/dashboard-booth-templates.converter';
+import { DashboardEnterprisesConverter } from './converters/dashboard-enterprises.converter';
+import { DashboardViewerOfExhibitionsConverter } from './converters/dashboard-viewer-of-exhibitions.converter';
+import { DashboardExhibitionsConverter } from './converters/dashboard-exhibitions.converter';
 
 @Module({
     controllers: [
@@ -103,6 +110,7 @@ import { PaginatedConferenceTemplatesConverter } from './converters/paginated-co
         MeetingController,
         ConferenceTemplateController,
         ConferenceController,
+        DashboardController,
     ],
     providers: [
         // service
@@ -119,6 +127,7 @@ import { PaginatedConferenceTemplatesConverter } from './converters/paginated-co
         MeetingService,
         ConferenceTemplateService,
         ConferenceService,
+        DashboardService,
         // converter
         CategoryConverter,
         ExhibitionConverter,
@@ -157,6 +166,11 @@ import { PaginatedConferenceTemplatesConverter } from './converters/paginated-co
         ConferenceImageConverter,
         ConferenceVideoConverter,
         PaginatedConferenceTemplatesConverter,
+        DashboardConverter,
+        DashboardBoothTemplatesConverter,
+        DashboardEnterprisesConverter,
+        DashboardViewerOfExhibitionsConverter,
+        DashboardExhibitionsConverter,
     ],
     imports: [
         TypeOrmModule.forFeature(
