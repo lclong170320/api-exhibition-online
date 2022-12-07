@@ -23,6 +23,7 @@ import { Video } from '../entities/video.entity';
 import { Project } from '../entities/project.entity';
 import { Product } from '../entities/product.entity';
 import { BoothOrganizationConverter } from '../converters/booth-organization.converter';
+import { PaginateQuery } from '@/decorators/paginate.decorator';
 import { MediaClientService } from 'clients/media.client';
 
 @Injectable()
@@ -36,29 +37,8 @@ export class BoothOrganizationService {
 
     async readBoothOrganizationById(
         boothOrganizationId: string,
-        populate: string[],
+        query: PaginateQuery,
     ): Promise<BoothOrganizationDto> {
-        const allowPopulate = [
-            'boothOrganizationTemplate',
-            'boothOrganizationTemplate.boothOrganizationTemplatePositions',
-            'boothOrganizationProducts.product',
-            'boothOrganizationProjects.project',
-            'boothOrganizationVideos.video',
-            'boothOrganizationImages.image',
-            'boothOrganizationProducts.boothOrganizationTemplatePosition',
-            'boothOrganizationProjects.boothOrganizationTemplatePosition',
-            'boothOrganizationVideos.boothOrganizationTemplatePosition',
-            'boothOrganizationImages.boothOrganizationTemplatePosition',
-        ];
-
-        populate.forEach((value) => {
-            if (!allowPopulate.includes(value)) {
-                throw new BadRequestException(
-                    'Query value is not allowed ' + value,
-                );
-            }
-        });
-
         const boothOrganizationRepository =
             this.dataSource.getRepository(BoothOrganization);
 
@@ -67,7 +47,8 @@ export class BoothOrganizationService {
                 where: {
                     id: parseInt(boothOrganizationId),
                 },
-                relations: populate,
+                relations: query.populate,
+                withDeleted: query.withDeleted,
             });
 
         if (!firstBoothOrganization) {

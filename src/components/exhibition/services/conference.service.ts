@@ -19,6 +19,7 @@ import { ConferenceVideoConverter } from '../converters/conference-video.convert
 import { ConferenceImageConverter } from '../converters/conference-image.converter';
 import { Video } from '../entities/video.entity';
 import { Image } from '../entities/image.entity';
+import { PaginateQuery } from '@/decorators/paginate.decorator';
 import { MediaClientService } from 'clients/media.client';
 
 @Injectable()
@@ -244,14 +245,15 @@ export class ConferenceService {
         return conference;
     }
 
-    async readConferenceById(id: string, populate: string[]) {
+    async readConferenceById(id: string, query: PaginateQuery) {
         const conferenceRepository =
             this.dataSource.manager.getRepository(Conference);
         const firstConference = await conferenceRepository.findOne({
             where: {
                 id: parseInt(id),
             },
-            relations: populate,
+            relations: query.populate,
+            withDeleted: query.withDeleted,
         });
 
         if (!firstConference) {

@@ -41,6 +41,7 @@ export class UserService {
             filterableColumns,
             populatableColumns,
             defaultSortBy,
+            withDeleted: query.withDeleted,
         });
 
         return this.paginatedUsersConverter.toDto(
@@ -51,21 +52,14 @@ export class UserService {
         );
     }
 
-    async readUserById(id: string, populate: string[]): Promise<UserDto> {
-        const allowPopulate = ['role'];
+    async readUserById(id: string, query: PaginateQuery): Promise<UserDto> {
         const userRepository = this.dataSource.manager.getRepository(User);
-        populate.forEach((value) => {
-            if (!allowPopulate.includes(value)) {
-                throw new BadRequestException(
-                    'Query value is not allowed ' + value,
-                );
-            }
-        });
         const user = await userRepository.findOne({
             where: {
                 id: parseInt(id),
             },
-            relations: populate,
+            relations: query.populate,
+            withDeleted: query.withDeleted,
         });
         if (!user) {
             throw new BadRequestException("The 'user_id' is not found: " + id);

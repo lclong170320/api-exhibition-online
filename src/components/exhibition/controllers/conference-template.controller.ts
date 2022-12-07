@@ -48,7 +48,7 @@ export class ConferenceTemplateController {
     ) {
         return this.conferenceTemplateService.readConferenceTemplateById(
             id,
-            query.populate,
+            query,
         );
     }
 

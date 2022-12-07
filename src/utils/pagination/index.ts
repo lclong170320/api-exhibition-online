@@ -20,6 +20,7 @@ export interface Option {
     filterableColumns?: string[];
     populatableColumns?: string[];
     defaultSortBy?: string[][];
+    withDeleted?: boolean;
 }
 
 export async function paginate<T>(
@@ -39,6 +40,7 @@ export async function paginate<T>(
         query.populate,
         option.populatableColumns,
     );
+    findOptions.withDeleted = option.withDeleted;
     const whereClause: FindOptionsWhere<T>[] = parseWhereClause(
         parseSearch(query.search, option.searchableColumns),
         parseFilter(query.filter, option.filterableColumns),

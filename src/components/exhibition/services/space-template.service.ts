@@ -3,11 +3,7 @@ import { SpaceTemplate } from '@/components/exhibition/entities/space-template.e
 import { DbConnection } from '@/database/config/db';
 import { PaginateQuery } from '@/decorators/paginate.decorator';
 import { paginate } from '@/utils/pagination';
-import {
-    Injectable,
-    NotFoundException,
-    BadRequestException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 import { PaginatedSpaceTemplatesConverter } from '../converters/paginated-space-templates.converter';
@@ -31,26 +27,15 @@ export class SpaceTemplateService {
         private readonly mediaClientService: MediaClientService,
     ) {}
 
-    async readSpaceTemplateById(id: string, populate: string[]) {
+    async readSpaceTemplateById(id: string, query: PaginateQuery) {
         const spaceTemplateRepository =
             this.dataSource.manager.getRepository(SpaceTemplate);
-        const populatableColumns = [
-            'spaces',
-            'spaceTemplatePositions',
-            'spaceTemplateLocations',
-        ];
-        populate.forEach((value) => {
-            if (!populatableColumns.includes(value)) {
-                throw new BadRequestException(
-                    'Query value is not allowed ' + value,
-                );
-            }
-        });
         const firstSpaceTemplate = await spaceTemplateRepository.findOne({
             where: {
                 id: parseInt(id),
             },
-            relations: populate,
+            relations: query.populate,
+            withDeleted: query.withDeleted,
         });
 
         if (!firstSpaceTemplate) {
@@ -79,6 +64,7 @@ export class SpaceTemplateService {
                 defaultSortBy,
                 searchableColumns,
                 populatableColumns,
+                withDeleted: query.withDeleted,
             },
         );
 

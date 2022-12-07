@@ -34,7 +34,7 @@ export class BoothOrganizationTemplateController {
     ) {
         return this.boothOrganizationTemplateService.readBoothOrganizationTemplateById(
             id,
-            query.populate,
+            query,
         );
     }
 

@@ -30,10 +30,7 @@ export class BoothTemplateController {
         @Param('id') id: string,
         @Paginate() query: PaginateQuery,
     ) {
-        return this.boothTemplateService.readBoothTemplateById(
-            id,
-            query.populate,
-        );
+        return this.boothTemplateService.readBoothTemplateById(id, query);
     }
 
     @Roles(Role.ADMIN)

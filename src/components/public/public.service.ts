@@ -59,6 +59,7 @@ export class PublicService {
                 status: StatusExhibition.LISTING,
             },
             relations: query.populate,
+            withDeleted: query.withDeleted,
         });
 
         if (!exhibitionEntity) {
@@ -132,6 +133,7 @@ export class PublicService {
             sortableColumns,
             filterableColumns,
             defaultSortBy,
+            withDeleted: query.withDeleted,
         });
         return this.paginatedMeetingsConverter.toDto(
             query.page,
@@ -141,14 +143,15 @@ export class PublicService {
         );
     }
 
-    async readConferenceById(id: string, populate: string[]) {
+    async readConferenceById(id: string, query: PaginateQuery) {
         const conferenceRepository =
             this.conferenceDataSource.manager.getRepository(Conference);
         const firstConference = await conferenceRepository.findOne({
             where: {
                 id: parseInt(id),
             },
-            relations: populate,
+            relations: query.populate,
+            withDeleted: query.withDeleted,
         });
 
         if (!firstConference) {
@@ -175,6 +178,7 @@ export class PublicService {
                 populatableColumns,
                 filterableColumns,
                 defaultSortBy,
+                withDeleted: query.withDeleted,
             },
         );
 

@@ -126,7 +126,7 @@ export class ConferenceTemplateService {
         });
     }
 
-    async readConferenceTemplateById(id: string, populate: string[]) {
+    async readConferenceTemplateById(id: string, query: PaginateQuery) {
         const conferenceTemplateRepository =
             this.dataSource.manager.getRepository(ConferenceTemplate);
 
@@ -135,7 +135,8 @@ export class ConferenceTemplateService {
                 where: {
                     id: parseInt(id),
                 },
-                relations: populate,
+                relations: query.populate,
+                withDeleted: query.withDeleted,
             });
 
         if (!firstConferenceTemplate) {
@@ -151,7 +152,6 @@ export class ConferenceTemplateService {
         const populatableColumns = query.populate;
         const conferenceTemplateRepository =
             this.dataSource.manager.getRepository(ConferenceTemplate);
-
         const [conferenceTemplate, total] = await paginate(
             query,
             conferenceTemplateRepository,
@@ -160,6 +160,7 @@ export class ConferenceTemplateService {
                 sortableColumns,
                 populatableColumns,
                 defaultSortBy,
+                withDeleted: query.withDeleted,
             },
         );
 

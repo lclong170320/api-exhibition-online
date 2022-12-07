@@ -23,7 +23,7 @@ export class BoothOrganizationController {
     ) {
         return this.boothOrganizationService.readBoothOrganizationById(
             id,
-            query.populate,
+            query,
         );
     }
 

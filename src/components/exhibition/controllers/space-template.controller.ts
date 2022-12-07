@@ -36,10 +36,7 @@ export class SpaceTemplateController {
         @Param('id') id: string,
         @Paginate() query: PaginateQuery,
     ) {
-        return this.spaceTemplateService.readSpaceTemplateById(
-            id,
-            query.populate,
-        );
+        return this.spaceTemplateService.readSpaceTemplateById(id, query);
     }
 
     @Roles(Role.ADMIN)

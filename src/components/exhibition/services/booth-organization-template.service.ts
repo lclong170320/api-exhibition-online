@@ -1,9 +1,5 @@
 import { DbConnection } from '@/database/config/db';
-import {
-    NotFoundException,
-    Injectable,
-    BadRequestException,
-} from '@nestjs/common';
+import { NotFoundException, Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 import { PaginateQuery } from '@/decorators/paginate.decorator';
@@ -27,24 +23,17 @@ export class BoothOrganizationTemplateService {
         private paginatedBoothOrganizationTemplatesConverter: PaginatedBoothOrganizationTemplatesConverter,
     ) {}
 
-    async readBoothOrganizationTemplateById(id: string, populate: string[]) {
+    async readBoothOrganizationTemplateById(id: string, query: PaginateQuery) {
         const boothOrganizationTemplateRepository =
             this.dataSource.manager.getRepository(BoothOrganizationTemplate);
-        const allowPopulate = ['boothOrganizationTemplatePositions'];
 
-        populate.forEach((value) => {
-            if (!allowPopulate.includes(value)) {
-                throw new BadRequestException(
-                    'Query value is not allowed ' + value,
-                );
-            }
-        });
         const firstBoothOrganizationTemplate =
             await boothOrganizationTemplateRepository.findOne({
                 where: {
                     id: parseInt(id),
                 },
-                relations: populate,
+                relations: query.populate,
+                withDeleted: query.withDeleted,
             });
 
         if (!firstBoothOrganizationTemplate) {
@@ -73,6 +62,7 @@ export class BoothOrganizationTemplateService {
                 populatableColumns,
                 filterableColumns,
                 defaultSortBy,
+                withDeleted: query.withDeleted,
             },
         );
 

@@ -33,7 +33,7 @@ export class UserController {
 
     @Get(':id')
     readUserById(@Param('id') id: string, @Paginate() query: PaginateQuery) {
-        return this.userService.readUserById(id, query.populate);
+        return this.userService.readUserById(id, query);
     }
 
     @UseGuards(JWTAuthGuard, RolesGuard)

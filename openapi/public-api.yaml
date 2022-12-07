@@ -60,6 +60,11 @@ paths:
             - booth_organization.booth_organization_videos.booth_organization_template_position
             - booth_organization.booth_organization_projects.project
             - booth_organization.booth_organization_projects.booth_organization_template_position
+        - in: query
+          name: withDeleted
+          schema:
+            type: string
+            example: 'true'
       responses:
         '200':
           description: OK
@@ -289,6 +294,11 @@ paths:
         description: |
          Searching on allow columns:
           - booth
+      - in: query
+        name: withDeleted
+        schema:
+          type: string
+          example: 'true'
       responses:
         '200':
           description: OK
@@ -383,6 +393,11 @@ paths:
         description: |
          Searching on allow columns:
           - booth_template_positions
+      - in: query
+        name: withDeleted
+        schema:
+          type: string
+          example: 'true'
       responses:
         '200':
           description: OK
@@ -435,6 +450,11 @@ paths:
             - conference_videos
             - conference_videos.video
             - conference_videos.conference_template_position
+      - in: query
+        name: withDeleted
+        schema:
+          type: string
+          example: 'true'
       tags:
         - Conference
       responses:

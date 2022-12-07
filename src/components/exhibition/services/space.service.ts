@@ -19,6 +19,7 @@ import { SpaceVideoConverter } from '../converters/space-video.converter';
 import { SpaceImageConverter } from '../converters/space-image.converter';
 import { Video } from '../entities/video.entity';
 import { Image } from '../entities/image.entity';
+import { PaginateQuery } from '@/decorators/paginate.decorator';
 import { MediaClientService } from 'clients/media.client';
 
 @Injectable()
@@ -32,32 +33,14 @@ export class SpaceService {
         private readonly mediaClientService: MediaClientService,
     ) {}
 
-    async readSpaceById(spaceId: string, populate: string[]) {
-        const allowPopulate = [
-            'exhibition',
-            'spaceImages',
-            'spaceVideos',
-            'spaceTemplate',
-            'spaceTemplate.spaceTemplatePositions',
-            'spaceImages.image',
-            'spaceImages.spaceTemplatePosition',
-            'spaceVideos.video',
-            'spaceVideos.spaceTemplatePosition',
-        ];
-
-        populate.forEach((value) => {
-            if (!allowPopulate.includes(value)) {
-                throw new BadRequestException(
-                    'Query value is not allowed ' + value,
-                );
-            }
-        });
+    async readSpaceById(spaceId: string, query: PaginateQuery) {
         const spaceRepository = this.dataSource.getRepository(Space);
         const firstSpace = await spaceRepository.findOne({
             where: {
                 id: parseInt(spaceId),
             },
-            relations: populate,
+            relations: query.populate,
+            withDeleted: query.withDeleted,
         });
 
         if (!firstSpace) {

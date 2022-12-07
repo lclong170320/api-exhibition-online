@@ -81,6 +81,11 @@ paths:
           | booth_organization |
           | booth_template     |
           | space_template     |
+      - in: query
+        name: withDeleted
+        schema:
+          type: string
+          example: 'true'
       responses:
         '200':
           description: OK
@@ -228,6 +233,11 @@ paths:
             - space.space_template
             - space.space_template.space_template_locations
             - booth_organization
+        - in: query
+          name: withDeleted
+          schema:
+            type: string
+            example: 'true'
       responses:
         '200':
           description: OK
@@ -565,6 +575,11 @@ paths:
             - booth_template
             - location
             - location.space_template_location
+        - in: query
+          name: withDeleted
+          schema:
+            type: string
+            example: 'true'
       responses:
         '200':
           description: OK
@@ -635,6 +650,11 @@ paths:
               example: 'position_booths'
           description:
            " Searching on allow columns:['booth_template_positions']"
+        - in: query
+          name: withDeleted
+          schema:
+            type: string
+            example: 'true'
       responses:
         '200':
           description: OK
@@ -762,6 +782,11 @@ paths:
           description: |
             List of populatable columns:
             - booth_organization_template_positions
+        - in: query
+          name: withDeleted
+          schema:
+            type: string
+            example: 'true'
       responses:
         '200':
           description: OK
@@ -917,6 +942,11 @@ paths:
         description: |
          Searching on allow columns:
             - booth_organization_template_positions
+      - in: query
+        name: withDeleted
+        schema:
+          type: string
+          example: 'true'
       responses:
         '200':
           description: OK
@@ -1047,6 +1077,11 @@ paths:
         description: |
          Searching on allow columns:
           - booth_template_positions
+      - in: query
+        name: withDeleted
+        schema:
+          type: string
+          example: 'true'
       responses:
         '200':
           description: OK
@@ -1148,6 +1183,11 @@ paths:
             - booth_organization_projects.booth_organization_template_position
             - booth_organization_videos.booth_organization_template_position
             - booth_organization_images.booth_organization_template_position
+      - in: query
+        name: withDeleted
+        schema:
+          type: string
+          example: 'true'
       tags:
         - Booth Organization
       responses:
@@ -1314,6 +1354,11 @@ paths:
              - location
              - location.space_template_location
              - exhibition
+      - in: query
+        name: withDeleted
+        schema:
+          type: string
+          example: 'true'
       responses:
         '200':
           description: OK
@@ -1374,6 +1419,11 @@ paths:
               - location.space_template_location
               - exhibition
               - meetings
+        - in: query
+          name: withDeleted
+          schema:
+            type: string
+            example: 'true'
       responses:
         '200':
           description: OK
@@ -1536,6 +1586,11 @@ paths:
         description: |
          Searching on allow columns:
           - booth
+      - in: query
+        name: withDeleted
+        schema:
+          type: string
+          example: 'true'
       responses:
         '200':
           description: OK
@@ -1595,6 +1650,11 @@ paths:
             - space_template_positions
             - space_template_locations
             - spaces
+        - in: query
+          name: withDeleted
+          schema:
+            type: string
+            example: 'true'
       responses:
         '200':
           description: OK
@@ -1753,6 +1813,11 @@ paths:
         description: |
           - space_template_positions
           - spaces
+      - in: query
+        name: withDeleted
+        schema:
+          type: string
+          example: 'true'
       responses:
         '200':
           description: OK
@@ -1878,6 +1943,11 @@ paths:
             - space_videos
             - space_videos.video
             - space_videos.space_template_position
+      - in: query
+        name: withDeleted
+        schema:
+          type: string
+          example: 'true'
       tags:
         - Space
       responses:
@@ -2031,6 +2101,11 @@ paths:
               type: string
           example: 'name:desc'
           description: column name for ordering and value [desc,asc]
+        - in: query
+          name: withDeleted
+          schema:
+            type: string
+            example: 'true'
       responses:
         '200':
           description: OK
@@ -2527,6 +2602,11 @@ paths:
               - status:$eq:active'
               - created_date:$eq:active'
         description: Filter by the field with syntax `column_name:operator:value`.
+      - in: query
+        name: withDeleted
+        schema:
+          type: string
+          example: 'true'
       responses:
         '200':
           description: OK
@@ -2696,6 +2776,11 @@ paths:
               example: 'role'
           description: |
             - role
+        - in: query
+          name: withDeleted
+          schema:
+            type: string
+            example: 'true'
       responses:
         '200':
           description: OK
@@ -3046,6 +3131,11 @@ paths:
         description: |
          Searching on allow columns:
           - conference_template_positions
+      - in: query
+        name: withDeleted
+        schema:
+          type: string
+          example: 'true'
       responses:
         '200':
           description: OK
@@ -3194,6 +3284,11 @@ paths:
           description: |
             List of populatable columns:
               - conference_template_positions
+        - in: query
+          name: withDeleted
+          schema:
+            type: string
+            example: 'true'
       responses:
         '200':
           description: OK
@@ -3267,6 +3362,11 @@ paths:
             - conference_images
             - conference_videos
             - conference_template
+      - in: query
+        name: withDeleted
+        schema:
+          type: string
+          example: 'true'
       responses:
         '200':
           description: OK

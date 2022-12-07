@@ -32,6 +32,7 @@ export class EnterpriseService {
                 searchableColumns,
                 sortableColumns,
                 defaultSortBy,
+                withDeleted: query.withDeleted,
             },
         );
         return this.paginatedEnterprisesConverter.toDto(

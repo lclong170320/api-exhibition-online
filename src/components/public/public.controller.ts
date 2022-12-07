@@ -41,7 +41,7 @@ export class PublicController {
         @Param('id') id: string,
         @Paginate() query: PaginateQuery,
     ) {
-        return this.publicService.readConferenceById(id, query.populate);
+        return this.publicService.readConferenceById(id, query);
     }
 
     @Get('/booth-templates')

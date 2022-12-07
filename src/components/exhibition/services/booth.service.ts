@@ -71,6 +71,7 @@ export class BoothService {
             filterableColumns,
             populatableColumns,
             defaultSortBy,
+            withDeleted: query.withDeleted,
         });
 
         return this.paginatedBoothsConverter.toDto(
@@ -109,14 +110,15 @@ export class BoothService {
         });
     }
 
-    async readBoothById(id: string, populate: string[]) {
+    async readBoothById(id: string, query: PaginateQuery) {
         const boothRepository = this.dataSource.getRepository(Booth);
 
         const firstBooth = await boothRepository.findOne({
             where: {
                 id: parseInt(id),
             },
-            relations: populate,
+            relations: query.populate,
+            withDeleted: query.withDeleted,
         });
 
         if (!firstBooth) {

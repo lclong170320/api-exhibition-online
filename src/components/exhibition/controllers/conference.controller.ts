@@ -33,6 +33,6 @@ export class ConferenceController {
         @Param('id') id: string,
         @Paginate() query: PaginateQuery,
     ) {
-        return this.conferenceService.readConferenceById(id, query.populate);
+        return this.conferenceService.readConferenceById(id, query);
     }
 }

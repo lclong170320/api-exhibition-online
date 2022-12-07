@@ -34,7 +34,7 @@ export class ExhibitionController {
         @Param('id') id: string,
         @Paginate() query: PaginateQuery,
     ) {
-        return this.exhibitionService.readExhibitionById(id, query.populate);
+        return this.exhibitionService.readExhibitionById(id, query);
     }
 
     @Roles(Role.ADMIN)
@@ -84,7 +84,7 @@ export class ExhibitionController {
         return this.exhibitionService.readBoothById(
             exhibitionId,
             boothId,
-            query.populate,
+            query,
         );
     }
 

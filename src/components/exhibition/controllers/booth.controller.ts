@@ -41,6 +41,6 @@ export class BoothController {
         @Param('id') id: string,
         @Paginate() query: PaginateQuery,
     ) {
-        return this.boothService.readBoothById(id, query.populate);
+        return this.boothService.readBoothById(id, query);
     }
 }

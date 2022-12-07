@@ -57,6 +57,7 @@ export class MeetingService {
                         populatableColumns,
                         filterableColumns,
                         defaultSortBy,
+                        withDeleted: query.withDeleted,
                     },
                 );
                 return this.paginatedMeetingsConverter.toDto(

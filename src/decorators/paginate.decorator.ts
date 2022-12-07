@@ -11,6 +11,7 @@ export interface PaginateQuery {
     field?: string[];
     filter?: { [column: string]: string | string[] };
     populate?: string[];
+    withDeleted?: boolean;
 }
 
 export const Paginate = createParamDecorator(
@@ -22,6 +23,7 @@ export const Paginate = createParamDecorator(
         const searchBy: string[] = [];
         const populate: string[] = [];
         const field: string[] = [];
+        let withDeleted = false;
         let filter: { [column: string]: string | string[] } = {};
 
         if (query.sort_by) {
@@ -38,6 +40,10 @@ export const Paginate = createParamDecorator(
                     }
                 }
             }
+        }
+
+        if (query.withDeleted === 'true') {
+            withDeleted = true;
         }
 
         if (query.searchBy) {
@@ -152,6 +158,7 @@ export const Paginate = createParamDecorator(
             filter: Object.keys(filter).length ? filter : undefined,
             populate: populate.length ? populate : [],
             field: field.length ? field : [],
+            withDeleted: withDeleted,
         };
     },
 );

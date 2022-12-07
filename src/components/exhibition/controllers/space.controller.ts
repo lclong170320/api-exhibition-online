@@ -16,7 +16,7 @@ export class SpaceController {
     @Roles(Role.ADMIN)
     @Get(':id')
     readBoothById(@Param('id') id: string, @Paginate() query: PaginateQuery) {
-        return this.spaceService.readSpaceById(id, query.populate);
+        return this.spaceService.readSpaceById(id, query);
     }
 
     @Roles(Role.ADMIN)

@@ -93,6 +93,7 @@ export class ExhibitionService {
                 populatableColumns,
                 filterableColumns,
                 defaultSortBy,
+                withDeleted: query.withDeleted,
             },
         );
 
@@ -104,14 +105,15 @@ export class ExhibitionService {
         );
     }
 
-    async readExhibitionById(id: string, populate: string[]) {
+    async readExhibitionById(id: string, query: PaginateQuery) {
         const exhibitionRepository =
             this.dataSource.manager.getRepository(Exhibition);
         const exhibitionEntity = await exhibitionRepository.findOne({
             where: {
                 id: parseInt(id),
             },
-            relations: populate,
+            relations: query.populate,
+            withDeleted: query.withDeleted,
         });
 
         if (!exhibitionEntity) {
@@ -368,7 +370,7 @@ export class ExhibitionService {
     async readBoothById(
         exhibitionId: string,
         boothId: string,
-        populate: string[],
+        query: PaginateQuery,
     ) {
         const exhibitionRepository =
             this.dataSource.manager.getRepository(Exhibition);
@@ -391,6 +393,7 @@ export class ExhibitionService {
                     id: exhibitionEntity.id,
                 },
             },
+            withDeleted: query.withDeleted,
             relations: [
                 'liveStreams',
                 'boothProducts',
@@ -401,7 +404,7 @@ export class ExhibitionService {
                 'boothImages.image',
                 'boothProjects.project',
                 'boothVideos.video',
-                ...populate,
+                ...query.populate,
             ],
         });
 
