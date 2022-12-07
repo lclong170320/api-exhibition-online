@@ -3,7 +3,6 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PublicController } from './public.controller';
 import { PublicService } from './public.service';
-import { UtilService } from '@/utils/helper/util.service';
 import { HttpModule } from '@nestjs/axios';
 import { JwtService } from '@nestjs/jwt';
 
@@ -78,12 +77,17 @@ import { ConferenceTemplate } from '../exhibition/entities/conference-template.e
 import { ConferenceTemplatePosition } from '../exhibition/entities/conference-template-position.entity';
 import { ConferenceConverter } from './converters/exhibition/conference.converter';
 import { CountProject } from '../exhibition/entities/count-project.entity';
+import { MediaClientService } from 'clients/media.client';
+import { EnterpriseClientService } from 'clients/enterprise.client';
+import { UserClientService } from 'clients/user.client';
 
 @Module({
     controllers: [PublicController],
     providers: [
         PublicService,
-        UtilService,
+        MediaClientService,
+        EnterpriseClientService,
+        UserClientService,
         ExhibitionConverter,
         CategoryConverter,
         SpaceTemplateConverter,

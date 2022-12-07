@@ -9,10 +9,10 @@ import { ConferenceTemplate } from '@/components/exhibition/entities/conference-
 import { ConferenceTemplatePosition } from '@/components/exhibition/entities/conference-template-position.entity';
 import { ConferenceTemplateConverter } from '@/components/exhibition/converters/conference-template.converter';
 import { ConferenceTemplatePositionConverter } from '@/components/exhibition/converters/conference-template-position.converter';
-import { UtilService } from '@/utils/helper/util.service';
 import { PaginateQuery } from '@/decorators/paginate.decorator';
 import { PaginatedConferenceTemplatesConverter } from '../converters/paginated-conference-templates.converter';
 import { paginate } from '@/utils/pagination';
+import { MediaClientService } from 'clients/media.client';
 
 @Injectable()
 export class ConferenceTemplateService {
@@ -22,7 +22,7 @@ export class ConferenceTemplateService {
         private conferenceTemplateConverter: ConferenceTemplateConverter,
         private conferenceTemplatePositionConverter: ConferenceTemplatePositionConverter,
         private paginatedConferenceTemplatesConverter: PaginatedConferenceTemplatesConverter,
-        private readonly utilService: UtilService,
+        private readonly mediaClientService: MediaClientService,
     ) {}
 
     async createConferenceTemplate(
@@ -42,13 +42,13 @@ export class ConferenceTemplateService {
                         conferenceTemplateDto,
                     );
                 conferenceTemplateEntity.modelId =
-                    await this.utilService.createUrlMedias(
+                    await this.mediaClientService.createUrlMedias(
                         conferenceTemplateDto.model_data,
                         jwtAccessToken,
                     );
 
                 conferenceTemplateEntity.thumbnailId =
-                    await this.utilService.createUrlMedias(
+                    await this.mediaClientService.createUrlMedias(
                         conferenceTemplateDto.thumbnail_data,
                         jwtAccessToken,
                     );

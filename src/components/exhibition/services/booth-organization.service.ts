@@ -23,7 +23,7 @@ import { Video } from '../entities/video.entity';
 import { Project } from '../entities/project.entity';
 import { Product } from '../entities/product.entity';
 import { BoothOrganizationConverter } from '../converters/booth-organization.converter';
-import { UtilService } from '@/utils/helper/util.service';
+import { MediaClientService } from 'clients/media.client';
 
 @Injectable()
 export class BoothOrganizationService {
@@ -31,7 +31,7 @@ export class BoothOrganizationService {
         @InjectDataSource(DbConnection.exhibitionCon)
         private readonly dataSource: DataSource,
         private readonly boothOrganizationConverter: BoothOrganizationConverter,
-        private readonly utilService: UtilService,
+        private readonly mediaClientService: MediaClientService,
     ) {}
 
     async readBoothOrganizationById(
@@ -520,7 +520,7 @@ export class BoothOrganizationService {
         imageEntity.imageId = boothOrganizationImageDto.selected_media_id;
 
         if (boothOrganizationImageDto.media_data) {
-            imageEntity.imageId = await this.utilService.createUrlMedias(
+            imageEntity.imageId = await this.mediaClientService.createUrlMedias(
                 boothOrganizationImageDto.media_data,
                 jwtAccessToken,
             );
@@ -566,7 +566,7 @@ export class BoothOrganizationService {
         videoEntity.videoId = boothOrganizationVideoDto.selected_media_id;
 
         if (boothOrganizationVideoDto.media_data) {
-            videoEntity.videoId = await this.utilService.createUrlMedias(
+            videoEntity.videoId = await this.mediaClientService.createUrlMedias(
                 boothOrganizationVideoDto.media_data,
                 jwtAccessToken,
             );
@@ -614,10 +614,11 @@ export class BoothOrganizationService {
         projectEntity.description = boothOrganizationProjectDto.description;
 
         if (boothOrganizationProjectDto.media_data) {
-            projectEntity.imageId = await this.utilService.createUrlMedias(
-                boothOrganizationProjectDto.media_data,
-                jwtAccessToken,
-            );
+            projectEntity.imageId =
+                await this.mediaClientService.createUrlMedias(
+                    boothOrganizationProjectDto.media_data,
+                    jwtAccessToken,
+                );
         }
 
         const createdProject = await projectRepository.save(projectEntity);
@@ -664,10 +665,11 @@ export class BoothOrganizationService {
         productEntity.description = boothOrganizationProductDto.description;
 
         if (boothOrganizationProductDto.media_data) {
-            productEntity.imageId = await this.utilService.createUrlMedias(
-                boothOrganizationProductDto.media_data,
-                jwtAccessToken,
-            );
+            productEntity.imageId =
+                await this.mediaClientService.createUrlMedias(
+                    boothOrganizationProductDto.media_data,
+                    jwtAccessToken,
+                );
         }
 
         const createdProduct = await productRepository.save(productEntity);

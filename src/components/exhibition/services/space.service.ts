@@ -19,7 +19,7 @@ import { SpaceVideoConverter } from '../converters/space-video.converter';
 import { SpaceImageConverter } from '../converters/space-image.converter';
 import { Video } from '../entities/video.entity';
 import { Image } from '../entities/image.entity';
-import { UtilService } from '@/utils/helper/util.service';
+import { MediaClientService } from 'clients/media.client';
 
 @Injectable()
 export class SpaceService {
@@ -29,7 +29,7 @@ export class SpaceService {
         private readonly spaceConverter: SpaceConverter,
         private readonly spaceVideoConverter: SpaceVideoConverter,
         private readonly spaceImageConverter: SpaceImageConverter,
-        private readonly utilService: UtilService,
+        private readonly mediaClientService: MediaClientService,
     ) {}
 
     async readSpaceById(spaceId: string, populate: string[]) {
@@ -164,7 +164,7 @@ export class SpaceService {
         newVideo.videoId = data.select_media_id;
 
         if (data.media_data) {
-            const newVideoId = await this.utilService.createUrlMedias(
+            const newVideoId = await this.mediaClientService.createUrlMedias(
                 data.media_data,
                 jwtAccessToken,
             );
@@ -207,7 +207,7 @@ export class SpaceService {
         imageEntity.imageId = data.select_media_id;
 
         if (data.media_data) {
-            const newImageId = await this.utilService.createUrlMedias(
+            const newImageId = await this.mediaClientService.createUrlMedias(
                 data.media_data,
                 jwtAccessToken,
             );

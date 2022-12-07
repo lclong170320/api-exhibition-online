@@ -49,8 +49,8 @@ import { Video } from '../entities/video.entity';
 import { UpdateExhibition } from '../dto/exhibition-update.dto';
 import { Conference } from '../entities/conference.entity';
 import { ConferenceTemplate } from '../entities/conference-template.entity';
-import { UtilService } from '@/utils/helper/util.service';
 import { User } from '@/components/exhibition/dto/user.dto';
+import { MediaClientService } from 'clients/media.client';
 
 @Injectable()
 export class ExhibitionService {
@@ -63,7 +63,7 @@ export class ExhibitionService {
         private readonly httpService: HttpService,
         private readonly liveStreamConverter: LiveStreamConverter,
         private readonly boothConverter: BoothConverter,
-        private readonly utilService: UtilService,
+        private readonly mediaClientService: MediaClientService,
     ) {}
 
     private checkDateExhibition(exhibitionDto: ExhibitionDto) {
@@ -541,7 +541,7 @@ export class ExhibitionService {
 
                     if (imageDto.media_data) {
                         imageEntity.imageId =
-                            await this.utilService.createUrlMedias(
+                            await this.mediaClientService.createUrlMedias(
                                 imageDto.media_data,
                                 jwtAccessToken,
                             );
@@ -596,7 +596,7 @@ export class ExhibitionService {
 
                     if (videoDto.media_data) {
                         videoEntity.videoId =
-                            await this.utilService.createUrlMedias(
+                            await this.mediaClientService.createUrlMedias(
                                 videoDto.media_data,
                                 jwtAccessToken,
                             );
@@ -652,7 +652,7 @@ export class ExhibitionService {
 
                         if (projectDto.media_data) {
                             projectEntity.imageId =
-                                await this.utilService.createUrlMedias(
+                                await this.mediaClientService.createUrlMedias(
                                     projectDto.media_data,
                                     jwtAccessToken,
                                 );
@@ -714,7 +714,7 @@ export class ExhibitionService {
 
                         if (productDto.media_data) {
                             productEntity.imageId =
-                                await this.utilService.createUrlMedias(
+                                await this.mediaClientService.createUrlMedias(
                                     productDto.media_data,
                                     jwtAccessToken,
                                 );

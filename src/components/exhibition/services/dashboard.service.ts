@@ -1,7 +1,8 @@
 import { DbConnection } from '@/database/config/db';
-import { UtilService } from '@/utils/helper/util.service';
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
+import { EnterpriseClientService } from 'clients/enterprise.client';
+import { UserClientService } from 'clients/user.client';
 import { DataSource } from 'typeorm';
 import { DashboardConverter } from '../converters/dashboard.converter';
 import { DashboardBoothTemplates } from '../dto/dashboard-booth-templates.dto';
@@ -18,7 +19,8 @@ export class DashboardService {
     constructor(
         @InjectDataSource(DbConnection.exhibitionCon)
         private readonly dataSource: DataSource,
-        private readonly utilService: UtilService,
+        private readonly userClientService: UserClientService,
+        private readonly enterpriseClientService: EnterpriseClientService,
         private readonly dashboardConverter: DashboardConverter,
     ) {}
 
@@ -71,16 +73,16 @@ export class DashboardService {
             },
         ];
 
-        const findEnterprises = await this.utilService.getEnterprises(
-            jwtAccessToken,
-        );
+        const findEnterprises =
+            await this.enterpriseClientService.getEnterprises(jwtAccessToken);
 
         await Promise.all(
             findEnterprises.enterprises.map(async (enterprise) => {
-                const checkUser = await this.utilService.getUserByEnterpriseId(
-                    jwtAccessToken,
-                    enterprise.id,
-                );
+                const checkUser =
+                    await this.userClientService.getUserByEnterpriseId(
+                        jwtAccessToken,
+                        enterprise.id,
+                    );
                 dashboardEnterprises.push({
                     enterprise_name: enterprise.name,
                     quantity: checkUser.users.length,

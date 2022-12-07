@@ -8,7 +8,6 @@ import { LoginPayload } from '@/components/user/dto/login-payload.dto';
 import { RoleName } from '@/components/user/dto/role.dto';
 import { DbConnection } from '@/database/config/db';
 import { PaginateQuery } from '@/decorators/paginate.decorator';
-import { UtilService } from '@/utils/helper/util.service';
 import { paginate } from '@/utils/pagination';
 import {
     Injectable,
@@ -20,6 +19,8 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { keys } from 'lodash';
 import { BoothConverter } from '@/components/exhibition/converters/booth.converter';
+import { UserClientService } from 'clients/user.client';
+import { EnterpriseClientService } from 'clients/enterprise.client';
 
 @Injectable()
 export class BoothService {
@@ -29,7 +30,8 @@ export class BoothService {
         private readonly paginatedBoothsConverter: PaginatedBoothsConverter,
         private readonly boothConverter: BoothConverter,
         private readonly jwtService: JwtService,
-        private readonly utilService: UtilService,
+        private readonly userClientService: UserClientService,
+        private readonly enterpriseClientService: EnterpriseClientService,
     ) {}
 
     async readBooths(jwtAccessToken: string, query: PaginateQuery) {
@@ -41,14 +43,14 @@ export class BoothService {
             jwtAccessToken,
         ) as LoginPayload;
 
-        const enterpriseId = await this.utilService.getEnterpriseIdFromToken(
-            jwtAccessToken,
-            decodedJwtAccessToken['user'].id,
-        );
+        const enterpriseId =
+            await this.userClientService.getEnterpriseIdFromToken(
+                jwtAccessToken,
+                decodedJwtAccessToken['user'].id,
+            );
 
-        const firstEnterprise = await this.utilService.checkEnterprise(
-            enterpriseId,
-        );
+        const firstEnterprise =
+            await this.enterpriseClientService.checkEnterprise(enterpriseId);
 
         if (!firstEnterprise) {
             throw new UnauthorizedException('Do not have access');

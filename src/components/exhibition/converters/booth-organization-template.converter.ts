@@ -1,6 +1,6 @@
 import { BoothOrganizationTemplate as BoothOrganizationTemplateDto } from '@/components/exhibition/dto/booth-organization-template.dto';
 import { BoothOrganizationTemplate } from '@/components/exhibition/entities/booth-organization-template.entity';
-import { UtilService } from '@/utils/helper/util.service';
+import { MediaClientService } from 'clients/media.client';
 import { Injectable } from '@nestjs/common';
 import { BoothOrganizationTemplatePositionConverter } from './booth-organization-template-position.converter';
 
@@ -8,7 +8,7 @@ import { BoothOrganizationTemplatePositionConverter } from './booth-organization
 export class BoothOrganizationTemplateConverter {
     constructor(
         private readonly boothOrganizationTemplatePositionConverter: BoothOrganizationTemplatePositionConverter,
-        private utilService: UtilService,
+        private mediaClientService: MediaClientService,
     ) {}
 
     async toEntity(
@@ -20,11 +20,11 @@ export class BoothOrganizationTemplateConverter {
         entity.name = dto.name;
         entity.createdBy = userId;
         entity.createdDate = new Date();
-        entity.modelId = await this.utilService.createUrlMedias(
+        entity.modelId = await this.mediaClientService.createUrlMedias(
             dto.model_data,
             jwtAccessToken,
         );
-        entity.thumbnailId = await this.utilService.createUrlMedias(
+        entity.thumbnailId = await this.mediaClientService.createUrlMedias(
             dto.thumbnail_data,
             jwtAccessToken,
         );

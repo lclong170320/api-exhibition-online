@@ -19,7 +19,7 @@ import { ConferenceVideoConverter } from '../converters/conference-video.convert
 import { ConferenceImageConverter } from '../converters/conference-image.converter';
 import { Video } from '../entities/video.entity';
 import { Image } from '../entities/image.entity';
-import { UtilService } from '@/utils/helper/util.service';
+import { MediaClientService } from 'clients/media.client';
 
 @Injectable()
 export class ConferenceService {
@@ -29,7 +29,7 @@ export class ConferenceService {
         private readonly conferenceConverter: ConferenceConverter,
         private readonly conferenceVideoConverter: ConferenceVideoConverter,
         private readonly conferenceImageConverter: ConferenceImageConverter,
-        private readonly utilService: UtilService,
+        private readonly mediaClientService: MediaClientService,
     ) {}
 
     async updateConference(
@@ -131,7 +131,7 @@ export class ConferenceService {
         newVideo.videoId = data.select_media_id;
 
         if (data.media_data) {
-            const newVideoId = await this.utilService.createUrlMedias(
+            const newVideoId = await this.mediaClientService.createUrlMedias(
                 data.media_data,
                 jwtAccessToken,
             );
@@ -176,7 +176,7 @@ export class ConferenceService {
         imageEntity.imageId = data.select_media_id;
 
         if (data.media_data) {
-            const newImageId = await this.utilService.createUrlMedias(
+            const newImageId = await this.mediaClientService.createUrlMedias(
                 data.media_data,
                 jwtAccessToken,
             );

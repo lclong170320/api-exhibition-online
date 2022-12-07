@@ -69,7 +69,6 @@ import { BoothController } from './controllers/booth.controller';
 import { PaginatedBoothsConverter } from './converters/paginated-booths.converter';
 import { JwtService } from '@nestjs/jwt';
 import { BoothService } from './services/booth.service';
-import { UtilService } from '@/utils/helper/util.service';
 import { PaginatedBoothOrganizationTemplatesConverter } from './converters/paginated-booth-organization-templates.converter';
 import { BoothOrganizationTemplateController } from './controllers/booth-organization-template.controller';
 import { BoothOrganizationTemplateService } from './services/booth-organization-template.service';
@@ -97,6 +96,9 @@ import { DashboardBoothTemplatesConverter } from './converters/dashboard-booth-t
 import { DashboardEnterprisesConverter } from './converters/dashboard-enterprises.converter';
 import { DashboardViewerOfExhibitionsConverter } from './converters/dashboard-viewer-of-exhibitions.converter';
 import { DashboardExhibitionsConverter } from './converters/dashboard-exhibitions.converter';
+import { MediaClientService } from 'clients/media.client';
+import { UserClientService } from 'clients/user.client';
+import { EnterpriseClientService } from 'clients/enterprise.client';
 
 @Module({
     controllers: [
@@ -123,7 +125,9 @@ import { DashboardExhibitionsConverter } from './converters/dashboard-exhibition
         JwtService,
         BoothService,
         BoothOrganizationTemplateService,
-        UtilService,
+        MediaClientService,
+        EnterpriseClientService,
+        UserClientService,
         MeetingService,
         ConferenceTemplateService,
         ConferenceService,

@@ -18,8 +18,8 @@ import { BoothTemplatePosition as BoothTemplatePositionDto } from '@/components/
 
 import { BoothTemplatePosition } from '../entities/booth-template-position.entity';
 import { BoothTemplatePositionConverter } from '../converters/booth-template-position.converter';
-import { UtilService } from '@/utils/helper/util.service';
 import { User } from '@/components/exhibition/dto/user.dto';
+import { MediaClientService } from 'clients/media.client';
 
 @Injectable()
 export class BoothTemplateService {
@@ -29,7 +29,7 @@ export class BoothTemplateService {
         private paginatedBoothTemplatesConverter: PaginatedBoothTemplatesConverter,
         private boothTemplateConverter: BoothTemplateConverter,
         private boothTemplatePositionConverter: BoothTemplatePositionConverter,
-        private readonly utilService: UtilService,
+        private readonly mediaClientService: MediaClientService,
     ) {}
 
     async readBoothTemplateById(id: string, populate: string[]) {
@@ -104,13 +104,13 @@ export class BoothTemplateService {
                 const boothTemplateEntity =
                     this.boothTemplateConverter.toEntity(boothTemplateDto);
                 boothTemplateEntity.modelId =
-                    await this.utilService.createUrlMedias(
+                    await this.mediaClientService.createUrlMedias(
                         boothTemplateDto.model_data,
                         jwtAccessToken,
                     );
 
                 boothTemplateEntity.thumbnailId =
-                    await this.utilService.createUrlMedias(
+                    await this.mediaClientService.createUrlMedias(
                         boothTemplateDto.thumbnail_data,
                         jwtAccessToken,
                     );

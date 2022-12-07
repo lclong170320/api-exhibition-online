@@ -1,13 +1,15 @@
 import { BoothVideo as BoothVideoDto } from '@/components/exhibition/dto/booth-video.dto';
 import { BoothVideo } from '@/components/exhibition/entities/booth-video.entity';
-import { UtilService } from '@/utils/helper/util.service';
 import { Injectable } from '@nestjs/common';
+import { MediaClientService } from 'clients/media.client';
 
 @Injectable()
 export class BoothVideoConverter {
-    constructor(private readonly utilService: UtilService) {}
+    constructor(private readonly mediaClientService: MediaClientService) {}
     async toDto(entity: BoothVideo) {
-        const url = await this.utilService.getMediaUrl(entity['video'].videoId);
+        const url = await this.mediaClientService.getMediaUrl(
+            entity['video'].videoId,
+        );
         const dto = {
             id: entity.id,
             video_id: entity['video'].videoId ?? undefined,
