@@ -44,7 +44,7 @@ export class UserController {
     }
 
     @UseGuards(JWTAuthGuard, RolesGuard)
-    @Roles(Role.ADMIN, Role.ADMIN)
+    @Roles(Role.ADMIN, Role.USER)
     @Post('change-password')
     @HttpCode(204)
     changePassword(
@@ -65,7 +65,7 @@ export class UserController {
     @Roles(Role.ADMIN)
     @Delete(':id')
     @HttpCode(204)
-    deleteBooth(@Param('id') id: string) {
+    deleteUser(@Param('id') id: string) {
         return this.userService.deleteUser(id);
     }
 }

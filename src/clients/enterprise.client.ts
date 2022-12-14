@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { HttpService } from '@nestjs/axios';
 import { lastValueFrom, map } from 'rxjs';
+import { PaginateQuery } from '@/decorators/paginate.decorator';
 
 @Injectable()
 export class EnterpriseClientService {
@@ -12,14 +13,18 @@ export class EnterpriseClientService {
 
     async checkEnterprise(id: number): Promise<boolean> {
         const url = this.configService.get('GETTING_ENTERPRISE_URL');
-        const firstEnterprise = this.httpService.get(`${url}/${id}`);
+        const query: PaginateQuery = {
+            withDeleted: true,
+        };
+        const firstEnterprise = this.httpService.get(
+            `${url}/${id}?withDeleted=${query.withDeleted}`,
+        );
         const response = firstEnterprise.pipe(
             map((res) => {
                 return res.data;
             }),
         );
         const parseValueEnterprise = await lastValueFrom(response);
-
         if (!parseValueEnterprise.id) {
             return false;
         }

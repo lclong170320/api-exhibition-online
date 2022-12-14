@@ -21,8 +21,11 @@ export class EnterpriseController {
     }
 
     @Get(':id')
-    readEnterpriseById(@Param('id') id: string) {
-        return this.enterpriseService.readEnterpriseById(id);
+    readEnterpriseById(
+        @Param('id') id: string,
+        @Paginate() query: PaginateQuery,
+    ) {
+        return this.enterpriseService.readEnterpriseById(id, query);
     }
 
     @Post()

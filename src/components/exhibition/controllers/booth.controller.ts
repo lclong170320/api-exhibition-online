@@ -19,7 +19,7 @@ import { RolesGuard } from 'guards/roles.guard';
 export class BoothController {
     constructor(private readonly boothService: BoothService) {}
 
-    @Roles(Role.USER)
+    @Roles(Role.ADMIN, Role.USER)
     @Get()
     readBooths(
         @JwtAccessToken() jwtAccessToken: string,

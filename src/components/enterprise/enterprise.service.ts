@@ -43,8 +43,8 @@ export class EnterpriseService {
         );
     }
 
-    async readEnterpriseById(id: string) {
-        const enterpriseEntity = await this.findEnterpriseById(id);
+    async readEnterpriseById(id: string, query: PaginateQuery) {
+        const enterpriseEntity = await this.findOneEnterprise(id, query);
         return this.enterpriseConverter.toDto(enterpriseEntity);
     }
 
@@ -79,6 +79,19 @@ export class EnterpriseService {
             this.dataSource.manager.getRepository(Enterprise);
         const enterpriseEntity = await enterpriseRepository.findOneBy({
             id: parseInt(id),
+        });
+        if (!enterpriseEntity) {
+            throw new NotFoundException('The id enterprise not exist: ' + id);
+        }
+        return enterpriseEntity;
+    }
+
+    private async findOneEnterprise(id: string, query: PaginateQuery) {
+        const enterpriseRepository =
+            this.dataSource.manager.getRepository(Enterprise);
+        const enterpriseEntity = await enterpriseRepository.findOne({
+            where: { id: parseInt(id) },
+            withDeleted: query.withDeleted,
         });
         if (!enterpriseEntity) {
             throw new NotFoundException('The id enterprise not exist: ' + id);
