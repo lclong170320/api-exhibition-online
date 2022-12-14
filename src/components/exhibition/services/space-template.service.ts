@@ -151,9 +151,7 @@ export class SpaceTemplateService {
 
                 const spaceTemplateEntity = new SpaceTemplate();
                 spaceTemplateEntity.name = spaceTemplateDto.name;
-                spaceTemplateEntity.createdDate = new Date(
-                    spaceTemplateDto.created_date,
-                );
+                spaceTemplateEntity.createdDate = new Date();
                 spaceTemplateEntity.createdBy = user.id;
 
                 spaceTemplateEntity.thumbnailId =

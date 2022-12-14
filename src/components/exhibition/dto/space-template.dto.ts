@@ -23,7 +23,7 @@ export interface SpaceTemplate {
     thumbnail_data: string;
     readonly map_id: number;
     map_data: string;
-    created_date: string;
+    readonly created_date: string;
     space_template_positions?: Array<SpaceTemplatePosition>;
     space_template_locations?: Array<SpaceTemplateLocation>;
     spaces?: Array<Space>;
