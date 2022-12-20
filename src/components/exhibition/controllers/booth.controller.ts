@@ -13,6 +13,8 @@ import {
     UseGuards,
 } from '@nestjs/common';
 import { RolesGuard } from 'guards/roles.guard';
+import { AllowUserGetBooth } from 'interceptors/allowUserGetBooth.interceptor';
+import { IsOwner } from '@/decorators/IsOwner';
 
 @UseGuards(JWTAuthGuard, RolesGuard)
 @Controller('booths')
@@ -20,6 +22,7 @@ export class BoothController {
     constructor(private readonly boothService: BoothService) {}
 
     @Roles(Role.ADMIN, Role.USER)
+    @IsOwner(AllowUserGetBooth)
     @Get()
     readBooths(
         @JwtAccessToken() jwtAccessToken: string,
@@ -28,7 +31,8 @@ export class BoothController {
         return this.boothService.readBooths(jwtAccessToken, query);
     }
 
-    @Roles(Role.ADMIN)
+    @Roles(Role.ADMIN, Role.USER)
+    @IsOwner(AllowUserGetBooth)
     @Delete(':id')
     @HttpCode(204)
     deleteBooth(@Param('id') id: string) {
@@ -36,11 +40,9 @@ export class BoothController {
     }
 
     @Roles(Role.ADMIN, Role.USER)
+    @IsOwner(AllowUserGetBooth)
     @Get(':id')
-    readBoothTemplateById(
-        @Param('id') id: string,
-        @Paginate() query: PaginateQuery,
-    ) {
+    readBoothById(@Param('id') id: string, @Paginate() query: PaginateQuery) {
         return this.boothService.readBoothById(id, query);
     }
 }
