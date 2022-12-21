@@ -21,6 +21,7 @@ import { keys } from 'lodash';
 import { BoothConverter } from '@/components/exhibition/converters/booth.converter';
 import { UserClientService } from 'clients/user.client';
 import { EnterpriseClientService } from 'clients/enterprise.client';
+import { LiveStream } from '@/components/exhibition/entities/live-stream.entity';
 import { LiveStreamConverter } from '../converters/live-stream.converter';
 
 @Injectable()
@@ -128,6 +129,28 @@ export class BoothService {
         }
 
         return this.boothConverter.toDto(firstBooth);
+    }
+
+    async deleteLiveStream(id: string, livestreamId: string) {
+        await this.dataSource.transaction(async (manager) => {
+            const boothRepository = manager.getRepository(Booth);
+            const liveStreamRepository = manager.getRepository(LiveStream);
+            const firstBooth = await boothRepository.findOne({
+                where: {
+                    id: parseInt(id),
+                    liveStreams: {
+                        id: parseInt(livestreamId),
+                    },
+                },
+                relations: ['liveStreams'],
+            });
+            if (!firstBooth) {
+                throw new NotFoundException(
+                    `The booth is not found: booth_id: ${id} and liveStream_id: ${livestreamId}`,
+                );
+            }
+            await liveStreamRepository.softRemove(firstBooth.liveStreams[0]);
+        });
     }
 
     async readLiveStreamByIdBooth(id: string, livestreamId: string) {

@@ -1525,6 +1525,69 @@ paths:
                     message: Internal server error
                     details: []
   '/booths/{id}/livestream/{livestream_id}':
+    delete:
+      tags:
+        - liveStream
+      security:
+      - bearerAuth: []
+      summary: Delete an existing liveStream
+      description: Delete an existing liveStream by Id
+      operationId: deleteLiveStream
+      parameters:
+        - name: id
+          description: ID of booth
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^[0-9]+$'
+        - name: livestream_id
+          description: ID to delete liveStream
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^[0-9]+$'
+      responses:
+        '204':
+          description: No Content
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Bad Request
+                    details:
+                      - field: .params.id
+                        message: 'should match pattern "^[0-9]+$"'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Not Found
+                    details:
+                      - field: .params.id
+                        message: 'The id not exist: "^[0-9]+$"'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Internal server error
+                    details: []
     get:
       security:
       - bearerAuth: []

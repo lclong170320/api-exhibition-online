@@ -22,7 +22,6 @@ export class BoothController {
     constructor(private readonly boothService: BoothService) {}
 
     @Roles(Role.ADMIN, Role.USER)
-    @IsOwner(AllowUserGetBooth)
     @Get()
     readBooths(
         @JwtAccessToken() jwtAccessToken: string,
@@ -44,6 +43,17 @@ export class BoothController {
     @Get(':id')
     readBoothById(@Param('id') id: string, @Paginate() query: PaginateQuery) {
         return this.boothService.readBoothById(id, query);
+    }
+
+    @Roles(Role.ADMIN, Role.USER)
+    @IsOwner(AllowUserGetBooth)
+    @Delete(':id/livestream/:livestreamId')
+    @HttpCode(204)
+    deleteLiveStream(
+        @Param('id') id: string,
+        @Param('livestreamId') liveStreamId: string,
+    ) {
+        return this.boothService.deleteLiveStream(id, liveStreamId);
     }
 
     @Roles(Role.ADMIN, Role.USER)
