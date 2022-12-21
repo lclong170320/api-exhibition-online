@@ -23,6 +23,7 @@ import { UserClientService } from 'clients/user.client';
 import { EnterpriseClientService } from 'clients/enterprise.client';
 import { LiveStream } from '@/components/exhibition/entities/live-stream.entity';
 import { LiveStreamConverter } from '../converters/live-stream.converter';
+import { LiveStream as LiveStreamDto } from '../dto/live-stream.dto';
 
 @Injectable()
 export class BoothService {
@@ -173,5 +174,41 @@ export class BoothService {
         }
 
         return this.liveStreamConverter.toDto(firstBooth.liveStreams[0]);
+    }
+
+    async updateLiveStream(
+        id: string,
+        livestreamId: string,
+        liveStreamDto: LiveStreamDto,
+    ) {
+        const boothRepository = this.dataSource.manager.getRepository(Booth);
+        const liveStreamRepository =
+            this.dataSource.manager.getRepository(LiveStream);
+
+        const firstBooth = await boothRepository.findOne({
+            where: {
+                id: parseInt(id),
+                liveStreams: {
+                    id: parseInt(livestreamId),
+                },
+            },
+            relations: ['liveStreams'],
+        });
+
+        if (!firstBooth) {
+            throw new NotFoundException(
+                `The booth is not found: booth_id: ${id} and liveStream_id: ${livestreamId}`,
+            );
+        }
+
+        const liveStreamEntity =
+            this.liveStreamConverter.toEntity(liveStreamDto);
+
+        const updateLiveStream = await liveStreamRepository.save({
+            ...firstBooth.liveStreams[0],
+            ...liveStreamEntity,
+        });
+
+        return this.liveStreamConverter.toDto(updateLiveStream);
     }
 }

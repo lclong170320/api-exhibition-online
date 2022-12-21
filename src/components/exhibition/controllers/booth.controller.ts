@@ -11,10 +11,13 @@ import {
     HttpCode,
     Param,
     UseGuards,
+    Put,
+    Body,
 } from '@nestjs/common';
 import { RolesGuard } from 'guards/roles.guard';
 import { AllowUserGetBooth } from 'interceptors/allowUserGetBooth.interceptor';
 import { IsOwner } from '@/decorators/IsOwner';
+import { LiveStream as LiveStreamDto } from '../dto/live-stream.dto';
 
 @UseGuards(JWTAuthGuard, RolesGuard)
 @Controller('booths')
@@ -64,5 +67,20 @@ export class BoothController {
         @Param('livestreamId') liveStreamId: string,
     ) {
         return this.boothService.readLiveStreamByIdBooth(boothId, liveStreamId);
+    }
+
+    @Roles(Role.ADMIN, Role.USER)
+    @IsOwner(AllowUserGetBooth)
+    @Put(':id/livestream/:livestreamId')
+    updateLiveStream(
+        @Param('id') id: string,
+        @Param('livestreamId') livestreamId: string,
+        @Body() liveStreamDto: LiveStreamDto,
+    ) {
+        return this.boothService.updateLiveStream(
+            id,
+            livestreamId,
+            liveStreamDto,
+        );
     }
 }

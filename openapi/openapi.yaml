@@ -1525,6 +1525,78 @@ paths:
                     message: Internal server error
                     details: []
   '/booths/{id}/livestream/{livestream_id}':
+    put:
+      security:
+      - bearerAuth: []
+      tags:
+        - liveStream
+      summary: Update an existing liveStream
+      description: Update an existing liveStream by Id liveStream and Id booth
+      operationId: updateLiveStream
+      parameters:
+        - name: id
+          description: ID to Get booth
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^[0-9]+$'
+        - name: livestream_id
+          description: ID to Get liveStream
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^[0-9]+$'
+      requestBody:
+        description: Update an existing liveStream
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LiveStream'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LiveStream'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Bad Request
+                    details:
+                      - field: .params.id
+                        message: 'should match pattern "^[0-9]+$"'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Not found
+                    details: []
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Internal server error
+                    details: []
     delete:
       tags:
         - liveStream
