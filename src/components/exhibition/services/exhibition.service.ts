@@ -247,12 +247,12 @@ export class ExhibitionService {
 
         const boothOrganizationEntity = new BoothOrganization();
         // TODO: default value
-        boothOrganizationEntity.positionX = 1;
-        boothOrganizationEntity.positionY = 1;
-        boothOrganizationEntity.positionZ = 1;
-        boothOrganizationEntity.rotationX = 1;
-        boothOrganizationEntity.rotationY = 1;
-        boothOrganizationEntity.rotationX = 1;
+        boothOrganizationEntity.positionX = 760;
+        boothOrganizationEntity.positionY = 10;
+        boothOrganizationEntity.positionZ = -180;
+        boothOrganizationEntity.rotationX = 0;
+        boothOrganizationEntity.rotationY = 0;
+        boothOrganizationEntity.rotationX = 0;
         boothOrganizationEntity.boothOrganizationTemplate =
             boothOrganizationTemplate;
 

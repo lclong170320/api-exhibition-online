@@ -87,10 +87,9 @@ export class BoothController {
 
     @Roles(Role.ADMIN, Role.USER)
     @IsOwner(AllowUserGetBooth)
-    @Post(':id/livestream/')
+    @Post(':id/livestream')
     createLiveStream(
         @Param('id') id: string,
-
         @Body() liveStreamDto: LiveStreamDto,
     ) {
         return this.boothService.createLiveStream(id, liveStreamDto);
