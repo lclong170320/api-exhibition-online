@@ -211,4 +211,32 @@ export class BoothService {
 
         return this.liveStreamConverter.toDto(updateLiveStream);
     }
+
+    async createLiveStream(id: string, liveStreamDto: LiveStreamDto) {
+        const boothRepository = this.dataSource.manager.getRepository(Booth);
+        const liveStreamRepository =
+            this.dataSource.manager.getRepository(LiveStream);
+
+        const firstBooth = await boothRepository.findOne({
+            where: {
+                id: parseInt(id),
+            },
+        });
+
+        if (!firstBooth) {
+            throw new NotFoundException(
+                `The booth is not found: booth_id: ${id}`,
+            );
+        }
+
+        const liveStreamEntity =
+            this.liveStreamConverter.toEntity(liveStreamDto);
+
+        liveStreamEntity.booth = firstBooth;
+        const createLiveStream = await liveStreamRepository.save(
+            liveStreamEntity,
+        );
+
+        return this.liveStreamConverter.toDto(createLiveStream);
+    }
 }

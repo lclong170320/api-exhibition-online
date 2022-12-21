@@ -13,6 +13,7 @@ import {
     UseGuards,
     Put,
     Body,
+    Post,
 } from '@nestjs/common';
 import { RolesGuard } from 'guards/roles.guard';
 import { AllowUserGetBooth } from 'interceptors/allowUserGetBooth.interceptor';
@@ -82,5 +83,16 @@ export class BoothController {
             livestreamId,
             liveStreamDto,
         );
+    }
+
+    @Roles(Role.ADMIN, Role.USER)
+    @IsOwner(AllowUserGetBooth)
+    @Post(':id/livestream/')
+    createLiveStream(
+        @Param('id') id: string,
+
+        @Body() liveStreamDto: LiveStreamDto,
+    ) {
+        return this.boothService.createLiveStream(id, liveStreamDto);
     }
 }

@@ -1524,12 +1524,67 @@ paths:
                   value:
                     message: Internal server error
                     details: []
+  '/booths/{id}/livestream/':
+    post:
+      security:
+      - bearerAuth: []
+      tags:
+        - Live Stream
+      summary: Add a liveStream by id booth
+      description: Add a liveStream by id booth
+      operationId: addliveStream
+      parameters:
+        - name: id
+          description: ID booth
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^[0-9]+$'
+      requestBody:
+        description: Create a liveStream
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LiveStream'
+        required: true
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LiveStream'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Bad Request
+                    details:
+                      - field: .params.id
+                        message: 'should match pattern "^[0-9]+$"'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Internal server error
+                    details: []
   '/booths/{id}/livestream/{livestream_id}':
     put:
       security:
       - bearerAuth: []
       tags:
-        - liveStream
+        - Live Stream
       summary: Update an existing liveStream
       description: Update an existing liveStream by Id liveStream and Id booth
       operationId: updateLiveStream
@@ -1599,7 +1654,7 @@ paths:
                     details: []
     delete:
       tags:
-        - liveStream
+        - Live Stream
       security:
       - bearerAuth: []
       summary: Delete an existing liveStream
@@ -1664,7 +1719,7 @@ paths:
       security:
       - bearerAuth: []
       tags:
-        - Booth
+        - Live Stream
       summary: Get a liveStream by id booth and id liveStream
       description: Get an existing liveStream by Id booth and id liveStream
       operationId: getLiveStream
