@@ -1524,6 +1524,74 @@ paths:
                   value:
                     message: Internal server error
                     details: []
+  '/booths/{id}/livestream/{livestream_id}':
+    get:
+      security:
+      - bearerAuth: []
+      tags:
+        - Booth
+      summary: Get a liveStream by id booth and id liveStream
+      description: Get an existing liveStream by Id booth and id liveStream
+      operationId: getLiveStream
+      parameters:
+        - name: id
+          description: ID to Get booth
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^[0-9]+$'
+        - name: livestream_id
+          description: ID to get liveStream
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^[0-9]+$'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LiveStream'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Bad Request
+                    details:
+                      - field: .params.id
+                        message: 'should match pattern "^[0-9]+$"'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Not Found
+                    details:
+                      - field: .params.id
+                        message: 'The id not exist: "^[0-9]+$"'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Internal server error
+                    details: []
   '/meetings':
     get:
       security:

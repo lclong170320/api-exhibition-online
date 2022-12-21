@@ -45,4 +45,14 @@ export class BoothController {
     readBoothById(@Param('id') id: string, @Paginate() query: PaginateQuery) {
         return this.boothService.readBoothById(id, query);
     }
+
+    @Roles(Role.ADMIN, Role.USER)
+    @IsOwner(AllowUserGetBooth)
+    @Get(':id/livestream/:livestreamId')
+    readLiveStreamByIdBooth(
+        @Param('id') boothId: string,
+        @Param('livestreamId') liveStreamId: string,
+    ) {
+        return this.boothService.readLiveStreamByIdBooth(boothId, liveStreamId);
+    }
 }
