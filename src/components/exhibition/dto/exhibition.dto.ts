@@ -19,6 +19,7 @@ import { Space } from './space.dto';
 
 export interface Exhibition {
     readonly id: number;
+    slug: string;
     name: string;
     booth_number: number;
     exhibition_code: string;

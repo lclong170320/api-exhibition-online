@@ -28,6 +28,7 @@ export class ExhibitionConverter {
     async toDto(entity: Exhibition) {
         const dto = {
             id: entity.id,
+            slug: entity.slug,
             name: entity.name,
             exhibition_code: entity.exhibitionCode,
             booth_number: entity.boothNumber,

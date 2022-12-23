@@ -8,6 +8,11 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 export class PublicController {
     constructor(private readonly publicService: PublicService) {}
 
+    @Get('/exhibitions')
+    readExhibitions(@Paginate() query: PaginateQuery) {
+        return this.publicService.readExhibitions(query);
+    }
+
     @Get('/exhibitions/:id')
     readExhibitionById(
         @Param('id') id: string,

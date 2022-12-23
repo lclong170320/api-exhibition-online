@@ -29,6 +29,7 @@ import { PaginatedBoothTemplatesConverter } from './converters/exhibition/pagina
 import { CountProject } from '../exhibition/entities/count-project.entity';
 import { BoothProject } from '../exhibition/entities/booth-project.entity';
 import { LikeProject } from '../exhibition/entities/like-project.entity';
+import { PaginatedExhibitionsConverter } from './converters/exhibition/paginated-exhibitions.converter';
 
 @Injectable()
 export class PublicService {
@@ -48,7 +49,37 @@ export class PublicService {
         private readonly meetingConverter: MeetingConverter,
         private readonly paginatedMeetingsConverter: PaginatedMeetingsConverter,
         private readonly paginatedBoothTemplatesConverter: PaginatedBoothTemplatesConverter,
+        private readonly paginatedExhibitionsConverter: PaginatedExhibitionsConverter,
     ) {}
+
+    async readExhibitions(query: PaginateQuery) {
+        const sortableColumns = ['id', 'name', 'createdAt'];
+        const searchableColumns = ['name'];
+        const filterableColumns = ['status', 'slug'];
+        const defaultSortBy = [['createdAt', 'DESC']];
+        const populatableColumns = query.populate;
+        const exhibitionRepository =
+            this.exhibitionDataSource.manager.getRepository(Exhibition);
+        const [exhibitions, total] = await paginate(
+            query,
+            exhibitionRepository,
+            {
+                searchableColumns,
+                sortableColumns,
+                populatableColumns,
+                filterableColumns,
+                defaultSortBy,
+                withDeleted: query.withDeleted,
+            },
+        );
+
+        return this.paginatedExhibitionsConverter.toDto(
+            query.page,
+            query.limit,
+            total,
+            exhibitions,
+        );
+    }
 
     async readExhibitionById(id: string, query: PaginateQuery) {
         const exhibitionRepository =

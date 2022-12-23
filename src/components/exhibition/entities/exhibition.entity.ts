@@ -8,6 +8,7 @@ import {
     OneToMany,
     OneToOne,
     PrimaryGeneratedColumn,
+    Unique,
     UpdateDateColumn,
 } from 'typeorm';
 import { BoothOrganization } from './booth-organization.entity';
@@ -23,6 +24,7 @@ export enum Status {
 }
 
 @Entity({ name: 'exhibition' })
+@Unique(['slug'])
 export class Exhibition {
     // table columns
     @PrimaryGeneratedColumn()
@@ -30,6 +32,9 @@ export class Exhibition {
 
     @Column()
     name: string;
+
+    @Column()
+    slug: string;
 
     @Column({ name: 'booth_number' })
     boothNumber: number;
