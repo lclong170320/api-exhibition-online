@@ -146,6 +146,7 @@ paths:
                     default: new
               required:
               - name
+              - slug
               - exhibition_code
               - date_exhibition_start
               - date_exhibition_end
@@ -3818,17 +3819,23 @@ components:
     Exhibition:
       required:
       - id
+      - slug
       type: object
       properties:
         id:
           type: integer
           readOnly: true
           example: 1
+        slug:
+          type: string
+          minLength: 1
+          maxLength: 255
+          example: expo-2022
         name:
           type: string
           minLength: 1
           maxLength: 255
-          example: Triển lãm xúc tiến đầu tư thương mại
+          example: Expo 2022
         exhibition_code:
           type: string
           minLength: 1

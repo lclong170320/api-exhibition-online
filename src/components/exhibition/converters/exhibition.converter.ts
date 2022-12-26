@@ -19,6 +19,7 @@ export class ExhibitionConverter {
     toEntity(dto: ExhibitionDto) {
         const entity = new Exhibition();
         entity.name = dto.name;
+        entity.slug = dto.slug;
         entity.boothNumber = dto.booth_number;
         entity.exhibitionCode = dto.exhibition_code.toUpperCase();
         entity.dateExhibitionStart = new Date(dto.date_exhibition_start);
@@ -30,6 +31,7 @@ export class ExhibitionConverter {
     toDto(entity: Exhibition) {
         const dto = {
             id: entity.id,
+            slug: entity.slug ?? undefined,
             name: entity.name ?? undefined,
             exhibition_code: entity.exhibitionCode ?? undefined,
             booth_number: entity.boothNumber ?? undefined,
