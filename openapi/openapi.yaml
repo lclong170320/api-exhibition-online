@@ -306,8 +306,7 @@ paths:
         content:
           application/json:
             schema:
-              allOf:
-              - $ref: '#/components/schemas/Exhibition'
+              $ref: '#/components/schemas/Exhibition'
       responses:
         '200':
           description: OK
