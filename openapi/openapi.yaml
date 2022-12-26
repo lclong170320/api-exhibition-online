@@ -306,7 +306,8 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Exhibition'
+              allOf:
+              - $ref: '#/components/schemas/Exhibition'
       responses:
         '200':
           description: OK
@@ -3819,7 +3820,6 @@ components:
     Exhibition:
       required:
       - id
-      - slug
       type: object
       properties:
         id:
