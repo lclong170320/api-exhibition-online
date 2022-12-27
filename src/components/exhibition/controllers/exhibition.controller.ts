@@ -22,13 +22,16 @@ import { JwtAccessToken } from '@/decorators/jwt-access-token.decorator';
 import { Role } from '@/components/exhibition/dto/role.dto';
 import { UpdateExhibition } from '@/components/exhibition/dto/exhibition-update.dto';
 import { JWTAuthGuard } from 'guards/auth.guard';
+import { IsOwner } from '@/decorators/IsOwner';
+import { AllowUserGetExhibtion } from 'interceptors/allowUserGetExhibition.interceptor';
 
 @UseGuards(JWTAuthGuard, RolesGuard)
 @Controller('exhibitions')
 export class ExhibitionController {
     constructor(private readonly exhibitionService: ExhibitionService) {}
 
-    @Roles(Role.ADMIN)
+    @Roles(Role.ADMIN, Role.USER)
+    @IsOwner(AllowUserGetExhibtion)
     @Get(':id')
     readExhibitionById(
         @Param('id') id: string,
