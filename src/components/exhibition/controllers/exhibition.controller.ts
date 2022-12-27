@@ -24,6 +24,7 @@ import { UpdateExhibition } from '@/components/exhibition/dto/exhibition-update.
 import { JWTAuthGuard } from 'guards/auth.guard';
 import { IsOwner } from '@/decorators/IsOwner';
 import { AllowUserGetExhibtion } from 'interceptors/allowUserGetExhibition.interceptor';
+import { AllowUserGetExhibitionBooth } from 'interceptors/allowUserGetExhibitionBooth.interceptor';
 
 @UseGuards(JWTAuthGuard, RolesGuard)
 @Controller('exhibitions')
@@ -77,7 +78,8 @@ export class ExhibitionController {
         );
     }
 
-    @Roles(Role.ADMIN)
+    @Roles(Role.ADMIN, Role.USER)
+    @IsOwner(AllowUserGetExhibitionBooth)
     @Get(':exhibitionId/booths/:boothId')
     readBoothById(
         @Param('exhibitionId') exhibitionId: string,
@@ -91,15 +93,18 @@ export class ExhibitionController {
         );
     }
 
-    @Roles(Role.ADMIN)
-    @Put(':exhibition_id/booths/:booth_id')
+    @Roles(Role.ADMIN, Role.USER)
+    @IsOwner(AllowUserGetExhibitionBooth)
+    @Put(':exhibitionId/booths/:boothId')
     updateBooth(
         @JwtAccessToken() jwtAccessToken: string,
         @CurrentUser() user: User,
-        @Param('exhibition_id') exhibitionId: string,
-        @Param('booth_id') boothId: string,
+        @Param('exhibitionId') exhibitionId: string,
+        @Param('boothId') boothId: string,
         @Body() boothDto: BoothDto,
     ) {
+        console.log({ user, exhibitionId, boothId, boothDto });
+
         return this.exhibitionService.updateBooth(
             jwtAccessToken,
             user,

@@ -33,7 +33,7 @@ export class BoothTemplateController {
         return this.boothTemplateService.readBoothTemplateById(id, query);
     }
 
-    @Roles(Role.ADMIN)
+    @Roles(Role.ADMIN, Role.USER)
     @Get()
     readBoothTemplates(@Paginate() query: PaginateQuery) {
         return this.boothTemplateService.readBoothTemplates(query);
