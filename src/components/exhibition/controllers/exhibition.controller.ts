@@ -37,7 +37,7 @@ export class ExhibitionController {
         return this.exhibitionService.readExhibitionById(id, query);
     }
 
-    @Roles(Role.ADMIN)
+    @Roles(Role.ADMIN, Role.USER)
     @Get()
     readExhibitions(@Paginate() query: PaginateQuery) {
         return this.exhibitionService.readExhibitions(query);

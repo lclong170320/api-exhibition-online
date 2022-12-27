@@ -79,7 +79,7 @@ export class ExhibitionService {
     async readExhibitions(query: PaginateQuery) {
         const sortableColumns = ['id', 'name', 'createdAt'];
         const searchableColumns = ['name'];
-        const filterableColumns = ['status'];
+        const filterableColumns = ['status', 'booths.enterpriseId'];
         const defaultSortBy = [['createdAt', 'DESC']];
         const populatableColumns = query.populate;
         const exhibitionRepository =
