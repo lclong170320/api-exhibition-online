@@ -16,8 +16,8 @@ export enum Status {
     DENIED = 'denied',
 }
 
-@Entity({ name: 'contact' })
-export class Contact {
+@Entity({ name: 'registration' })
+export class Registration {
     @PrimaryGeneratedColumn()
     id: number;
 
@@ -62,7 +62,7 @@ export class Contact {
     })
     deletedAt: Date;
 
-    @ManyToOne(() => Exhibition, (exhibition) => exhibition.contacts)
+    @ManyToOne(() => Exhibition, (exhibition) => exhibition.registrations)
     @JoinColumn({
         name: 'exhibiton_id',
     })

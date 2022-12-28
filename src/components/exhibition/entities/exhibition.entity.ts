@@ -16,7 +16,7 @@ import { Booth } from './booth.entity';
 import { Category } from './category.entity';
 import { Conference } from './conference.entity';
 import { Space } from './space.entity';
-import { Contact } from './contact.entity';
+import { Registration } from './registration.entity';
 
 export enum Status {
     NEW = 'new',
@@ -108,6 +108,6 @@ export class Exhibition {
     })
     conference: Conference;
 
-    @OneToMany(() => Contact, (contact) => contact.exhibition)
-    contacts: Contact[];
+    @OneToMany(() => Registration, (registration) => registration.exhibition)
+    registrations: Registration[];
 }

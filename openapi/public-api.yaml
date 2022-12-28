@@ -692,29 +692,21 @@ paths:
                     details: []
       tags:
         - Counter
-  '/exhibitions/{id}/contacts':
+  '/registrations':
     post:
       security:
       - bearerAuth: []
       tags:
-      - Contact
-      summary: Create contact
-      description: Create contact
-      operationId: createContact
-      parameters:
-      - name: id
-        description: ID to get exhibition
-        in: path
-        required: true
-        schema:
-          type: string
-          pattern: '^[0-9]+$'
+      - Registration
+      summary: Create registration
+      description: Create registration
+      operationId: createRegistration
       requestBody:
-        description: Create a contact
+        description: Create a registration
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Contact'
+              $ref: '#/components/schemas/Registration'
         required: true
       responses:
         '200':
@@ -722,7 +714,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Contact'
+                $ref: '#/components/schemas/Registration'
         '400':
           description: Bad request
           content:
@@ -2157,7 +2149,7 @@ components:
                 - agenda
                 - booth_number
                 - status
-    Contact:
+    Registration:
       type: object
       required:
         - id
@@ -2171,7 +2163,7 @@ components:
         id:
           type: integer
           example: 0
-          description: The number id contact.
+          description: The number id registration.
           readOnly: true
         name:
           type: string
@@ -2206,9 +2198,9 @@ components:
           type: string
           enum: ['new','accepted'] 
           example: 'new'
-          description: Status of contact.
+          description: Status of registration.
           default: 'new'
         exhibition_id:
           type: number
           example: 1
-          description: Exhibition id of contact.
+          description: Exhibition id of registration.

@@ -16,7 +16,7 @@ export enum Status {
     DENIED = 'denied',
 }
 
-export interface Contact {
+export interface Registration {
     readonly id: number;
     name: string;
     phone: string;
@@ -24,4 +24,5 @@ export interface Contact {
     email: string;
     note?: string;
     status: Status;
+    exhibition_id: number;
 }

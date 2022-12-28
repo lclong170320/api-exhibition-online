@@ -3,7 +3,7 @@ import { Paginate, PaginateQuery } from '@/decorators/paginate.decorator';
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { Meeting } from '../exhibition/dto/meeting.dto';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { Contact } from '@/components/exhibition/dto/contact.dto';
+import { Registration } from '@/components/exhibition/dto/registration.dto';
 @Controller()
 export class PublicController {
     constructor(private readonly publicService: PublicService) {}
@@ -70,8 +70,8 @@ export class PublicController {
         this.publicService.countLikeProject();
     }
 
-    @Post('/exhibitions/:id/contacts')
-    createContact(@Body() ContactDto: Contact, @Param('id') id: string) {
-        return this.publicService.createContact(ContactDto, id);
+    @Post('/registrations')
+    createRegistration(@Body() RegistrationDto: Registration) {
+        return this.publicService.createRegistration(RegistrationDto);
     }
 }

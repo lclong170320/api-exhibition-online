@@ -30,9 +30,9 @@ import { CountProject } from '@/components/exhibition/entities/count-project.ent
 import { BoothProject } from '@/components/exhibition/entities/booth-project.entity';
 import { LikeProject } from '@/components/exhibition/entities/like-project.entity';
 import { PaginatedExhibitionsConverter } from './converters/exhibition/paginated-exhibitions.converter';
-import { Contact as ContactDto } from '@/components/exhibition/dto/contact.dto';
-import { Contact } from '@/components/exhibition/entities/contact.entity';
-import { ContactConverter } from './converters/exhibition/contact.converter';
+import { Registration as RegistrationDto } from '@/components/exhibition/dto/registration.dto';
+import { Registration } from '@/components/exhibition/entities/registration.entity';
+import { RegistrationConverter } from './converters/exhibition/registration.converter';
 
 @Injectable()
 export class PublicService {
@@ -53,7 +53,7 @@ export class PublicService {
         private readonly paginatedMeetingsConverter: PaginatedMeetingsConverter,
         private readonly paginatedBoothTemplatesConverter: PaginatedBoothTemplatesConverter,
         private readonly paginatedExhibitionsConverter: PaginatedExhibitionsConverter,
-        private readonly contactConverter: ContactConverter,
+        private readonly registrationConverter: RegistrationConverter,
     ) {}
 
     async readExhibitions(query: PaginateQuery) {
@@ -295,22 +295,25 @@ export class PublicService {
         await boothProjectRepository.save(updatedBoothProject);
     }
 
-    async createContact(contactDto: ContactDto, id: string) {
-        const contactRepository =
-            this.exhibitionDataSource.manager.getRepository(Contact);
+    async createRegistration(registrationDto: RegistrationDto) {
+        const registrationRepository =
+            this.exhibitionDataSource.manager.getRepository(Registration);
         const exhibitionRepository =
             this.exhibitionDataSource.manager.getRepository(Exhibition);
         const firstExhibition = await exhibitionRepository.findOneBy({
-            id: Number(id),
+            id: Number(registrationDto.exhibition_id),
         });
 
         if (!firstExhibition)
             throw new BadRequestException(
-                `The exhibition_id: ${id} is not found`,
+                `The exhibition_id: ${registrationDto.exhibition_id} is not found`,
             );
-        const newContactEntity = this.contactConverter.toEntity(contactDto);
-        newContactEntity.exhibition = firstExhibition;
-        const savedContact = await contactRepository.save(newContactEntity);
-        return this.contactConverter.toDto(savedContact);
+        const newRegistrationEntity =
+            this.registrationConverter.toEntity(registrationDto);
+        newRegistrationEntity.exhibition = firstExhibition;
+        const savedRegistration = await registrationRepository.save(
+            newRegistrationEntity,
+        );
+        return this.registrationConverter.toDto(savedRegistration);
     }
 }

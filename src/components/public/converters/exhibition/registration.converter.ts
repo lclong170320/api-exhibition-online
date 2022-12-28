@@ -1,11 +1,11 @@
-import { Contact as ContactDto } from '@/components/exhibition/dto/contact.dto';
-import { Contact } from '@/components/exhibition/entities/contact.entity';
+import { Registration as RegistrationDto } from '@/components/exhibition/dto/registration.dto';
+import { Registration } from '@/components/exhibition/entities/registration.entity';
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
-export class ContactConverter {
-    toEntity(dto: ContactDto) {
-        const entity = new Contact();
+export class RegistrationConverter {
+    toEntity(dto: RegistrationDto) {
+        const entity = new Registration();
         entity.name = dto.name;
         entity.phone = dto.phone;
         entity.email = dto.email;
@@ -14,7 +14,7 @@ export class ContactConverter {
         return entity;
     }
 
-    toDto(entity: Contact) {
+    toDto(entity: Registration) {
         const dto = {
             id: entity.id,
             name: entity.name,
@@ -22,8 +22,8 @@ export class ContactConverter {
             email: entity.email,
             address: entity.address,
             note: entity.note ?? undefined,
-        } as ContactDto;
-
+            exhibition_id: entity.exhibition.id,
+        } as RegistrationDto;
         return dto;
     }
 }
