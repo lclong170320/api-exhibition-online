@@ -80,6 +80,7 @@ import { CountProject } from '../exhibition/entities/count-project.entity';
 import { MediaClientService } from 'clients/media.client';
 import { EnterpriseClientService } from 'clients/enterprise.client';
 import { UserClientService } from 'clients/user.client';
+import { ContactConverter } from './converters/exhibition/contact.converter';
 
 @Module({
     controllers: [PublicController],
@@ -128,6 +129,7 @@ import { UserClientService } from 'clients/user.client';
         ConferenceVideoConverter,
         ConferenceTemplatePositionConverter,
         PaginatedBoothTemplatesConverter,
+        ContactConverter,
     ],
     imports: [
         TypeOrmModule.forFeature(

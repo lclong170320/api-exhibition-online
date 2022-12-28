@@ -99,6 +99,8 @@ import { DashboardExhibitionsConverter } from './converters/dashboard-exhibition
 import { MediaClientService } from 'clients/media.client';
 import { UserClientService } from 'clients/user.client';
 import { EnterpriseClientService } from 'clients/enterprise.client';
+import { ContactConverter } from '@/components/public/converters/exhibition/contact.converter';
+import { Contact } from './entities/contact.entity';
 
 @Module({
     controllers: [
@@ -175,6 +177,7 @@ import { EnterpriseClientService } from 'clients/enterprise.client';
         DashboardEnterprisesConverter,
         DashboardViewerOfExhibitionsConverter,
         DashboardExhibitionsConverter,
+        ContactConverter,
     ],
     imports: [
         TypeOrmModule.forFeature(
@@ -220,6 +223,7 @@ import { EnterpriseClientService } from 'clients/enterprise.client';
                 Conference,
                 ConferenceTemplate,
                 ConferenceTemplatePosition,
+                Contact,
             ],
             DbConnection.exhibitionCon,
         ),
