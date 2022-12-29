@@ -17,6 +17,7 @@ export interface BoothProject {
     readonly image_id: number;
     selected_media_id?: number;
     media_data?: string;
+    project_id?: number;
     title: string;
     description: string;
     booth_template_position_id?: number;

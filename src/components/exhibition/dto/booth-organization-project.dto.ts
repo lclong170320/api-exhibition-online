@@ -17,6 +17,7 @@ export interface BoothOrganizationProject {
     readonly image_id: number;
     media_data?: string;
     title: string;
+    project_id?: number;
     description: string;
     booth_organization_template_position_id: number;
     booth_organization_template_position?: BoothOrganizationTemplatePosition;

@@ -10,6 +10,7 @@ export class BoothProjectConverter {
             view: undefined,
             like: undefined,
             image_id: entity.project.imageId,
+            project: entity.project.id,
             title: entity.project.title,
             description: entity.project.description,
             booth_template_position: entity.boothTemplatePosition ?? undefined,

@@ -14,6 +14,7 @@ export class BoothOrganizationProjectConverter {
             image_id: entity.project.imageId ?? undefined,
             title: entity.project.title,
             description: entity.project.description,
+            project_id: entity.project.id,
             booth_organization_template_position:
                 entity.boothOrganizationTemplatePosition
                     ? this.boothOrganizationTemplatePositionConverter.toDto(
