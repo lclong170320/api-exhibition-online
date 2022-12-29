@@ -3814,6 +3814,102 @@ paths:
                   value:
                     message: Internal server error
                     details: []
+  '/registrations':
+    get:
+      tags:
+        - Registration
+      security:
+      - bearerAuth: []
+      summary: Show list registration of exhibitions
+      description: Show list registration of exhibitions
+      operationId: getRegistrations
+      parameters:
+      - in: query
+        name: page
+        schema:
+          type: string
+          pattern: '^[0-9]+'
+          example: '1'
+        description: The number of items to skip before starting to collect the result set
+      - in: query
+        name: limit
+        schema:
+          type: string
+          pattern: '^[0-9]+'
+          example: '10'
+        description: The numbers of items to return
+      - in: query
+        name: search
+        schema:
+          type: string
+          example: 'image'
+        description:
+         " Searching on allow columns:['name']"
+      - in: query
+        name: sort_by
+        allowReserved: true
+        schema:
+          type: string
+          example: 'mime:DESC'
+        description: "Sort on allow columns:[['id'],[DESC,ASC]]\n default column:['created_at', 'DESC']"
+      - in: query
+        name: filter
+        allowReserved: true
+        schema:
+          type: array
+          items:
+            type: string
+            example: 
+              - status:$eq:new'
+        description: Filter by the field with syntax `column_name:operator:value`.
+      - in: query
+        name: populate
+        schema:
+          type: array
+          items:
+            type: string
+            example: 'exhibition'
+        description: |
+          List of populatable columns
+          | Populates          |
+          |--------------------|
+          | exhibition         |
+      - in: query
+        name: withDeleted
+        schema:
+          type: string
+          example: 'true'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedRegistration'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Bad Request
+                    details:
+                      - field: .params.id
+                        message: 'should match pattern "^[0-9]+$"'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Internal server error
+                    details: []
 components:
   schemas:
     Exhibition:
@@ -5397,6 +5493,85 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/User'
+    Registration:
+      type: object
+      required:
+        - id
+        - name
+        - phone
+        - email
+        - address
+        - status
+        - exhibition_id
+      properties:
+        id:
+          type: integer
+          example: 0
+          description: The number id registration.
+          readOnly: true
+        name:
+          type: string
+          example: 'Lê Quốc Anh'
+          description: The name of user.
+          maxLength: 255
+          minLength: 1
+        phone:
+          type: string
+          example: '0363636336'
+          description: The number phone of user.
+          maxLength: 15
+          minLength: 1
+        email:
+          type: string
+          format: email
+          example: 'abc@gmail.com'
+          description: The email of user.
+          maxLength: 255
+        address:
+          type: string
+          example: 'Kiên Gianggggggggggggg'
+          description: The address of user.
+          maxLength: 255
+          minLength: 1
+        note:
+          type: string
+          example: 'What do you want to me?'
+          description: note.
+          maxLength: 20000
+        status:
+          type: string
+          enum: ['new','accepted'] 
+          example: 'new'
+          description: Status of registration.
+          default: 'new'
+        exhibition_id:
+          type: number
+          example: 1
+          description: Exhibition id of registration.
+    PaginatedRegistration:
+      type: object
+      required:
+        - page
+        - limit
+        - total
+        - registrations
+      properties:
+        page:
+          type: integer
+          example: 0
+          description: The number of items to skip before starting to collect the result set.
+        limit:
+          type: integer
+          example: 10
+          description: The number of items to return.
+        total:
+          type: integer
+          format: int64
+          example: 1
+        registrations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Registration'
   securitySchemes:
     bearerAuth:
       type: http

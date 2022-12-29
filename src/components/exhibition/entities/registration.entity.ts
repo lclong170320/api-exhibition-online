@@ -64,7 +64,7 @@ export class Registration {
 
     @ManyToOne(() => Exhibition, (exhibition) => exhibition.registrations)
     @JoinColumn({
-        name: 'exhibiton_id',
+        name: 'exhibition_id',
     })
     exhibition: Exhibition;
 }

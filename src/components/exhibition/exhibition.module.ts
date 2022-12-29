@@ -99,8 +99,11 @@ import { DashboardExhibitionsConverter } from './converters/dashboard-exhibition
 import { MediaClientService } from 'clients/media.client';
 import { UserClientService } from 'clients/user.client';
 import { EnterpriseClientService } from 'clients/enterprise.client';
-import { RegistrationConverter } from '@/components/public/converters/exhibition/registration.converter';
 import { Registration } from './entities/registration.entity';
+import { RegistrationController } from './controllers/registration.controller';
+import { RegistrationService } from './services/registration.service';
+import { PaginatedRegistrationsConverter } from './converters/paginated-registrations';
+import { RegistrationConverter } from './converters/registration.converter';
 
 @Module({
     controllers: [
@@ -115,6 +118,7 @@ import { Registration } from './entities/registration.entity';
         ConferenceTemplateController,
         ConferenceController,
         DashboardController,
+        RegistrationController,
     ],
     providers: [
         // service
@@ -134,6 +138,7 @@ import { Registration } from './entities/registration.entity';
         ConferenceTemplateService,
         ConferenceService,
         DashboardService,
+        RegistrationService,
         // converter
         CategoryConverter,
         ExhibitionConverter,
@@ -178,6 +183,7 @@ import { Registration } from './entities/registration.entity';
         DashboardViewerOfExhibitionsConverter,
         DashboardExhibitionsConverter,
         RegistrationConverter,
+        PaginatedRegistrationsConverter,
     ],
     imports: [
         TypeOrmModule.forFeature(
