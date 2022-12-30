@@ -3910,6 +3910,138 @@ paths:
                   value:
                     message: Internal server error
                     details: []
+  '/registrations/{id}':
+    get:
+      security:
+      - bearerAuth: []
+      tags:
+      - Registration
+      summary: Get registrations by ID
+      description: Return a single registrations
+      operationId: readRegistrationById
+      parameters:
+      - name: id
+        description: ID to get registrations
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: '^[0-9]+$'
+      - in: query
+        name: populate
+        schema:
+          type: array
+          items:
+            type: string
+            example: 'exhibition'
+        description: |
+          List of populatable columns:
+            - exhibition
+      - in: query
+        name: withDeleted
+        schema:
+          type: string
+          example: 'true'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Registration'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Bad Request
+                    details:
+                      - field: .params.id
+                        message: 'should match pattern "^[0-9]+$"'
+        '404':
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Not Found
+                    details:
+                      - field: .params.id
+                        message: 'The id not exist: "^[0-9]+$"'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Internal server error
+                    details: []
+    patch:
+      security:
+      - bearerAuth: []
+      summary: Update registration by ID
+      description: Update registration
+      operationId: updateRegistrationById
+      parameters:
+        - name: id
+          description: ID of registration
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^[0-9]+$'
+      requestBody:
+        description: Update registration
+        content:
+          application/json:
+            schema:
+              properties:
+                status:
+                  type: string
+                  enum: ['new', 'accepted', 'refused']
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Registration'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Bad Request
+                    details:
+                      - field: .params.id
+                        message: 'should match pattern "^[0-9]+$"'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Internal server error
+                    details: []
+      tags:
+        - Registration
 components:
   schemas:
     Exhibition:
@@ -5540,7 +5672,7 @@ components:
           maxLength: 20000
         status:
           type: string
-          enum: ['new','accepted'] 
+          enum: ['new','accepted','refused'] 
           example: 'new'
           description: Status of registration.
           default: 'new'

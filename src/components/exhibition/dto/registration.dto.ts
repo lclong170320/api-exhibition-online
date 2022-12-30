@@ -13,7 +13,7 @@
 export enum Status {
     NEW = 'new',
     ACCEPTED = 'accepted',
-    DENIED = 'denied',
+    REFUSED = 'refused',
 }
 
 export interface Registration {

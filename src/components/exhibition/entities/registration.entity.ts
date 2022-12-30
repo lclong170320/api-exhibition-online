@@ -13,7 +13,7 @@ import { Exhibition } from './exhibition.entity';
 export enum Status {
     NEW = 'new',
     ACCEPTED = 'accepted',
-    DENIED = 'denied',
+    REFUSED = 'refused',
 }
 
 @Entity({ name: 'registration' })
