@@ -42,6 +42,9 @@ export class User {
     @Column({ name: 'enterprise_id' })
     enterpriseId: number;
 
+    @Column({ nullable: true })
+    key: string;
+
     @CreateDateColumn({
         type: 'timestamp',
         name: 'created_at',

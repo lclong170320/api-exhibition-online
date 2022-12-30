@@ -17,6 +17,7 @@ import { User } from './entities/user.entity';
 import { AuthService } from './services/auth.service';
 import { UserService } from './services/user.service';
 import { JWTStrategy } from 'strategies/jwt.strategy';
+import { ForgotPasswordConverter } from './converters/forgot-password.converter';
 
 @Module({
     controllers: [UserController, AuthController],
@@ -30,6 +31,7 @@ import { JWTStrategy } from 'strategies/jwt.strategy';
         RoleConverter,
         JWTStrategy,
         PaginatedUsersConverter,
+        ForgotPasswordConverter,
     ],
     imports: [
         TypeOrmModule.forFeature([User, Role, Blacklist], DbConnection.userCon),

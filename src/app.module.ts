@@ -3,7 +3,7 @@ import { ExhibitionModule } from '@/components/exhibition/exhibition.module';
 import { DatabaseConnections } from '@/database/connections';
 import { AccessLoggerMiddleware } from '@/middlewares/access-logger.middleware';
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import * as OpenApiValidator from 'express-openapi-validator';
 import { join } from 'path';
 import { AppController } from './app.controller';
@@ -15,6 +15,8 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { UserModule } from '@/components/user/user.module';
 import { RouterModule } from '@nestjs/core';
 import { PublicModule } from './components/public/public.module';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 
 @Module({
     imports: [
@@ -53,6 +55,33 @@ import { PublicModule } from './components/public/public.module';
                 module: PublicModule,
             },
         ]),
+        MailerModule.forRootAsync({
+            inject: [ConfigService],
+            useFactory: (configService: ConfigService) => ({
+                transport: {
+                    host: configService.get<string>('EMAIL_HOST'),
+                    port: configService.get<number>('EMAIL_PORT'),
+                    secure: true,
+                    auth: {
+                        user: configService.get<string>('EMAIL_NAME'),
+                        pass: configService.get<string>('EMAIL_PASS'),
+                    },
+                },
+                defaults: {
+                    from: `"No Reply" ${configService.get<string>(
+                        'EMAIL_NAME',
+                    )}`,
+                },
+                preview: true,
+                template: {
+                    dir: process.cwd() + '/src/utils/template/',
+                    adapter: new HandlebarsAdapter(),
+                    options: {
+                        strict: true,
+                    },
+                },
+            }),
+        }),
     ],
     controllers: [AppController],
     providers: [AppService, HttpLogger, Logger],

@@ -19,6 +19,7 @@ export class UserConverter {
         entity.status =
             dto.status === StatusDto.ACTIVE ? Status.ACTIVE : Status.INACTIVE;
         entity.enterpriseId = dto.enterprise_id;
+        entity.key = dto.key ?? null;
         return entity;
     }
 
@@ -28,6 +29,7 @@ export class UserConverter {
             name: entity.name,
             phone: entity.phone,
             email: entity.email,
+            key: entity.key ? entity.key : null,
             role: entity.role
                 ? this.roleConverter.toDto(entity.role)
                 : undefined,

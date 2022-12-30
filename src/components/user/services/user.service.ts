@@ -9,16 +9,20 @@ import {
 import { InjectDataSource } from '@nestjs/typeorm';
 import * as bcrypt from 'bcrypt';
 import { DataSource } from 'typeorm';
-import { UserConverter } from '../converters/user.converter';
-import { Role } from '../entities/role.entity';
-import { User } from '../entities/user.entity';
-import { User as UserDto } from '../dto/user.dto';
+import { UserConverter } from '@/components/user/converters/user.converter';
+import { Role } from '@/components/user/entities/role.entity';
+import { User } from '@/components/user/entities/user.entity';
+import { User as UserDto } from '@/components/user/dto/user.dto';
 import { UpdateUser } from '@/components/user/dto/user-update.dto';
 import { Password as PasswordDto } from '@/components/user/dto/password.dto';
 import { keys } from 'lodash';
 import { PaginateQuery } from '@/decorators/paginate.decorator';
 import { paginate } from '@/utils/pagination';
-import { PaginatedUsersConverter } from '../converters/paginated-users.converter';
+import { PaginatedUsersConverter } from '@/components/user/converters/paginated-users.converter';
+import { MailerService } from '@nestjs-modules/mailer';
+import { ForgotPasswordConverter } from '@/components/user/converters/forgot-password.converter';
+import generateApiKey from 'generate-api-key';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class UserService {
@@ -27,12 +31,15 @@ export class UserService {
         @InjectDataSource(DbConnection.userCon)
         private readonly dataSource: DataSource,
         private readonly paginatedUsersConverter: PaginatedUsersConverter,
+        private readonly mailerService: MailerService,
+        private readonly forgotPasswordConverter: ForgotPasswordConverter,
+        private readonly configService: ConfigService,
     ) {}
 
     async readUsers(query: PaginateQuery) {
         const filterableColumns = keys(query.filter);
         const defaultSortBy = [['createdAt', 'DESC']];
-        const searchableColumns = ['name', 'createdDate'];
+        const searchableColumns = ['name', 'key', 'createdDate'];
         const populatableColumns = query.populate;
 
         const userRepository = this.dataSource.getRepository(User);
@@ -161,5 +168,72 @@ export class UserService {
 
             await userRepository.softRemove(firstUser);
         });
+    }
+
+    async forgotPassword(email: string) {
+        const userRepository = this.dataSource.manager.getRepository(User);
+        const firstUser = await userRepository.findOne({
+            where: {
+                email: email,
+            },
+        });
+
+        if (!firstUser) {
+            throw new BadRequestException(
+                `The user not found: email: ${email}`,
+            );
+        }
+
+        const randomKey = generateApiKey({ method: 'uuidv4', dashes: false });
+
+        firstUser.key = randomKey.toString();
+
+        await userRepository.save(firstUser);
+
+        this.sendMail(email, randomKey.toString());
+
+        return this.forgotPasswordConverter.toDto(firstUser);
+    }
+
+    private async sendMail(email: string, randomKey: string) {
+        this.mailerService.sendMail({
+            to: email,
+            subject: 'Đặt lại mật khẩu',
+            template: './email',
+            context: {
+                randomKey: randomKey,
+                host: this.configService.get('DATABASE_HOST'),
+                link: this.configService.get('Link_Change_Password'),
+            },
+        });
+    }
+
+    async resetPassword(key: string) {
+        const userRepository = this.dataSource.manager.getRepository(User);
+        const firstKey = await userRepository.findOne({
+            where: {
+                key: key,
+            },
+        });
+        if (!firstKey) {
+            throw new BadRequestException(`The key not found: ${key}`);
+        }
+        return this.userConverter.toDto(firstKey);
+    }
+
+    async newPassword(id: string, password: string) {
+        const userRepository = this.dataSource.getRepository(User);
+        const firstUser = await userRepository.findOneBy({
+            id: parseInt(id),
+        });
+        if (!firstUser) {
+            throw new NotFoundException(`The user_id ${id} not found`);
+        }
+
+        firstUser.password = await this.hashPassword(password);
+        firstUser.key = null;
+
+        await userRepository.save(firstUser);
+        return this.userConverter.toDto(firstUser);
     }
 }

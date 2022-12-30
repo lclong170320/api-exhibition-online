@@ -25,6 +25,7 @@
     "typeorm": "typeorm-ts-node-commonjs"
   },
   "dependencies": {
+    "@nestjs-modules/mailer": "^1.8.1",
     "@nestjs/axios": "^0.1.0",
     "@nestjs/common": "9.1.4",
     "@nestjs/config": "^2.2.0",
@@ -43,10 +44,13 @@
     "express-openapi-validator": "^4.13.8",
     "fastify": "4.6.0",
     "file-type": "16.5.4",
+    "generate-api-key": "^1.0.2",
+    "handlebars": "^4.7.7",
     "http-errors": "^2.0.0",
     "js-yaml": "^4.1.0",
     "jwt-decode": "^3.1.2",
     "mysql2": "^2.3.3",
+    "nodemailer": "^6.8.0",
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",

@@ -3193,6 +3193,106 @@ paths:
                   value:
                     message: Internal server error
                     details: []
+  '/users/forgot-password':
+    get:
+      tags:
+        - User
+      summary: Forgot password and send email link user
+      description: Forgot password and send email link user
+      operationId:  ForgotPasswordSendEmailUser
+      parameters:
+      - in: query
+        name: email
+        allowReserved: true
+        schema:
+          type: string
+          example: 'test@email.com'
+        description: The email of user
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForgotPassword'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Not found
+                    details: []
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Internal server error
+                    details: []
+  '/users/reset-password':
+    get:
+      tags:
+        - User
+      summary: Get key of user
+      description: Get key of user by email
+      operationId: ApiKey
+      parameters:
+        - in: query
+          name: key
+          allowReserved: true
+          schema:
+            type: string
+            example: 'a30Ov1E5-IvvT0uZ6TdnajjG5CtoNTKv'
+          description: The key 32 characters for user 
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Bad Request
+                    details:
+                      - field: .params.key
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Not found
+                    details: []
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Internal server error
+                    details: []
   '/auth/login':
     post:
       tags:
@@ -3213,6 +3313,76 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Login'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Bad Request
+                    details:
+                      - field: .params.id
+                        message: 'should match pattern "^[0-9]+$"'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Internal server error
+                    details: []
+  '/users/{id}/password':
+    patch:
+      tags:
+        - User
+      summary: Change password of user
+      description: Change password of user by id
+      operationId: changePasswordUser
+      parameters:
+        - name: id
+          description: ID of user
+          in: path
+          required: true
+          schema:
+            type: string
+            pattern: '^[0-9]+$'
+      requestBody:
+        description: Password of user
+        content:
+          application/json:
+            schema:
+              required:
+                - value
+              properties:
+                value: 
+                  type: string
+                  minLength: 1
+                  maxLength: 255
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponseBody'
+              examples:
+                example-1:
+                  value:
+                    message: Not found
+                    details: []
         '400':
           description: Validation error
           content:
@@ -5017,6 +5187,9 @@ components:
             readOnly: true
           name:
             type: string
+          key:
+            type: string
+            example: 5nm84uflro
           phone:
             type: string
             pattern: '^(((\+|)84)|0)([0-9]{9})$'
@@ -5625,6 +5798,17 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/User'
+    ForgotPassword:
+        type: object
+        required:
+          - email
+        properties:
+          email:
+            type: string
+            format: email
+            example: dalavina@dalavina.com
+            minLength: 1
+            maxLength: 255
     Registration:
       type: object
       required:

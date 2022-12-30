@@ -8,6 +8,7 @@ import {
     Param,
     Patch,
     Post,
+    Query,
     UseGuards,
 } from '@nestjs/common';
 import { UpdateUser } from '@/components/user/dto/user-update.dto';
@@ -23,6 +24,21 @@ import { Password as PasswordDto } from '@/components/user/dto/password.dto';
 @Controller('users')
 export class UserController {
     constructor(private readonly userService: UserService) {}
+
+    @Get('forgot-password')
+    forgotPassword(@Query('email') email: string) {
+        return this.userService.forgotPassword(email);
+    }
+
+    @Get('reset-password')
+    resetPassword(@Query('key') key: string) {
+        return this.userService.resetPassword(key);
+    }
+
+    @Patch(':id/password')
+    newPassword(@Param('id') id: string, @Body('value') password: string) {
+        return this.userService.newPassword(id, password);
+    }
 
     @UseGuards(JWTAuthGuard, RolesGuard)
     @Roles(Role.ADMIN)
