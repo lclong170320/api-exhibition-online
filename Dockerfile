@@ -1,13 +1,28 @@
-# build stage
-FROM node:16-alpine
+FROM node:16-alpine as builder
 
-# Set working directory
+ENV NODE_ENV build
+
+USER node
 WORKDIR /app
 
-COPY . .
+COPY package.json ./
+COPY yarn.lock ./
 
-RUN yarn
+RUN yarn install --frozen-lockfile
 
-EXPOSE 3000
+COPY --chown=node:node . .
+RUN yarn build && yarn install --production
 
-CMD ["yarn", "start:dev"]
+FROM node:16-alpine
+
+ENV NODE_ENV production
+
+USER node
+WORKDIR /app
+
+COPY --from=builder --chown=node:node /app/package.json ./
+COPY --from=builder --chown=node:node /app/yarn.lock ./
+COPY --from=builder --chown=node:node /app/node_modules/ ./node_modules/
+COPY --from=builder --chown=node:node /app/dist/ ./dist/
+
+CMD ["yarn", "start:prod"]

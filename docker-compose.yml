@@ -1,15 +1,16 @@
 version: "3.8"
 services:
-  service:
+  compaon-service:
+    container_name: compaon-service
+    image: compaon-service:latest
     build:
-      context: ./
-    container_name: compaon.service
-    volumes:
-      - ./:/app
-      # Exclude container directory overwritten by host.
-      - /app/node_modules
+      context: .
     ports:
-      - "3000:3000"
+      - 3000:3000
+    volumes:
+      - .:/app
+      - /app/node_modules
+    restart: unless-stopped
   mysql:
     image: mysql:5.7
     # For MAC M1
