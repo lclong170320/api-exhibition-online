@@ -79,7 +79,7 @@ export class ExhibitionService {
     async readExhibitions(query: PaginateQuery) {
         const sortableColumns = ['id', 'name', 'createdAt'];
         const searchableColumns = ['name'];
-        const filterableColumns = ['status', 'booths.enterpriseId'];
+        const filterableColumns = ['status', 'booths.enterpriseId', 'slug'];
         const defaultSortBy = [['createdAt', 'DESC']];
         const populatableColumns = query.populate;
         const exhibitionRepository =
@@ -1170,8 +1170,7 @@ export class ExhibitionService {
             exhibition.dateExhibitionStart = new Date(
                 exhibitionDto.date_exhibition_start,
             );
-        exhibition.exhibitionCode =
-            exhibitionDto.exhibition_code ?? exhibition.exhibitionCode;
+        exhibition.slug = exhibitionDto.slug ?? exhibition.slug;
         if (exhibitionDto.date_exhibition_end)
             exhibition.dateExhibitionEnd = new Date(
                 exhibitionDto.date_exhibition_end,

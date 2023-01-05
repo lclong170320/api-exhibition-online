@@ -103,8 +103,6 @@ export class ExhibitionController {
         @Param('boothId') boothId: string,
         @Body() boothDto: BoothDto,
     ) {
-        console.log({ user, exhibitionId, boothId, boothDto });
-
         return this.exhibitionService.updateBooth(
             jwtAccessToken,
             user,
