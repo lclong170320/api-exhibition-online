@@ -38,6 +38,7 @@ export class DashboardConverter {
                 this.dashboardEnterprisesConverter.toDto(
                     data.enterprise_name,
                     data.quantity,
+                    data.quantity_booth,
                 ),
             ),
             booth_templates: booth_templates.map((data) =>

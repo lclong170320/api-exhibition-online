@@ -5742,6 +5742,9 @@ components:
               quantity:
                 type: number
                 description: Number of enterprises joined
+              quantity_booth:
+                type: number
+                description: Number of booth enterprises joined
         booth_templates:
           type: array
           items:

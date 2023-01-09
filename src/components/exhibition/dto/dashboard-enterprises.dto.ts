@@ -13,4 +13,5 @@
 export interface DashboardEnterprises {
     enterprise_name: string;
     quantity: number;
+    quantity_booth: number;
 }

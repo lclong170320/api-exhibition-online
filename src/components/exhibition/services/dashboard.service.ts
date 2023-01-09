@@ -58,8 +58,6 @@ export class DashboardService {
 
         const dashboardEnterprises: DashboardEnterprises[] = [];
         const dashboardBoothTemplates: DashboardBoothTemplates[] = [];
-
-        // TODO
         const totalViewer = 5000;
         const maxViewExhibition = 5000;
         const viewerOfExhibitions = [
@@ -86,6 +84,11 @@ export class DashboardService {
                 dashboardEnterprises.push({
                     enterprise_name: enterprise.name,
                     quantity: checkUser.users.length,
+                    quantity_booth: await boothRepository.count({
+                        where: {
+                            enterpriseId: enterprise.id,
+                        },
+                    }),
                 });
             }),
         );
