@@ -24,6 +24,7 @@ import { EnterpriseClientService } from 'clients/enterprise.client';
 import { LiveStream } from '@/components/exhibition/entities/live-stream.entity';
 import { LiveStreamConverter } from '../converters/live-stream.converter';
 import { LiveStream as LiveStreamDto } from '../dto/live-stream.dto';
+import { Meeting } from '@/components/exhibition/entities/meeting.entity';
 
 @Injectable()
 export class BoothService {
@@ -238,5 +239,27 @@ export class BoothService {
         );
 
         return this.liveStreamConverter.toDto(createLiveStream);
+    }
+
+    async deleteMeeting(id: string, meetingId: string) {
+        await this.dataSource.transaction(async (manager) => {
+            const boothRepository = manager.getRepository(Booth);
+            const meetingRepository = manager.getRepository(Meeting);
+            const firstBooth = await boothRepository.findOne({
+                where: {
+                    id: parseInt(id),
+                    meetings: {
+                        id: parseInt(meetingId),
+                    },
+                },
+                relations: ['meetings'],
+            });
+            if (!firstBooth) {
+                throw new NotFoundException(
+                    `The booth is not found: booth_id: ${id} and meeting_id: ${meetingId}`,
+                );
+            }
+            await meetingRepository.softRemove(firstBooth.meetings[0]);
+        });
     }
 }

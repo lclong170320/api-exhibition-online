@@ -62,6 +62,17 @@ export class BoothController {
 
     @Roles(Role.ADMIN, Role.USER)
     @IsOwner(AllowUserGetBooth)
+    @Delete(':id/meeting/:meetingId')
+    @HttpCode(204)
+    deleteMeeting(
+        @Param('id') id: string,
+        @Param('meetingId') meetingId: string,
+    ) {
+        return this.boothService.deleteMeeting(id, meetingId);
+    }
+
+    @Roles(Role.ADMIN, Role.USER)
+    @IsOwner(AllowUserGetBooth)
     @Get(':id/livestream/:livestreamId')
     readLiveStreamByIdBooth(
         @Param('id') boothId: string,
