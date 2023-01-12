@@ -89,10 +89,12 @@ export class AuthService {
             const decodedJwtAccessToken = this.jwtService.decode(
                 data.token,
             ) as LoginPayload;
-            new Date().valueOf() >=
-            new Date(decodedJwtAccessToken.exp).valueOf() * 1000
-                ? blacklistRepository.delete(data.id)
-                : '';
+            const currentTime = new Date().valueOf();
+            const expiresTime =
+                new Date(decodedJwtAccessToken.exp).valueOf() * 1000;
+            if (currentTime >= expiresTime) {
+                blacklistRepository.delete(data.id);
+            }
         });
     }
 

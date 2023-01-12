@@ -19,7 +19,9 @@ export class AuthController {
         const jwtAccessToken = req.get('Authorization')
             ? req.get('Authorization').split(' ')[1]
             : undefined;
-        jwtAccessToken ? await this.authService.logout(jwtAccessToken) : '';
+        if (jwtAccessToken) {
+            await this.authService.logout(jwtAccessToken);
+        }
     }
 
     @Get('me')
