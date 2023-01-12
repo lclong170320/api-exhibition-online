@@ -50,8 +50,14 @@ export async function paginate<T>(
     }
     const [data, total] = await repository.findAndCount(findOptions);
 
-    let sortedData = data;
     const sortBy = parseSortBy(query.sortBy, option.sortableColumns);
+    const sortedData = handleSortData(data, sortBy);
+
+    return [sortedData, total] as [T[], number];
+}
+
+function handleSortData<T>(data: T[], sortBy: [string, string][]) {
+    let sortedData = data;
     sortBy.forEach((item) => {
         sortedData = data.sort((i1, i2) => {
             type ObjectKey = keyof typeof i1;
@@ -67,7 +73,7 @@ export async function paginate<T>(
         });
     });
 
-    return [sortedData, total] as [T[], number];
+    return sortedData;
 }
 
 function parseSortBy(

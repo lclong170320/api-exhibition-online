@@ -753,22 +753,21 @@ export class ExhibitionService {
         return listOfCreatedBoothProduct;
     }
 
-    private async removeOldBoothRelations(
+    private async removeLivestream(
         booth: Booth,
-        boothProjectRepository: Repository<BoothProject>,
-        boothProductRepository: Repository<BoothProduct>,
-        boothImageRepository: Repository<BoothImage>,
-        boothVideoRepository: Repository<BoothVideo>,
         liveStreamRepository: Repository<LiveStream>,
-        projectRepository: Repository<Project>,
-        productRepository: Repository<Product>,
-        imageRepository: Repository<Image>,
-        videoRepository: Repository<Video>,
     ) {
         if (booth.liveStreams) {
             await liveStreamRepository.remove(booth.liveStreams);
             booth.liveStreams = [];
         }
+    }
+
+    private async removeBoothImages(
+        booth: Booth,
+        boothImageRepository: Repository<BoothImage>,
+        imageRepository: Repository<Image>,
+    ) {
         if (booth.boothImages) {
             await Promise.all(
                 booth.boothImages.map(async (boothImage) => {
@@ -789,6 +788,13 @@ export class ExhibitionService {
             );
             booth.boothImages = [];
         }
+    }
+
+    private async removeBoothVideo(
+        booth: Booth,
+        boothVideoRepository: Repository<BoothVideo>,
+        videoRepository: Repository<Video>,
+    ) {
         if (booth.boothVideos) {
             await Promise.all(
                 booth.boothVideos.map(async (boothVideo) => {
@@ -809,6 +815,13 @@ export class ExhibitionService {
             );
             booth.boothVideos = [];
         }
+    }
+
+    private async removeBoothProduct(
+        booth: Booth,
+        boothProductRepository: Repository<BoothProduct>,
+        productRepository: Repository<Product>,
+    ) {
         if (booth.boothProducts) {
             await Promise.all(
                 booth.boothProducts.map(async (boothProduct) => {
@@ -832,6 +845,13 @@ export class ExhibitionService {
             );
             booth.boothProducts = [];
         }
+    }
+
+    private async removeBoothProject(
+        booth: Booth,
+        boothProjectRepository: Repository<BoothProject>,
+        projectRepository: Repository<Project>,
+    ) {
         if (booth.boothProjects) {
             await Promise.all(
                 booth.boothProjects.map(async (boothProject) => {
@@ -856,7 +876,6 @@ export class ExhibitionService {
 
             booth.boothProjects = [];
         }
-        return booth;
     }
 
     async createBooth(
@@ -1052,17 +1071,30 @@ export class ExhibitionService {
                 boothEntity.location = firstLocation;
                 boothEntity.enterpriseId = enterpriseId;
                 boothEntity.name = boothDto.name;
-                await this.removeOldBoothRelations(
+
+                this.removeLivestream(boothEntity, liveStreamRepository);
+                this.removeBoothImages(
+                    boothEntity,
+                    boothImageRepository,
+                    imageRepository,
+                );
+
+                this.removeBoothVideo(
+                    boothEntity,
+                    boothVideoRepository,
+                    videoRepository,
+                );
+
+                this.removeBoothProduct(
+                    boothEntity,
+                    boothProductRepository,
+                    productRepository,
+                );
+
+                this.removeBoothProject(
                     boothEntity,
                     boothProjectRepository,
-                    boothProductRepository,
-                    boothImageRepository,
-                    boothVideoRepository,
-                    liveStreamRepository,
                     projectRepository,
-                    productRepository,
-                    imageRepository,
-                    videoRepository,
                 );
 
                 const createdBooth = await boothRepository.save(boothEntity);
