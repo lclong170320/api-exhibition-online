@@ -107,6 +107,120 @@ function parseDefaultSortBy<T>(defaultSortBy: string[][]) {
     return result;
 }
 
+function handleFilterWithColon<T>(
+    valueFilter: string,
+    filterableColumns: string[],
+    columns: string[],
+    column: string,
+    result: FindOptionsWhere<T>,
+    allowedOperator: string[],
+) {
+    const [operator, value] = valueFilter.split(':');
+    if (
+        filterableColumns.includes(column) &&
+        allowedOperator.includes(operator) &&
+        value
+    ) {
+        switch (operator) {
+            case '$eq':
+                Object.assign(
+                    result,
+                    reduceRight(
+                        columns,
+                        (memo, arrayValue) => {
+                            const obj = {};
+                            obj[arrayValue] = memo;
+                            return obj;
+                        },
+                        Equal(value),
+                    ),
+                );
+                break;
+            case '$lt':
+                Object.assign(
+                    result,
+                    reduceRight(
+                        columns,
+                        (memo, arrayValue) => {
+                            const obj = {};
+                            obj[arrayValue] = memo;
+                            return obj;
+                        },
+                        LessThan(value),
+                    ),
+                );
+                break;
+            case '$lte':
+                Object.assign(
+                    result,
+                    reduceRight(
+                        columns,
+                        (memo, arrayValue) => {
+                            const obj = {};
+                            obj[arrayValue] = memo;
+                            return obj;
+                        },
+                        LessThanOrEqual(value),
+                    ),
+                );
+                break;
+            case '$gt':
+                Object.assign(
+                    result,
+                    reduceRight(
+                        columns,
+                        (memo, arrayValue) => {
+                            const obj = {};
+                            obj[arrayValue] = memo;
+                            return obj;
+                        },
+                        MoreThan(value),
+                    ),
+                );
+                break;
+            case '$gte':
+                Object.assign(
+                    result,
+                    reduceRight(
+                        columns,
+                        (memo, arrayValue) => {
+                            const obj = {};
+                            obj[arrayValue] = memo;
+                            return obj;
+                        },
+                        MoreThanOrEqual(value),
+                    ),
+                );
+                break;
+            default:
+                break;
+        }
+    }
+}
+
+function hanldeFilterNoColon<T>(
+    filterableColumns: string[],
+    columns: string[],
+    column: string,
+    valueFilter: string,
+    result: FindOptionsWhere<T>,
+) {
+    if (filterableColumns.includes(column) && valueFilter) {
+        Object.assign(
+            result,
+            reduceRight(
+                columns,
+                (memo, arrayValue) => {
+                    const obj = {};
+                    obj[arrayValue] = memo;
+                    return obj;
+                },
+                Equal(valueFilter),
+            ),
+        );
+    }
+}
+
 function parseFilter<T>(
     filter: { [column: string]: string | string[] },
     filterableColumns: string[],
@@ -119,102 +233,22 @@ function parseFilter<T>(
             if (isString(filter[column])) {
                 const valueFilter = filter[column] as string;
                 if (valueFilter.includes(':')) {
-                    const [operator, value] = valueFilter.split(':');
-                    if (
-                        filterableColumns.includes(column) &&
-                        allowedOperator.includes(operator) &&
-                        value
-                    ) {
-                        switch (operator) {
-                            case '$eq':
-                                Object.assign(
-                                    result,
-                                    reduceRight(
-                                        columns,
-                                        (memo, arrayValue) => {
-                                            const obj = {};
-                                            obj[arrayValue] = memo;
-                                            return obj;
-                                        },
-                                        Equal(value),
-                                    ),
-                                );
-                                break;
-                            case '$lt':
-                                Object.assign(
-                                    result,
-                                    reduceRight(
-                                        columns,
-                                        (memo, arrayValue) => {
-                                            const obj = {};
-                                            obj[arrayValue] = memo;
-                                            return obj;
-                                        },
-                                        LessThan(value),
-                                    ),
-                                );
-                                break;
-                            case '$lte':
-                                Object.assign(
-                                    result,
-                                    reduceRight(
-                                        columns,
-                                        (memo, arrayValue) => {
-                                            const obj = {};
-                                            obj[arrayValue] = memo;
-                                            return obj;
-                                        },
-                                        LessThanOrEqual(value),
-                                    ),
-                                );
-                                break;
-                            case '$gt':
-                                Object.assign(
-                                    result,
-                                    reduceRight(
-                                        columns,
-                                        (memo, arrayValue) => {
-                                            const obj = {};
-                                            obj[arrayValue] = memo;
-                                            return obj;
-                                        },
-                                        MoreThan(value),
-                                    ),
-                                );
-                                break;
-                            case '$gte':
-                                Object.assign(
-                                    result,
-                                    reduceRight(
-                                        columns,
-                                        (memo, arrayValue) => {
-                                            const obj = {};
-                                            obj[arrayValue] = memo;
-                                            return obj;
-                                        },
-                                        MoreThanOrEqual(value),
-                                    ),
-                                );
-                                break;
-                            default:
-                                break;
-                        }
-                    }
+                    handleFilterWithColon(
+                        valueFilter,
+                        filterableColumns,
+                        columns,
+                        column,
+                        result,
+                        allowedOperator,
+                    );
                 } else {
-                    if (filterableColumns.includes(column) && valueFilter) {
-                        Object.assign(
-                            result,
-                            reduceRight(
-                                columns,
-                                (memo, arrayValue) => {
-                                    const obj = {};
-                                    obj[arrayValue] = memo;
-                                    return obj;
-                                },
-                                Equal(valueFilter),
-                            ),
-                        );
-                    }
+                    hanldeFilterNoColon(
+                        filterableColumns,
+                        columns,
+                        column,
+                        valueFilter,
+                        result,
+                    );
                 }
             }
         }
