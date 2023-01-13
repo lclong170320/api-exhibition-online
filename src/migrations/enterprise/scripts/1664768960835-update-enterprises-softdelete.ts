@@ -8,7 +8,7 @@ const sqlUp = fs.readFileSync(
     },
 );
 
-export class updateEnterprisesSoftdelete1664768960835
+export class UpdateEnterprisesSoftdelete1664768960835
     implements MigrationInterface
 {
     public async up(queryRunner: QueryRunner): Promise<void> {

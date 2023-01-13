@@ -15,7 +15,7 @@ const sqlDown = fs.readFileSync(
     },
 );
 
-export class updateDocuments1664872866025 implements MigrationInterface {
+export class UpdateDocuments1664872866025 implements MigrationInterface {
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`${sqlUp}`);
     }

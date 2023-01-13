@@ -14,7 +14,7 @@ const sqlDown = fs.readFileSync(
     },
 );
 
-export class booth1667377353060 implements MigrationInterface {
+export class Booth1667377353060 implements MigrationInterface {
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`${sqlUp}`);
     }

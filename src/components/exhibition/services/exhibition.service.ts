@@ -246,7 +246,6 @@ export class ExhibitionService {
             );
 
         const boothOrganizationEntity = new BoothOrganization();
-        // TODO: default value
         boothOrganizationEntity.positionX = 760;
         boothOrganizationEntity.positionY = 10;
         boothOrganizationEntity.positionZ = -180;

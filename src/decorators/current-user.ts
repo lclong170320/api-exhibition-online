@@ -9,9 +9,8 @@ export const CurrentUser = createParamDecorator(
 
         if (request.get('Authorization')) {
             const jwtAccessToken = request.get('Authorization').split(' ')[1];
-            const decodedJwtAccessToken = jwt_decode(
-                jwtAccessToken,
-            ) as LoginPayload;
+            const decodedJwtAccessToken: LoginPayload =
+                jwt_decode(jwtAccessToken);
 
             return decodedJwtAccessToken.user;
         }

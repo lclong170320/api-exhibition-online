@@ -77,7 +77,7 @@ export class AuthService {
         const verifyToken = this.jwtService.verify(token, {
             publicKey: this.publicKey,
             ignoreExpiration: true,
-        }) as LoginPayload;
+        });
         if (verifyToken) await blacklistRepository.save({ token: token });
     }
 

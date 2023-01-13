@@ -1,11 +1,10 @@
 import { DbConnection } from '@/database/config/db';
 import { NotFoundException, Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, DataSource } from 'typeorm';
 import { BoothTemplate } from '@/components/exhibition/entities/booth-template.entity';
 import { PaginatedBoothTemplatesConverter } from '@/components/exhibition/converters/paginated-booth-templates.converter';
 import { BoothTemplateConverter } from '@/components/exhibition/converters/booth-template.converter';
-import { DataSource } from 'typeorm';
 import { PaginateQuery } from '@/decorators/paginate.decorator';
 import { paginate } from '@/utils/pagination';
 

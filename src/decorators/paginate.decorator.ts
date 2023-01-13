@@ -139,7 +139,7 @@ function parseFilter(
                         name.includes('filter.') &&
                         (isString(param) ||
                             (Array.isArray(param) &&
-                                (param as any[]).every((p) => isString(p)))),
+                                param.every((p) => isString(p)))),
                 ) as Dictionary<string | string[]>,
                 (_param, name) => {
                     const columnName = name.replace('filter.', '');

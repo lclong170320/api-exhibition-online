@@ -48,12 +48,12 @@ export async function paginate<T>(
     if (!isEmpty(whereClause)) {
         findOptions.where = whereClause;
     }
-    const [data] = await repository.findAndCount(findOptions);
+    const [data, total] = await repository.findAndCount(findOptions);
 
     const sortBy = parseSortBy(query.sortBy, option.sortableColumns);
     const sortedData = handleSortData(data, sortBy);
 
-    return sortedData;
+    return [sortedData, total] as [T[], number];
 }
 
 function sortData(i1, i2, item) {

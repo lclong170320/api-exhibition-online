@@ -87,7 +87,6 @@ export class UserService {
                 "The 'role_id' is not found: " + userDto.role_id,
             );
         }
-        // TODO
         userDto.password = await this.hashPassword(userDto.password);
         const newUserEntity = this.userConverter.toEntity(userDto);
         newUserEntity.role = role;
