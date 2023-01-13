@@ -2,7 +2,6 @@ import { SpaceTemplate as SpaceTemplateDto } from '@/components/exhibition/dto/s
 import { SpaceTemplate } from '@/components/exhibition/entities/space-template.entity';
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { SpaceTemplateLocationConverter } from './space-template-location.converter';
-// import { PositionSpaceConverter } from './position-space.converter';
 import { SpaceTemplatePositionConverter } from './space-template-position.converter';
 import { SpaceConverter } from './space.converter';
 

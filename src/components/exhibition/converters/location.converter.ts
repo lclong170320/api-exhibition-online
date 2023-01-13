@@ -11,6 +11,15 @@ export class LocationConverter {
     constructor(
         private spaceTemplateLocationConverter: SpaceTemplateLocationConverter,
     ) {}
+
+    private checkStatus(status: Status) {
+        if (!status) return;
+        if (status === Status.AVAILABLE) {
+            return Status.AVAILABLE;
+        }
+
+        return Status.RESERVED;
+    }
     toEntity(dto: LocationDto) {
         const entity = new Location();
         entity.id = dto.id;
@@ -23,11 +32,7 @@ export class LocationConverter {
     toDto(entity: Location) {
         const dto = {
             id: entity.id,
-            status: entity.status
-                ? entity.status === Status.AVAILABLE
-                    ? Status.AVAILABLE
-                    : Status.RESERVED
-                : undefined,
+            status: this.checkStatus(entity.status),
             space_template_location: entity.spaceTemplateLocation
                 ? this.spaceTemplateLocationConverter.toDto(
                       entity.spaceTemplateLocation,

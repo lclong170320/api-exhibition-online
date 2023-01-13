@@ -48,29 +48,29 @@ export async function paginate<T>(
     if (!isEmpty(whereClause)) {
         findOptions.where = whereClause;
     }
-    const [data, total] = await repository.findAndCount(findOptions);
+    const [data] = await repository.findAndCount(findOptions);
 
     const sortBy = parseSortBy(query.sortBy, option.sortableColumns);
     const sortedData = handleSortData(data, sortBy);
 
-    return [sortedData, total] as [T[], number];
+    return sortedData;
+}
+
+function sortData(i1, i2, item) {
+    type ObjectKey = keyof typeof i1;
+    if (i1[item[0] as ObjectKey] === i2[item[0] as ObjectKey]) {
+        return 0;
+    }
+    if (item[1] === 'ASC') {
+        return i1[item[0] as ObjectKey] < i2[item[0] as ObjectKey] ? -1 : 1;
+    }
+    return i1[item[0] as ObjectKey] > i2[item[0] as ObjectKey] ? -1 : 1;
 }
 
 function handleSortData<T>(data: T[], sortBy: [string, string][]) {
     let sortedData = data;
     sortBy.forEach((item) => {
-        sortedData = data.sort((i1, i2) => {
-            type ObjectKey = keyof typeof i1;
-            if (i1[item[0] as ObjectKey] === i2[item[0] as ObjectKey]) {
-                return 0;
-            }
-            if (item[1] === 'ASC') {
-                return i1[item[0] as ObjectKey] < i2[item[0] as ObjectKey]
-                    ? -1
-                    : 1;
-            }
-            return i1[item[0] as ObjectKey] > i2[item[0] as ObjectKey] ? -1 : 1;
-        });
+        sortedData = [...data].sort((i1, i2) => sortData(i1, i2, item));
     });
 
     return sortedData;

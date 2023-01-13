@@ -108,15 +108,27 @@ export class BoothOrganizationService {
                 boothOrganizationEntity.boothOrganizationTemplate =
                     firstBoothOrganizationTemplate;
 
-                await this.removeBoothOrganizationRelations(
+                this.removeBoothOrganizationImages(
                     boothOrganizationEntity,
                     boothOrganizationImageRepository,
-                    boothOrganizationVideoRepository,
-                    boothOrganizationProjectRepository,
-                    boothOrganizationProductRepository,
                     imageRepository,
+                );
+
+                this.removeBoothOrganizationVideos(
+                    boothOrganizationEntity,
+                    boothOrganizationVideoRepository,
                     videoRepository,
+                );
+
+                this.removeBoothOrganizationProjects(
+                    boothOrganizationEntity,
+                    boothOrganizationProjectRepository,
                     projectRepository,
+                );
+
+                this.removeBoothOrganizationProducts(
+                    boothOrganizationEntity,
+                    boothOrganizationProductRepository,
                     productRepository,
                 );
 
@@ -294,16 +306,10 @@ export class BoothOrganizationService {
         return boothOrganizationProducts;
     }
 
-    private async removeBoothOrganizationRelations(
+    private async removeBoothOrganizationImages(
         boothOrganization: BoothOrganization,
         boothOrganizationImageRepository: Repository<BoothOrganizationImage>,
-        boothOrganizationVideoRepository: Repository<BoothOrganizationVideo>,
-        boothOrganizationProjectRepository: Repository<BoothOrganizationProject>,
-        boothOrganizationProductRepository: Repository<BoothOrganizationProduct>,
         imageRepository: Repository<Image>,
-        videoRepository: Repository<Video>,
-        projectRepository: Repository<Project>,
-        productRepository: Repository<Product>,
     ) {
         const boothOrganizationImages =
             await boothOrganizationImageRepository.find({
@@ -324,6 +330,13 @@ export class BoothOrganizationService {
                 }),
             );
         }
+    }
+
+    private async removeBoothOrganizationVideos(
+        boothOrganization: BoothOrganization,
+        boothOrganizationVideoRepository: Repository<BoothOrganizationVideo>,
+        videoRepository: Repository<Video>,
+    ) {
         const boothOrganizationVideos =
             await boothOrganizationVideoRepository.find({
                 where: {
@@ -343,6 +356,13 @@ export class BoothOrganizationService {
                 }),
             );
         }
+    }
+
+    private async removeBoothOrganizationProjects(
+        boothOrganization: BoothOrganization,
+        boothOrganizationProjectRepository: Repository<BoothOrganizationProject>,
+        projectRepository: Repository<Project>,
+    ) {
         const boothOrganizationProjects =
             await boothOrganizationProjectRepository.find({
                 where: {
@@ -364,6 +384,13 @@ export class BoothOrganizationService {
                 ),
             );
         }
+    }
+
+    private async removeBoothOrganizationProducts(
+        boothOrganization: BoothOrganization,
+        boothOrganizationProductRepository: Repository<BoothOrganizationProduct>,
+        productRepository: Repository<Product>,
+    ) {
         const boothOrganizationProducts =
             await boothOrganizationProductRepository.find({
                 where: {
@@ -385,8 +412,6 @@ export class BoothOrganizationService {
                 ),
             );
         }
-
-        return boothOrganization;
     }
 
     private async removeBoothOrganizationImage(
