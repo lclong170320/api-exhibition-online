@@ -5808,8 +5808,8 @@ components:
             properties:
               exhibition_name:
                 type: string
-              type:
-                type: string
+              category_id:
+                type: number
               view:
                 type: number
               total_enterprise:

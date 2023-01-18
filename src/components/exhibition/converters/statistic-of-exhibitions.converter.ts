@@ -5,16 +5,18 @@ import { Status } from '@/components/exhibition/entities/exhibition.entity';
 @Injectable()
 export class StatisticOfExhibitionsConverter {
     toDto(
+        id: number,
         exhibition_name: string,
-        type: string,
+        category_id: number,
         view: number,
         total_enterprise: number,
         total_booth: number,
         status: Status,
     ) {
         const dto = {
+            id,
             exhibition_name,
-            type,
+            category_id,
             view,
             total_enterprise,
             total_booth,

@@ -186,8 +186,9 @@ export class DashboardService {
                     ...new Set(data.booths.map((booth) => booth.enterpriseId)),
                 ];
                 statisticOfExhibitions.push({
+                    id: data.id,
                     exhibition_name: data.name,
-                    type: data.category.name,
+                    category_id: data.category.id,
                     view: 1000,
                     total_enterprise: unique.length,
                     total_booth: data.booths.length,

@@ -12,8 +12,9 @@
 import { Status } from '@/components/exhibition/entities/exhibition.entity';
 
 export interface StatisticOfExhibitions {
+    id: number;
     exhibition_name: string;
-    type: string;
+    category_id: number;
     view: number;
     total_enterprise: number;
     total_booth: number;

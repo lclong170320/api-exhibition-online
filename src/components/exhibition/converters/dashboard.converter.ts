@@ -62,8 +62,9 @@ export class DashboardConverter {
             ),
             statistic_of_exhibitions: statistic_of_exhibitions.map((data) =>
                 this.statisticOfExhibitionsConverter.toDto(
+                    data.id,
                     data.exhibition_name,
-                    data.type,
+                    data.category_id,
                     data.view,
                     data.total_enterprise,
                     data.total_booth,
