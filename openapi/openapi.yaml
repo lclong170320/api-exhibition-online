@@ -5773,6 +5773,7 @@ components:
         - enterprises
         - booth_templates
         - exhibitions
+        - statistic_of_exhibition
       properties:
         max_view_exhibition:
           type: number
@@ -5793,6 +5794,37 @@ components:
               view:
                 type: number
                 description: Number of viewers of each exhibition
+        statistic_of_exhibitions:
+          type: array
+          items:
+            type: object
+            required:
+              - exhibition_name
+              - type
+              - view
+              - total_enterprise
+              - total_booth
+              - status
+            properties:
+              exhibition_name:
+                type: string
+              type:
+                type: string
+              view:
+                type: number
+              total_enterprise:
+                type: number
+              total_booth:
+                type: number
+              status: 
+                type: string
+                enum: ['new','listing','finished']     
+        total_livestream:
+          type: number
+          description: total number of livesteam
+        total_meeting:
+          type: number
+          description: total number of meeting
         enterprises:
           type: array
           items:

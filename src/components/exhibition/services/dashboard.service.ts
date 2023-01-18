@@ -1,3 +1,4 @@
+import { StatisticOfExhibitions } from '@/components/exhibition/dto/statistic-of-exhibitions.dto';
 import { DbConnection } from '@/database/config/db';
 import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
@@ -13,6 +14,8 @@ import { BoothProject } from '../entities/booth-project.entity';
 import { BoothTemplate } from '../entities/booth-template.entity';
 import { Booth } from '../entities/booth.entity';
 import { Exhibition } from '../entities/exhibition.entity';
+import { PaginateQuery } from '@/decorators/paginate.decorator';
+import { paginate } from '@/utils/pagination';
 
 @Injectable()
 export class DashboardService {
@@ -24,8 +27,9 @@ export class DashboardService {
         private readonly dashboardConverter: DashboardConverter,
     ) {}
 
-    async readDashboard(jwtAccessToken: string) {
-        const query = [
+    async readDashboard(jwtAccessToken: string, query: PaginateQuery) {
+        const populatableColumns = [
+            'category',
             'booths',
             'booths.boothTemplate',
             'booths.liveStreams',
@@ -33,6 +37,19 @@ export class DashboardService {
             'booths.boothProjects',
             'booths.boothProducts',
         ];
+
+        query.populate = [
+            'category',
+            'booths',
+            'booths.boothTemplate',
+            'booths.liveStreams',
+            'booths.meetings',
+            'booths.boothProjects',
+            'booths.boothProducts',
+        ];
+
+        const filterableColumns = ['category.id', 'status'];
+        const searchableColumns = ['name'];
 
         const exhibitionRepository =
             this.dataSource.manager.getRepository(Exhibition);
@@ -43,9 +60,15 @@ export class DashboardService {
         const boothTemplateRepository =
             this.dataSource.manager.getRepository(BoothTemplate);
         const boothRepository = this.dataSource.manager.getRepository(Booth);
+        const [listExhibitions] = await paginate(query, exhibitionRepository, {
+            searchableColumns,
+            filterableColumns,
+            populatableColumns,
+            withDeleted: query.withDeleted,
+        });
 
-        const listExhibitions = await exhibitionRepository.find({
-            relations: query,
+        const findExhibitions = await exhibitionRepository.find({
+            relations: populatableColumns,
         });
 
         const dashboardExhibitions: DashboardExhibitions = {
@@ -60,6 +83,8 @@ export class DashboardService {
         const dashboardBoothTemplates: DashboardBoothTemplates[] = [];
         const totalViewer = 5000;
         const maxViewExhibition = 5000;
+        let totalLiveStream = 0;
+        let totalMeeting = 0;
         const viewerOfExhibitions = [
             {
                 exhibition_name: 'trien lam 1',
@@ -70,6 +95,7 @@ export class DashboardService {
                 view: 2000,
             },
         ];
+        const statisticOfExhibitions: StatisticOfExhibitions[] = [];
 
         const findEnterprises =
             await this.enterpriseClientService.getEnterprises(jwtAccessToken);
@@ -111,7 +137,7 @@ export class DashboardService {
         );
 
         await Promise.all(
-            listExhibitions.map(async (data) => {
+            findExhibitions.map(async (data) => {
                 if (data.status === 'new') {
                     dashboardExhibitions._new++;
                 }
@@ -153,6 +179,26 @@ export class DashboardService {
                 }
             }),
         );
+
+        await Promise.all(
+            listExhibitions.map(async (data) => {
+                const unique = [
+                    ...new Set(data.booths.map((booth) => booth.enterpriseId)),
+                ];
+                statisticOfExhibitions.push({
+                    exhibition_name: data.name,
+                    type: data.category.name,
+                    view: 1000,
+                    total_enterprise: unique.length,
+                    total_booth: data.booths.length,
+                    status: data.status,
+                });
+                data.booths.map((data) => {
+                    totalLiveStream += data.liveStreams.length;
+                    totalMeeting += data.meetings.length;
+                });
+            }),
+        );
         return this.dashboardConverter.toDto(
             maxViewExhibition,
             totalViewer,
@@ -160,6 +206,9 @@ export class DashboardService {
             dashboardEnterprises,
             dashboardBoothTemplates,
             dashboardExhibitions,
+            statisticOfExhibitions,
+            totalLiveStream,
+            totalMeeting,
         );
     }
 }

@@ -5,6 +5,7 @@ import { Controller, Get, UseGuards } from '@nestjs/common';
 import { JWTAuthGuard } from 'guards/auth.guard';
 import { RolesGuard } from 'guards/roles.guard';
 import { DashboardService } from '../services/dashboard.service';
+import { Paginate, PaginateQuery } from '@/decorators/paginate.decorator';
 
 @Controller('dashboards')
 export class DashboardController {
@@ -13,7 +14,10 @@ export class DashboardController {
     @UseGuards(JWTAuthGuard, RolesGuard)
     @Roles(Role.ADMIN)
     @Get()
-    readDashboard(@JwtAccessToken() jwtAccessToken: string) {
-        return this.dashboardService.readDashboard(jwtAccessToken);
+    readDashboard(
+        @JwtAccessToken() jwtAccessToken: string,
+        @Paginate() query: PaginateQuery,
+    ) {
+        return this.dashboardService.readDashboard(jwtAccessToken, query);
     }
 }

@@ -13,6 +13,7 @@ import { DashboardBoothTemplates } from './dashboard-booth-templates.dto';
 import { DashboardEnterprises } from './dashboard-enterprises.dto';
 import { DashboardExhibitions } from './dashboard-exhibitions.dto';
 import { DashboardViewerOfExhibitions } from './dashboard-viewer-of-exhibitions.dto';
+import { StatisticOfExhibitions } from './statistic-of-exhibitions.dto';
 
 export interface Dashboard {
     max_view_exhibition: number;
@@ -21,4 +22,7 @@ export interface Dashboard {
     enterprises: Array<DashboardEnterprises>;
     booth_templates: Array<DashboardBoothTemplates>;
     exhibitions: DashboardExhibitions;
+    statistic_of_exhibitions: Array<StatisticOfExhibitions>;
+    total_livestream: number;
+    total_meeting: number;
 }

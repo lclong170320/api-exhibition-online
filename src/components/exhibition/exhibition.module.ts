@@ -104,6 +104,7 @@ import { RegistrationController } from './controllers/registration.controller';
 import { RegistrationService } from './services/registration.service';
 import { PaginatedRegistrationsConverter } from './converters/paginated-registrations';
 import { RegistrationConverter } from './converters/registration.converter';
+import { StatisticOfExhibitionsConverter } from './converters/statistic-of-exhibitions.converter';
 
 @Module({
     controllers: [
@@ -184,6 +185,7 @@ import { RegistrationConverter } from './converters/registration.converter';
         DashboardExhibitionsConverter,
         RegistrationConverter,
         PaginatedRegistrationsConverter,
+        StatisticOfExhibitionsConverter,
     ],
     imports: [
         TypeOrmModule.forFeature(
